@@ -1,10 +1,18 @@
 ﻿@page
 @model LogoutModel
 @{
-    ViewData["Title"] = "Log out";
+    ViewData["Title"] = "Изход";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    <p>You have successfully logged out of the application.</p>
-</header>
+<div class="col-sm-12">
+    <h1>Изход</h1>
+    <p>Успешно излязохте от приложението.</p>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            $(".container.main").removeClass("main").addClass("about");
+        });
+    </script>
+}

@@ -1,0 +1,68 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на категория";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Categories">Категории</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Categories" asp-route-id="@Model.Id">@Model.Name</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Delete" asp-controller="Categories" asp-route-id="@Model.Id">Изтриване</a>
+}
+
+<div class="col-lg-10 blog-main">
+
+    <h2 class="underlined">@ViewData["Title"]</h2>
+
+    <h3>@Model.Name</h3>
+    <pre class="help-block">@Model.Description</pre>
+
+    <hr />
+    
+    <div class="row">
+        <div class="form-group col-md-4 @(Model.SourcesCount > 0 ? "has-error" : string.Empty)">
+            <label asp-for="SourcesCount" class="control-label"></label>
+            <input asp-for="SourcesCount" class="form-control" readonly="readonly" />
+        </div>
+        <div class="form-group col-md-4 @(Model.EPagesCount > 0 ? "has-error" : string.Empty)">
+            <label asp-for="EPagesCount" class="control-label"></label>
+            <input asp-for="EPagesCount" class="form-control" readonly="readonly" />
+        </div>
+        <div class="form-group col-md-4 @(Model.AllSourcesCount > 0 ? "has-warning" : string.Empty)">
+            <label asp-for="AllSourcesCount" class="control-label"></label>
+            <input asp-for="AllSourcesCount" class="form-control" readonly="readonly" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label asp-for="LastUpdated" class="control-label"></label>
+            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-md-4 col-md-offset-4">
+            <label asp-for="DateCreated" class="control-label"></label>
+            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+    </div>
+
+    <h5>Сигурни ли сте, че искате да изтриете избраната статия? Всички свързани към нея е-страници и източници <b>също ще бъдат изтрити</b>.</h5>
+
+    <hr />
+
+    <div class="row text-right">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index">Отказ</a> |
+            <input type="submit" value="Потвърди" class="btn btn-danger" />
+        </form>
+    </div>
+
+</div>

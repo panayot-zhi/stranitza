@@ -1,0 +1,32 @@
+﻿@model CommentsWrapViewModel
+
+@foreach (var comment in Model.Comments)
+{
+    <partial name="_Comment" model="comment" />
+}
+
+@if (Model.TotalCount > Model.CurrentOffset + Model.Comments.Count)
+{
+    var loadLimit = Model.TotalCount - Model.Limit - Model.CurrentOffset;
+
+    @if (Model.ParentId.HasValue)
+    {
+        <div class="load-more-replies">
+            <a class="comments-load-more-replies" data-parent-id="@Model.ParentId" href="#"><i class="fa fa-refresh fa-3x fa-fw"></i>Зареди още отговори (@loadLimit)... @*@(loadLimit != 1 ? $"({loadLimit}) отговори" : $"({loadLimit}) отговор")*@</a>
+        </div>
+    }
+    else
+    {
+        <div class="load-more">
+            <a class="comments-load-more" href="#"><i class="fa fa-refresh fa-3x fa-fw"></i>Зареди още коментари (@loadLimit)... @*@(loadLimit != 1 ? $"({loadLimit}) коментари" : $"({loadLimit}) коментар" )*@</a>
+        </div>
+    }
+}
+
+@if (Model.CurrentUserDisplayName != null)
+{
+    <script id="CurrentUserDisplayNameUpdateScript">
+        $("#comment-display-name").val('@Html.Raw(Model.CurrentUserDisplayName)');
+        $("#CurrentUserDisplayNameUpdateScript").remove();
+    </script>
+}

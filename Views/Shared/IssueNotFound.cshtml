@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Броят липсва";
+    Layout = "_LayoutNews";
+}
+
+@section breadcrumb {
+    <span>@ViewData["Title"]</span>
+}
+
+<h1>
+    <span class="about-bold">404 - Броят все още не съществува</span>
+</h1>
+
+<div class="about-small">
+    За съжаление заявеният брой все още не е част от дигиталния архив на сайта.
+    <img src="@Url.Content("~/images/not-found-error.jpg")" alt="404 - Not Found" class="about-portrait img-responsive">
+    Ако вярвате, че броят не би трябвало да липсва или това е вътрешен проблем, моля обърнете се към администратора на системата по email за да отстрани проблема възможно най-бързо.
+    Моля, при забелязани грешки и неизправности по системата, свържете се с главния редактор на списанието посредством бутона по-долу.
+</div>
+
+<div class="about-button">
+    <a class="btn btn-xlarge btn-tales-one" href="mailto:@StranitzaConstants.HeadEditorEmail">Свържете се с нас</a>
+</div>
+
+<hr>

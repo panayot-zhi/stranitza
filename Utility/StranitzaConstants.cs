@@ -31,7 +31,7 @@ namespace stranitza.Utility
 
         public const string ForbiddenPagePdfFileName = "forbidden-page.pdf";
         public const string IndexJsonFileName = "stranitza-index.json";
-        public const string ThumbnailsFolderName = "thumb";
+        public const string ThumbnailsFolderName = "thumb";        
         public const string IssuesFolderName = "issues";
         public const string UploadsFolderName = "uploads";
 
@@ -66,14 +66,14 @@ namespace stranitza.Utility
         public const string VerifiedEmail = ClaimType2005Namespace + "/verified_email";
     }
 
-    /*public enum StranitzaRoles
+    public enum StranitzaRoles
     {
         Administrator = StranitzaRolesHelper.AdministratorWeight,
         HeadEditor = StranitzaRolesHelper.HeadEditorWeight,
         Editor = StranitzaRolesHelper.EditorWeight,
         UserPlus = StranitzaRolesHelper.UserPlusWeight,
         //User = StranitzaRolesHelper.UserWeight
-    }*/
+    }
 
     public enum StranitzaPageType
     {

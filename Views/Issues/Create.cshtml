@@ -1,0 +1,178 @@
+﻿@model IssueCreateViewModel
+
+@{
+    ViewData["Title"] = "Създаване на брой";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Issues">Библиотека</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Create" asp-controller="Issues">Създаване на брой</a>
+}
+
+<div class="col-lg-6 col-lg-offset-3 blog-main">
+    <article class="blog-post" id="post">
+        <h2 class="underlined">Създаване на брой</h2>
+
+        <form id="create-issue-form" asp-action="Create" enctype="multipart/form-data" novalidate="novalidate">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group" str-validation-for="IssueNumber" str-error-class="has-error">
+                <label asp-for="IssueNumber" class="control-label"></label>
+                <input asp-for="IssueNumber" class="form-control" type="text" />
+                <span asp-validation-for="IssueNumber" class="text-danger"></span>
+            </div>
+
+            <div class="checkbox text-right">
+                <label asp-for="IsAvailable" class="control-label">
+                    <input asp-for="IsAvailable" /> <b> @Html.DisplayNameFor(x => x.IsAvailable) </b>
+                </label>
+            </div>
+
+            <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Незадължително, допълнително описание за конкретния брой..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+
+                <div class="form-group col-xs-2">
+                    <div class="" str-validation-for="ReleaseNumber" str-error-class="has-error">
+                        <label asp-for="ReleaseNumber" class="control-label">Номер </label>
+                        <input asp-for="ReleaseNumber" class="form-control" type="text" />
+                    </div>
+                </div>
+                <div class="form-group col-xs-10">
+                    <div class="" str-validation-for="ReleaseYear" str-error-class="has-error">
+                        <label asp-for="ReleaseYear" class="control-label">и година на издаване</label>
+                        <div class="input-group">
+                            <input asp-for="ReleaseYear" class="form-control" aria-describedby="calendar-addon" type="text" placeholder="@DateTime.Now.Year" />
+                            <span class="input-group-addon" id="calendar-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        <span asp-validation-for="ReleaseYear" class="text-danger text-right"></span>
+
+                    </div>
+                </div>
+                @*<div class="col-xs-12 help-block">
+                    <span asp-validation-for="ReleaseNumber" class="text-danger"></span>
+                </div>*@
+            </div>
+
+            <div class="form-group" str-validation-for="PdfFile" str-error-class="has-error">
+                <label asp-for="PdfFile" class="control-label"></label>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-file-pdf-o"></i></span>
+                    <input type="text" name="PdfFileName" id="PdfFileName" class="form-control" readonly="readonly">
+                    <span class="input-group-btn">
+                        <label class="btn btn-tales-two">
+                            Качи <input asp-for="PdfFile" accept=".pdf" style="display: none;" />
+                        </label>
+                    </span>
+                </div>
+                <span asp-validation-for="PdfFile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" str-validation-for="PageFiles" str-error-class="has-error">
+                <label asp-for="PageFiles" class="control-label"></label>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <label class="btn btn-tales-one">
+                            Качи <input asp-for="PageFiles" multiple="multiple" accept="image/*" style="display: none;" />
+                        </label>
+                    </span>
+                    <input type="text" name="PageFileNames" id="PageFileNames" class="form-control" readonly="readonly">
+                    <span class="input-group-addon"><i class="fa fa-file-image-o"></i></span>
+                </div>
+                <p class="help-block"><small>Налични като изображения трябва да са поне заглавната страница (корицата) и съдържанието на броя.</small></p>
+                <span asp-validation-for="PageFiles" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <div class="form-group text-right">
+                <a asp-controller="Issues" asp-action="Index" class="btn btn-default">Отказ</a>
+                <input type="submit" value="Запис" class="btn btn-tales-one" />
+            </div>
+
+        </form>
+
+    </article>
+</div>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+
+        var pdfFileSize = 0;
+        var pageFilesSize = 0;
+        window.confirmFormSubmission = false;
+
+        function accumulate(acc, file) {
+            return acc + file.size;
+        }
+
+        function keepAlive() {
+            setInterval(function() {
+                $.get('@Url.Action("Ping", "Home")');
+            }, 5E3);
+        }
+
+        $(document).ready(function () {
+            keepAlive();
+
+            $('#PdfFile').on('change', function (e) {
+                const target = $("#PdfFileName");                
+                target.val(getFileName(e.target.files));
+                pdfFileSize = Array.from(e.target.files).reduce(accumulate, 0);
+            });
+
+            $('#PageFiles').on('change', function (e) {
+                const target = $("#PageFileNames");                
+                target.val(getFileName(e.target.files));                               
+                pageFilesSize = Array.from(e.target.files).reduce(accumulate, 0);
+            });
+
+            $("#create-issue-form").on('submit', function (e) {
+
+                var currentFilesSize = pageFilesSize + pdfFileSize;
+                if (currentFilesSize > requestLimit && !confirmFormSubmission) {
+                    e.preventDefault();
+
+                    let me = this;
+                    function confirm() {
+                        window.confirmFormSubmission = true;
+                        $(me).submit();
+                    }
+
+                    function reset() {
+                        window.currentFilesSize = 0;
+                        $('input[type="file"]').val('');
+                        $("#PageFileNames").val('');
+                        $("#PdfFileName").val('');                        
+                    }
+
+                    const message = "Прикачвате файлове с размер (" +
+                        getFriendlySizeName(currentFilesSize) +
+                        ") надвишаващ позволения размер за прикачване на файлове (" +
+                        getFriendlySizeName(requestLimit) +
+                        "). Възможно е заявката да не може да се осъществи, желаете ли да продължите?";
+
+                    modal.confirm(message, confirm, reset);
+                    
+                    return false;
+                }
+
+                modal.wait.show("Броят се записва, моля изчакайте...");
+
+                return true;
+            });
+        });
+    </script>
+}

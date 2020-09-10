@@ -1,12 +1,25 @@
 ﻿@page
 @model DownloadPersonalDataModel
+
 @{
-    ViewData["Title"] = "Download Your Data";
+    ViewData["Title"] = "Изтегляне на лични данни";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h4>@ViewData["Title"]</h4>
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <span class="separator">/</span>
+
+    <a asp-page="PersonalData">Лични данни</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="DownloadPersonalData">Изтегляне</a>
+}
+
+<partial name="_Messages" />
+
+@section scripts {
+    <partial name="_ValidationScripts" />
 }

@@ -1,0 +1,31 @@
+﻿@model EPageIndexViewModel
+
+<div class="epage-container">
+    <div class="row">
+
+        <div class="col-md-8 text-right epage-title-container">
+            <a asp-action="Details" asp-controller="EPages" asp-route-id="@Model.Id">
+                <strong>@Model.Title</strong>
+            </a>
+        </div>
+
+        @*TODO: Add branch when user avatars are resolved *@
+        <div class="col-md-4 text-left epage-author-container">
+            <span class="author-firstName">
+                @Model.FirstName
+            </span>
+            <span class="author-lastName">
+                @Model.LastName
+            </span>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-8 text-right epage-category-container">
+            <sup>@Model.Description</sup>
+        </div>
+        <div class="col-md-4 text-left epage-date-container">
+            <sup>@Model.DateCreated.ToString("d MMMM")</sup>
+        </div>
+    </div>
+</div>

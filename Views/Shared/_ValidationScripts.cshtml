@@ -1,0 +1,47 @@
+<environment include="Development">
+    <script src="~/lib/jquery-validate/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/jquery-validate/localization/messages_bg.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-validate/localization/messages_bg.min.js"></script>
+</environment>
+
+<script>
+    $(document).ready(function () {
+
+        // attach has-error on parent form-group
+        function highlight(element, errorClass, validClass) {
+            if (element.type === "radio") {
+                this.findByName(element.name).closest('div.form-group').addClass(errorClass).removeClass(validClass);
+            } else {
+                $(element).closest('div.form-group').addClass(errorClass).removeClass(validClass);
+            }
+        }
+
+        // detach has-error from parent form-group
+        function unhighlight(element, errorClass, validClass) {
+            if (element.type === "radio") {
+                this.findByName(element.name).closest('div.form-group').removeClass(errorClass).addClass(validClass);
+            } else {
+                $(element).closest('div.form-group').removeClass(errorClass).addClass(validClass);
+            }
+        }
+
+        $("form").each(function (index, item) {
+            var validator = $(item).data("validator");
+            if (!validator) {
+                return;
+            }
+
+            var settings = validator.settings;
+            settings.ignore = ".str-validation-ignore";
+            settings.errorClass = "has-error";            
+            settings.highlight = highlight;
+            settings.unhighlight = unhighlight;
+            
+        });
+    });
+</script>

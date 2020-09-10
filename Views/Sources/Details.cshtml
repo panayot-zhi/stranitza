@@ -1,0 +1,197 @@
+﻿@model SourceDetailsViewModel
+
+@{
+    ViewData["Title"] = "Преглед на източник";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@{
+    var modelTitle = "ЛИПСВА ЗАГЛАВИЕ";
+    if (!string.IsNullOrEmpty(Model.Title))
+    {
+        modelTitle = Model.Title;
+    }
+
+    var modelDescription = Model.Description;
+    if (string.IsNullOrWhiteSpace(modelDescription))
+    {
+        modelDescription = "Няма допълнителна информация";
+    }
+
+    if (Model.IsTranslation)
+    {
+        modelDescription += Environment.NewLine + "Превод";
+    }
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Sources">Индекс</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Sources" asp-route-id="@Model.Id">@modelTitle</a>
+}
+
+<div class="col-lg-8 blog-main">
+
+    <h2>@modelTitle</h2>
+
+    <pre class="help-block">@modelDescription</pre>
+
+    <h4 class="text-right"><small><i>@Model.CategoryName</i></small></h4>
+
+    <hr/>
+
+    <div class="row">
+
+        <div class="form-group col-md-5 col-md-offset-1">
+            <label asp-for="FirstName" class="control-label"></label>
+            <input asp-for="FirstName" class="form-control" readonly="readonly"/>
+        </div>
+
+        <div class="form-group col-md-5">
+            <label asp-for="LastName" class="control-label"></label>
+            <input asp-for="LastName" class="form-control" readonly="readonly"/>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="form-group col-md-10 col-md-offset-1">
+            <label asp-for="Origin" class="control-label"></label>
+            <input asp-for="Origin" class="form-control" readonly="readonly"/>
+
+            <p class="help-block">
+                <small>
+                    Двете имена се използват за да се намери и свърже автора на произведението с потребителски акаунт в системата.
+                    Произходът на произведението се показва в индекса.
+                </small>
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        @if (Model.AuthorId != null)
+        {
+            <div class="col-md-5 col-md-offset-6">
+                <label asp-for="AuthorUserName" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="AuthorUserName" class="form-control" readonly="readonly"/>
+                    <span class="input-group-btn">
+                        @* TODO: Wire this to an author preview page *@
+                        <a class="btn btn-default" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="fa fa-user"></i></a>
+                    </span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-5 col-md-offset-6">
+                <label asp-for="AuthorUserName" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="AuthorUserName" class="form-control" readonly="readonly" value="няма"/>
+                    <span class="input-group-btn">
+                        @* TODO: Wire this to a author search functionality *@
+                        <a class="btn btn-default" href="#"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row">
+        <p class="col-md-10 col-md-offset-1 source-row text-center pt40">
+            @if (Model.EPageId.HasValue)
+            {
+                <strong>
+                    Източникът е свързан с:&nbsp;
+
+                    <a href="@Url.Action("Details", "EPages", new {id = Model.EPageId})" target="_blank">
+                        e-страница (@Model.ReleaseYear)<sup><i class="fa fa-e-stranitza-plus"></i></sup>
+                    </a>
+                </strong>
+            }
+            else if (Model.IssueId.HasValue)
+            {
+                <strong>
+                    Източникът е свързан с брой:&nbsp;
+
+                    @* seeks page within an issue *@
+                    <a href=@Url.Action("FindPage", "Sources", new {id = Model.Id}) target="_blank">
+                        @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-external-link"></i></sup>
+                    </a>
+                </strong>
+            }
+            else
+            {
+                <strong>
+                    Източникът НЕ е свързан с брой; последвайте връзката за да извършите търсене на броя в системата:&nbsp;
+
+                    @* seeks issue *@
+                    <a href="@Url.Action("FindIssue", "Sources", new {id = Model.Id})" target="_blank">
+                        бр. @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-search"></i></sup>
+                    </a>
+                </strong>
+            }
+        </p>
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label asp-for="Notes" class="control-label"></label>
+            <textarea asp-for="Notes" class="form-control" readonly="readonly" rows="5"></textarea>
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label asp-for="LastUpdated" class="control-label"></label>
+            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text"/>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="Uploader" class="control-label"></label>
+            <input asp-for="Uploader" class="form-control" readonly="readonly"/>
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label asp-for="DateCreated" class="control-label"></label>
+            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text"/>
+        </div>
+    </div>
+
+</div>
+
+<aside class="col-lg-4 blog-aside pt10">
+
+    <div class="aside-widget">
+
+        <header>
+            <h3>Навигация</h3>
+        </header>
+        <div class="body">
+            <ul class="tales-list">
+                <li><a asp-action="Create" asp-controller="Sources">Създаване на нов източник</a></li>
+                @if (!Model.EPageId.HasValue)
+                {
+                    <li><a asp-action="Edit" asp-controller="Sources" asp-route-id="@Model.Id">Редакция на източник</a></li>
+                }
+                <li><a asp-action="Details" asp-controller="Categories" asp-route-id="@Model.CategoryId">Преглед на категория</a></li>
+                @*<li><a asp-action="Index" asp-controller="Sources">Към индекс</a></li>*@
+
+                @if (User.IsAtLeast(StranitzaRoles.HeadEditor) && !Model.EPageId.HasValue)
+                {
+                    <li><a asp-action="Delete" asp-controller="Sources" asp-route-id="@Model.Id">Изтриване</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+
+</aside>

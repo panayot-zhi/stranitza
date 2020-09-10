@@ -1,0 +1,27 @@
+﻿@page
+@model stranitza.Areas.Identity.Pages.Account.RedirectorModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Пренасочване - Списание Страница</title>
+
+    <meta name="description" content="">    @* TODO: Fill *@
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+
+</head>
+<body>
+    Ако не успеете да бъдете пренасочен автоматично, <a href="@Model.RedirectUrl" >моля натиснете тук</a>...
+<script>
+    window.location.href = '@Model.RedirectUrl';
+</script>
+</body>

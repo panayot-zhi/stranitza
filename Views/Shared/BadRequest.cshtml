@@ -1,0 +1,27 @@
+﻿@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Грешка в данните";
+    Layout = "_LayoutAdmin";
+}
+
+@section breadcrumb {
+    <span>@ViewData["Title"]</span>
+}
+
+<h1>
+    <span class="about-bold">400 - Грешка във Вашите данни</span>
+</h1>
+
+<div class="about-small">
+    За съжаление се натъкнахме на проблем, докато обработвахме данните Ви.
+    <img src="@Url.Content("~/images/bad-request-error.jpg")" alt="400 - Bad Request" class="about-portrait img-responsive"> <br>
+    Моля, прегледайте данните, които сте ни изпратили и се уверете, че са коректни и че никой не ги е манипулирал преди да пристигнат до нас.
+    Ако смятате, че не трябва да виждате тази страница, моля, свържете се с администратора на системата посредством бутона по-долу.
+</div>
+
+<div class="about-button">
+    <a class="btn btn-xlarge btn-tales-one" href="mailto:@StranitzaConstants.AdministratorEmail">Свържете се с нас</a>
+</div>
+
+<hr>

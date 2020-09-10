@@ -1,0 +1,146 @@
+﻿@model SourceDetailsViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на източник";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@{
+    var modelTitle = "ЛИПСВА ЗАГЛАВИЕ";
+    if (!string.IsNullOrEmpty(Model.Title))
+    {
+        modelTitle = Model.Title;
+    }
+
+    var modelDescription = Model.Description;
+    if (string.IsNullOrWhiteSpace(modelDescription))
+    {
+        modelDescription = "Няма допълнителна информация";
+    }
+
+    if (Model.IsTranslation)
+    {
+        modelDescription += Environment.NewLine + "Превод";
+    }
+}
+
+@section breadcrumb {
+    <a asp-action="Index">Индекс</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-route-id="@Model.Id">@modelTitle</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Delete" asp-route-id="@Model.Id">Изтриване</a>
+
+}
+
+<div class="col-lg-10 blog-main">
+
+    <h2 class="underlined">@ViewData["Title"]</h2>
+
+    <h3>@Model.Title</h3>
+    <pre class="help-block">@Model.Description</pre>
+    <h4 class="text-right"><small><i>@Model.CategoryName</i></small></h4>
+
+    <hr />
+
+    <div class="row">
+        <div class="form-group col-md-3 col-md-offset-1">
+            <label asp-for="FirstName" class="control-label"></label>
+            <input asp-for="FirstName" class="form-control" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="LastName" class="control-label"></label>
+            <input asp-for="LastName" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label asp-for="Origin" class="control-label"></label>
+            <input asp-for="Origin" class="form-control" readonly="readonly" type="text" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm-2 col-md-offset-1 mt20" >
+            <label asp-for="ReleaseNumber" class="control-label"></label>
+            <input asp-for="ReleaseNumber" class="form-control" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-sm-3 mt20">
+            <label asp-for="ReleaseYear" class="control-label"></label>
+            <input asp-for="ReleaseYear" class="form-control" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-sm-3 mt20">
+            <label asp-for="Pages" class="control-label"></label>
+            <input asp-for="Pages" class="form-control" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-sm-2">
+            <label asp-for="StartingPage" class="control-label"></label>
+            <input asp-for="StartingPage" class="form-control" readonly="readonly" type="text"  />
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="form-group col-md-3 col-md-offset-1">
+            <label asp-for="IssueId" class="control-label"></label>
+            <input asp-for="IssueId" class="form-control" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-md-3">
+            <label asp-for="AuthorId" class="control-label"></label>
+            <input asp-for="AuthorId" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label asp-for="EPageId" class="control-label"></label>
+            <input asp-for="EPageId" class="form-control" readonly="readonly" type="text" />
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label asp-for="Notes" class="control-label"></label>
+            <textarea asp-for="Notes" class="form-control" readonly="readonly" rows="5"></textarea>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label asp-for="LastUpdated" class="control-label"></label>
+            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="Uploader" class="control-label"></label>
+            <input asp-for="Uploader" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label asp-for="DateCreated" class="control-label"></label>
+            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+    </div>
+    
+    <h5>Сигурни ли сте, че искате да изтриете избраният източник?</h5>
+
+    <hr />
+
+    <div class="row text-right">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index">Отказ</a> |
+            <input type="submit" value="Потвърди" class="btn btn-danger" />
+        </form>
+    </div>
+
+</div>

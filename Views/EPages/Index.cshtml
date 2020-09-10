@@ -1,0 +1,108 @@
+﻿@model EPageViewModel
+
+@{
+    ViewData["Title"] = "е-страница";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="EPages">е-страница</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="EPages" asp-route-year="@Model.CurrentYear">@Model.CurrentYear</a>
+}
+
+<div class="col-md-8 blog-main epage">
+    <article class="blog-post">
+        <h1>Съдържание</h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <hr>
+            </div>
+            
+            @if (!Model.EPagesByCategory.Any())
+            {
+                <div class="col-sm-8 col-sm-offset-4">
+                    <p class="help-block text-right"><small>За съжаление, тазгодишното издание на е-страница все още няма одобрени произведения. Моля, опитайте отново по-късно@(Model.HasArchive ? " или прегледайте миналогодишните произведения от Архива" : string.Empty).</small></p>
+                    <p class="help-block text-right"><small>Ако желаете, можете да ни изпратите авторска творба <br> на <a href="mailto:@StranitzaConstants.HeadEditorEmail">email адресът на главния редактор</a>.</small></p>
+                </div>
+            }
+            else
+            {
+                @foreach (var category in Model.EPagesByCategory.Keys)
+                {
+                    <div class="row">
+                        <div class="col-md-8 text-right">
+                            <h4><i>@category</i></h4>
+                        </div>
+                    </div>
+
+                    foreach (var epage in Model.EPagesByCategory[category])
+                    {
+                        @await Html.PartialAsync("_EPage", epage)
+                    }
+                }
+            }
+
+        </div>
+    </article>
+</div>
+
+<aside class="col-md-4 blog-aside">
+
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Навигация</h3>
+            </header>
+
+            <div class="body">
+                <ul class="tales-list">
+
+                    <li><a asp-controller="EPages" asp-action="Create">Създаване на нова публикация</a></li>
+
+                    @* TODO: Add navigation links here *@
+                </ul>
+            </div>
+        </div>
+    }
+    
+    @if (Model.HasArchive)
+    {
+        <div id="release-year-filter" class="aside-widget">
+            <header>
+                <h3>Архив</h3>
+            </header>
+            <div class="body">
+                <ul class="tales-list">
+                    @foreach (var filter in Model.YearFilter)
+                    {
+                        <li>
+                            <a class="category @(Model.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Index", "EPages", new {year = filter.Year})">
+                                @filter.Year (@filter.Count)
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    }
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+</aside>

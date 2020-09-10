@@ -1,53 +1,191 @@
 ﻿@page
+@using stranitza.Utility
 @model ExternalLoginsModel
+
 @{
-    ViewData["Title"] = "Manage your external logins";
+    ViewData["Title"] = "Управление на външни източници за вход";
     ViewData["ActivePage"] = ManageNavPages.ExternalLogins;
 }
 
-<partial name="_StatusMessage" for="StatusMessage" />
-@if (Model.CurrentLogins?.Count > 0)
-{
-    <h4>Registered Logins</h4>
-    <table class="table">
-        <tbody>
-            @foreach (var login in Model.CurrentLogins)
-            {
-                <tr>
-                    <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
-                    <td>
-                        @if (Model.ShowRemoveButton)
-                        {
-                            <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
-                                <div>
-                                    <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
-                                    <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
-                                    <button type="submit" class="btn btn-primary" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            @: &nbsp;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="ExternalLogins">Услуги за вход</a>
 }
-@if (Model.OtherLogins?.Count > 0)
-{
-    <h4>Add another service to log in.</h4>
-    <hr />
-    <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="form-horizontal">
-        <div id="socialLoginList">
-            <p>
-                @foreach (var provider in Model.OtherLogins)
+
+<partial name="_Messages" />
+
+<div class="row">
+    <div class="col-md-6">
+
+        @if (Model.CurrentLogins?.Count > 0)
+        {
+            <h4>Регистрирани услуги</h4>
+
+            <hr />
+
+            <form id="remove-login-form" asp-page-handler="RemoveLogin" method="post" class="form-horizontal text-center pb30">
+                <input id="loginProvider" type="hidden" name="loginProvider" />
+                <input id="providerKey" type="hidden" name="providerKey" />
+
+                @if (Model.CurrentLogins.Facebook() != null)
                 {
-                    <button id="@($"link-login-button-{provider.Name}")" type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                    @* FACEBOOK *@
+                    <div class="social-icon color-three">
+                        <a href="#" target="_blank" class="facebook-share-button" title="Премахни връзка с @Model.CurrentLogins.Facebook().ProviderDisplayName акаунт">
+                            <div class="inner-circle"></div>
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                    </div>
                 }
-            </p>
-        </div>
-    </form>
+
+                @if (Model.CurrentLogins.Twitter() != null)
+                {
+                    @* TWITTER *@
+                    <div class="social-icon color-one">
+                        <a href="#" target="_blank" class="twitter-share-button" title="Премахни връзка с @Model.CurrentLogins.Twitter().ProviderDisplayName акаунт">
+                            <div class="inner-circle"></div>
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                    </div>
+                }
+
+                @if (Model.CurrentLogins.Google() != null)
+                {
+                    @* GOOGLE *@
+                    <div class="social-icon color-four">
+                        <a href="#" target="_blank" class="google-share-button" title="Премахни връзка с @Model.CurrentLogins.Google().ProviderDisplayName акаунт">
+                            <div class="inner-circle"></div>
+                            <i class="fa fa-google"></i>
+                        </a>
+                    </div>
+                }
+            </form>
+        }
+
+        @if (Model.OtherLogins?.Count > 0)
+        {
+            <h4>Услуги за външен вход</h4>
+
+            <hr />
+
+            <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="form-horizontal text-center">
+
+                <input id="provider" type="hidden" name="provider" />
+
+                @if (Model.OtherLogins.Facebook() != null)
+                {
+                    @* FACEBOOK *@
+                    <div class="social-icon color-three">
+                        <a href="#" target="_blank" class="facebook-share-button" title="Свързване с @Model.OtherLogins.Facebook().DisplayName акаунт">
+                            <div class="inner-circle"></div>
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                    </div>
+                }
+
+                @if (Model.OtherLogins.Twitter() != null)
+                {
+                    @* TWITTER *@
+                    <div class="social-icon color-one">
+                        <a href="#" target="_blank" class="twitter-share-button" title="Свързване с @Model.OtherLogins.Twitter().DisplayName акаунт">
+                            <div class="inner-circle"></div>
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                    </div>
+                }
+
+                @if (Model.OtherLogins.Google() != null)
+                {
+                    @* GOOGLE *@
+                    <div class="social-icon color-four">
+                        <a href="#" target="_blank" class="google-share-button" title="Свързване с @Model.OtherLogins.Google().DisplayName акаунт">
+                            <div class="inner-circle"></div>
+                            <i class="fa fa-google"></i>
+                        </a>
+                    </div>
+                }
+
+            </form>
+        }
+
+    </div>
+
+    <div class="col-md-6">
+        @if (!Model.CanRemove)
+        {
+            <p class="help-block"><small><b>Показаната услуга е единствената, която използвате за вход в сайта и тя не може да бъде изтрита.</b> Ако желаете да я изтриете, асоциирайте друга услуга за вход или <a class="underlined" asp-page="SetPassword">въведете Ваша лична парола за сайта</a>.</small></p>
+        }
+        <p class="help-block"><small>Сайтът на Списание Страница свързва от асоциираният Ви профил: снимка, email адрес, псевдоним и двете Ви имена (ако има въведени). Сайтът не използва друга информация от свързаният Ви профил.</small></p>
+        <p class="help-block"><small>Задължително събираната информация за функционирането на сайта на Списание Страница <b>не се използва за маркетингови цели и не се предоставя на трети страни</b>.</small></p>
+        @if (Model.CanRemove)
+        {
+            <p class="help-block"><small>По всяко време можете <span class="underlined">да добавяте връзка</span> със свързан профил от външна услуга, като кликнете на нея от достъпните Услуги за външен вход.</small></p>
+            <p class="help-block"><small>По всяко време можете <a class="underlined">да премахнете връзката</a> с асоциираният профил от външната услуга, като кликнете на нея от Регистрирани услуги.</small></p>
+            <p class="help-block"><small>Моля, преди да свържете потребителят си с външен източник, се уверете, че сте наясно с неговите <a class="underlined" asp-controller="Home" asp-action="TaC">Общи правила</a>, <a class="underlined" asp-controller="Home" asp-action="Privacy">Политика на поверителност</a> и <a class="underlined" asp-controller="Home" asp-action="Cookies">Политика относно бисквитките</a>.</small></p>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+
+            $("#link-login-form .facebook-share-button").on('click', function (e) {
+                e.preventDefault();
+                modal.wait.show('Свързване с @Model.OtherLogins?.Facebook()?.DisplayName, моля изчакайте...', { progressType: "info" });
+                $("#provider").val('@Model.OtherLogins?.Facebook()?.Name');
+                $("form#link-login-form").submit();
+            });
+
+            $("#link-login-form .twitter-share-button").on('click', function (e) {
+                e.preventDefault();
+                modal.wait.show('Свързване с @Model.OtherLogins?.Twitter()?.DisplayName, моля изчакайте...', { progressType: "success" });
+                $("#provider").val('@Model.OtherLogins?.Twitter()?.Name');
+                $("form#link-login-form").submit();
+            });
+
+            $("#link-login-form .google-share-button").on('click', function (e) {
+                e.preventDefault();
+                modal.wait.show('Свързване с @Model.OtherLogins?.Google()?.DisplayName, моля изчакайте...', { progressType: "danger" });
+                $("#provider").val('@Model.OtherLogins?.Google()?.Name');
+                $("form#link-login-form").submit();
+            });
+
+        });
+    </script>
+
+    @if (Model.CanRemove)
+    {
+        <script>
+            $(document).ready(function () {
+
+                $("#remove-login-form .facebook-share-button").on('click', function (e) {
+                    e.preventDefault();
+                    modal.wait.show('Премахване на връзка с @Model.CurrentLogins?.Facebook()?.ProviderDisplayName, моля изчакайте...', { progressType: "info" });
+                    $("#loginProvider").val('@Model.CurrentLogins?.Facebook()?.LoginProvider');
+                    $("#providerKey").val('@Model.CurrentLogins?.Facebook()?.ProviderKey');
+                    $("form#remove-login-form").submit();
+                });
+
+                $("#remove-login-form .twitter-share-button").on('click', function (e) {
+                    e.preventDefault();
+                    modal.wait.show('Премахване на връзка с @Model.CurrentLogins?.Twitter()?.ProviderDisplayName, моля изчакайте...', { progressType: "success" });
+                    $("#loginProvider").val('@Model.CurrentLogins?.Twitter()?.LoginProvider');
+                    $("#providerKey").val('@Model.CurrentLogins?.Twitter()?.ProviderKey');
+                    $("form#remove-login-form").submit();
+                });
+
+                $("#remove-login-form .google-share-button").on('click', function (e) {
+                    e.preventDefault();
+                    modal.wait.show('Премахване на връзка с @Model.CurrentLogins?.Google()?.ProviderDisplayName, моля изчакайте...', { progressType: "danger" });
+                    $("#loginProvider").val('@Model.CurrentLogins?.Google()?.LoginProvider');
+                    $("#providerKey").val('@Model.CurrentLogins?.Google()?.ProviderKey');
+                    $("form#remove-login-form").submit();
+                });
+            });
+        </script>
+    }
 }

@@ -1,33 +1,96 @@
 ﻿@page
 @model DeletePersonalDataModel
+
 @{
-    ViewData["Title"] = "Delete Personal Data";
+    ViewData["Title"] = "Изтриване на лични данни";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h4>@ViewData["Title"]</h4>
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="PersonalData">Лични данни</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="DeletePersonalData">Изтриване</a>
+}
+
+<partial name="_Messages" />
 
 <div class="alert alert-warning" role="alert">
     <p>
-        <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>&nbsp;Внимание!</strong> Изтриването на тези данни <strong>ще премахне трайно акаунта Ви</strong> без възможност информацията да бъде възстановена!
     </p>
 </div>
 
-<div>
-    <form id="delete-user" method="post" class="form-group">
-        <div asp-validation-summary="All" class="text-danger"></div>
-        @if (Model.RequirePassword)
-        {
-            <div class="form-group">
-                <label asp-for="Input.Password"></label>
-                <input asp-for="Input.Password" class="form-control" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+<div class="row">
+
+    <div class="col-sm-6">
+        <form id="delete-user" method="post" class="form-group">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            @if (Model.RequirePassword)
+            {
+                <div class="form-group">
+                    <label asp-for="Input.Password"></label>
+                    <input asp-for="Input.Password" class="form-control" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+            }
+
+            <hr>
+
+            <div class="text-right">
+                <a asp-page="./PersonalData" class="btn btn-default">Назад</a>
+                <button type="submit" class="btn btn-danger">Продължи</button>
             </div>
+
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        @if (Model.HasConnectedResources)
+        {
+            <p class="help-block">
+                <small>
+                    Към Вашият потребителски профил има свързани ресурси, които ще бъдат изтрити или от тях ще бъдат заличени личните Ви данни:
+                </small>
+            </p>
+
+            <ul class="help-block">
+                @if (Model.AuthoredEPagesCount > 0)
+                {
+                    <li><small>@Model.AuthoredEPagesCount разпознати материала в e-страница</small></li>
+                }
+                @if (Model.UploadedEPagesCount > 0)
+                {
+                    <li><small>@Model.UploadedEPagesCount текста в е-страница, които Вие сте качили</small></li>
+                }
+                @if (Model.SourcesCount > 0)
+                {
+                    <li><small>@Model.SourcesCount свързани източника в Индекса са Ваши!</small></li>
+                }
+                @if (Model.CommentsCount > 0)
+                {
+                    <li><small>@Model.CommentsCount Ваши коментара</small></li>
+                }
+                @if (Model.ModeratedCommentsCount > 0)
+                {
+                    <li><small>@Model.ModeratedCommentsCount коментара с Ваша лична модерация</small></li>
+                }
+                @if (Model.PostsCount > 0)
+                {
+                    <li><small>@Model.PostsCount статии, качени от Вас</small></li>
+                }
+            </ul>
         }
-        <button class="btn btn-danger" type="submit">Delete data and close my account</button>
-    </form>
+    </div>
+
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@section scripts {
+    <partial name="_ValidationScripts" />
 }

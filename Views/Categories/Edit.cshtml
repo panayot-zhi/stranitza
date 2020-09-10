@@ -1,0 +1,118 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewData["Title"] = $"Редакция на категория „{Model.Name}“";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-controller="Categories" asp-action="Index">Категории</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Categories" asp-route-id="@Model.Id">@Model.Name</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Edit" asp-controller="Categories" asp-route-id="@Model.Id">Редакция</a>
+}
+
+<div class="col-lg-8 blog-main">
+    <article class="blog-post" id="post">
+
+        <h2 class="underlined">Редакция на категория</h2>
+
+        <form asp-action="Edit" enctype="multipart/form-data">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group" str-validation-for="Name" str-error-class="has-error">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="form-group col-md-4 ">
+                    <label asp-for="LastUpdated" class="control-label"></label>
+                    <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+                    <span asp-validation-for="LastUpdated" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 col-md-offset-4 text-right">
+                    <label asp-for="DateCreated" class="control-label"></label>
+                    <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+                    <span asp-validation-for="DateCreated" class="text-danger"></span>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group text-right">
+                <a asp-controller="Categories" asp-action="Index" class="btn btn-default">Отказ</a>
+                <input type="submit" value="Запис" class="btn btn-tales-one" />
+            </div>
+        </form>
+
+    </article>
+</div>
+
+<aside class="col-md-4 blog-aside">
+
+    <div class="aside-widget">
+        <header>
+            <h3>Навигация</h3>
+        </header>
+
+
+        <div class="body">
+            <ul class="tales-list">
+                <li><a asp-controller="Categories" asp-action="Create">Създаване на нова категория</a></li>
+                <li><a asp-action="Sources" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани източници</a></li>
+                <li><a asp-action="EPages" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на е-страници</a></li>
+                <li><a asp-controller="Categories" asp-action="Index">Към списък</a></li>
+                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                {
+                    <li><a asp-controller="Categories" asp-action="Delete" asp-route-id="@Model.Id">Изтриване</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+</aside>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        function keepAlive() {
+            setInterval(function() {
+                $.get('@Url.Action("Ping", "Home")');
+            }, 5E3);
+        }
+
+        $(document).ready(function() {
+            keepAlive();
+        });
+    </script>
+}

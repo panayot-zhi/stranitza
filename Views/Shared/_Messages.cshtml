@@ -1,0 +1,19 @@
+﻿<div id="notification"></div>
+
+<script>
+    $(document).ready(function() {
+
+        var _modalMessage;
+        @{ var tempDataMessage = TempData?["ModalMessage"]; }
+        @if (tempDataMessage != null)
+        {
+            @:var rawMessage = '@Html.Raw(tempDataMessage)';
+            @:_modalMessage = JSON.parse(rawMessage);
+            TempData?.Remove("ModalMessage");
+        }
+
+        if (_modalMessage) {
+            window.modal.notification.insert(_modalMessage.content, _modalMessage.type);
+        }
+    });
+</script>

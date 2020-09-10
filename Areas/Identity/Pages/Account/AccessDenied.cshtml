@@ -1,10 +1,27 @@
 ﻿@page
-@model AccessDeniedModel
+
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = "Забранен";
+    Layout = "_LayoutNews";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+@section breadcrumb {
+    <span>Забранен</span>
+}
+
+<h1>
+    <span class="about-bold">403 - Забранен</span>
+</h1>
+
+<div class="about-small">
+    За съжаление потребителският ви акаунт няма достатъчни права за достъп до поискания ресурс.
+    <img src="@Url.Content("~/images/forbidden-error.jpg")" alt="403 - Forbidden" class="about-portrait img-responsive">
+    Ако мислите, че това е грешка и че не би трябвало да виждате тази странца, моля обърнете се към администратора на системата по email, чрез бутона по-долу.
+    Моля, при забелязани грешки и неизправности по системата, свържете се с администратора на системата посредством бутона по-долу.
+</div>
+
+<div class="about-button">
+    <a class="btn btn-xlarge btn-tales-one" href="mailto:panayot_zhi@abv.bg">Свържете се с нас</a>
+</div>
+
+<hr>

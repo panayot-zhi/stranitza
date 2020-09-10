@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Липсва";
+    Layout = "_LayoutNews";
+}
+
+@section breadcrumb {
+    <span>@ViewData["Title"]</span>
+}
+
+<h1>
+    <span class="about-bold">404 - Страницата не съществува</span>
+</h1>
+
+<h2>
+    <small>@ViewData["Path"]</small>
+</h2>
+
+<div class="about-small">
+    Поисканата от Вас страница не беше намерена.
+    <img src="@Url.Content("~/images/not-found-error.jpg")" alt="404 - Not Found" class="about-portrait img-responsive">    
+    Ако мислите, че страницата липсва или това е вътрешен проблем, моля обърнете се към администратора на системата по email за да отстрани проблема възможно най-бързо.    
+    Моля, при забелязани грешки и неизправности по системата, свържете се с администратора на системата посредством бутона по-долу.
+</div>
+
+<div class="about-button">
+    <a class="btn btn-xlarge btn-tales-one" href="mailto:@StranitzaConstants.AdministratorEmail">Свържете се с нас</a>
+</div>
+
+<hr>

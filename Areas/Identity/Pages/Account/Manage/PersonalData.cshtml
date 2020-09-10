@@ -1,27 +1,52 @@
 ﻿@page
 @model PersonalDataModel
+
 @{
-    ViewData["Title"] = "Personal Data";
+    ViewData["Title"] = "Вашите данни";
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h4>@ViewData["Title"]</h4>
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="PersonalData">Лични данни</a>
+}
+
+<partial name="_Messages" />
 
 <div class="row">
     <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form id="download-data" asp-page="DownloadPersonalData" method="post" class="form-group">
-            <button class="btn btn-primary" type="submit">Download</button>
+
+        <form id="download-personal-data" asp-page="DownloadPersonalData" method="post" class="form-group text-right">
+
+            <p>Вашият потребителски акаунт съдържа лични данни, които сте ни предоставили. Тази страница Ви позволява да изтеглите или изтриете тези данни.</p>
+
+            <a href="#download-personal-data" class="submit-link">
+                <img src="@Url.Content("~/images/json-file.png")" class="img-responsive pull-right" alt="Сваляне на лични данни в JSON формат" />
+            </a>
         </form>
-        <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-primary">Delete</a>
-        </p>
+
+        <hr>
+
+        <div class="text-right">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-default">Отказ</a>
+            <a asp-page="DeletePersonalData" class="btn btn-tales-one">Изтриване</a>
+        </div>
+
+    </div>
+    <div class="col-sm-6">
+        <p class="help-block"><small>Всички лични данни събирани в сайтът на Списание Страница могат да бъдат изтеглени и прегледани в <a href="http://www.google.com/search?q=json" target="_blank">машинно четим формат (JSON)</a>.</small></p>
+        <p class="help-block"><small>Страница не събира лична информация, различна от тази, която ни предоставяте. Във всеки един момент информацията, която пазим за Вас може да бъде прегледана и (виж по-долу) изтрита.</small></p>
+        <p class="help-block"><small>Изтриването на информация, задължителна за Вашата автентикация в системата ще доведе до <b>изтриване на потребителят Ви от системата</b>.</small></p>
+        <p class="help-block"><small><b>Внимание! Ако изтриете потребителят си от системата, няма да можете да влизате в сайта и всяка асоциирана с Вас информация ще бъде изтрита!</b></small></p>
+
+
+
     </div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@section scripts {
+    <partial name="_ValidationScripts" />
 }

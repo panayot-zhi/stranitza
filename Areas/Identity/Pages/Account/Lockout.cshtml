@@ -1,10 +1,39 @@
 ﻿@page
 @model LockoutModel
+
 @{
-    ViewData["Title"] = "Locked out";
+    ViewData["Title"] = "Заключен акаунт";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+@section breadcrumb {
+    <a asp-area="Identity" asp-page="/Account/Login">Вход</a>
+    <span class="separator">/</span>
+    <span>Заключен</span>
+}
+
+<div class="col-sm-3">
+    <img class="pt20 img-responsive" src="~/images/error-logo-left.png" alt="Грешка" />
+</div>
+
+<div class="col-sm-8">
+    <h1 class="text-danger">Заключен акаунт</h1>
+    <p class="text-danger">
+        Вашият потребителски акаунт е заключен от администратор. Моля, запознайте се с:
+    </p>
+    <ul class="text-danger">
+        <li><a class="underlined" asp-controller="Home" asp-action="TaC">Общите правила</a> на сайта</li>
+        <li><a class="underlined" asp-controller="Home" asp-action="Privacy">Политиката за поверителност</a></li>
+        <li><a class="underlined" asp-controller="Home" asp-action="Help">Секцията за помощ</a></li>
+    </ul>
+    <p class="text-danger">
+        и опитайте отново по-късно. Ако мислите, че това е грешка и че не би трябвало да виждате тази странца, моля обърнете се към администратора на системата на <a href="mailto:panayot_zhi@abv.bg">този email адрес</a>.
+    </p>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            $(".container.main").removeClass("main").addClass("about");
+        });
+    </script>
+}

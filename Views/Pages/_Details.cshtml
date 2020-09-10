@@ -1,0 +1,68 @@
+﻿@model PageViewModel
+
+<div class="row">
+    <div class="col-lg-7">
+        <a href="@Url.GetGallerySlide(Model.IssueId, Model.SlideNumber)">
+            <img src="@Url.Action("Load", "Pages", new {id = Model.Id})" class="img-responsive text-left" alt="Брой @Model.GetIssueTitle() стр. @Model.PageNumber">
+        </a>
+    </div>
+    
+    <div id="pages-edit" class="col-lg-5">
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#page" aria-controls="page" role="tab" data-toggle="tab">Страница</a></li>
+            <li role="presentation"><a href="#file" aria-controls="file" role="tab" data-toggle="tab">Файл</a></li>
+            <li role="presentation"><a href="#issue" aria-controls="issue" role="tab" data-toggle="tab">Брой</a></li>            
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="page">
+                <table class="table table-striped">
+                    <tr><td>@Html.DisplayNameFor(model => model.Id)</td><tr><td>@Html.DisplayFor(model => model.Id)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.Type)</td><tr><td>@Html.DisplayFor(model => model.Type)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.PageNumber)</td><tr><td>@Html.DisplayFor(model => model.PageNumber)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.SlideNumber)</td><tr><td>@Html.DisplayFor(model => model.SlideNumber)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.IsAvailable)</td><tr><td>@Html.DisplayFor(model => model.IsAvailable)</td></tr>
+
+                    <tr><td>@Html.DisplayNameFor(model => model.LastUpdated)</td><tr><td>@Html.DisplayFor(model => model.LastUpdated)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.DateCreated)</td><tr><td>@Html.DisplayFor(model => model.DateCreated)</td></tr>
+                </table>
+                
+
+            </div>
+
+            <div role="tabpanel" class="tab-pane fade" id="issue">
+                <table class="table table-striped">
+                    <tr><td>@Html.DisplayNameFor(model => model.IssueId)</td><tr><td>@Html.DisplayFor(model => model.IssueId)</td></tr>
+
+                    <tr><td>@Html.DisplayNameFor(model => model.IssueNumber)</td><tr><td>@Html.DisplayFor(model => model.IssueNumber)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.ReleaseNumber)</td><tr><td>@Html.DisplayFor(model => model.ReleaseNumber)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.ReleaseYear)</td><tr><td>@Html.DisplayFor(model => model.ReleaseYear)</td></tr>
+                </table>
+            </div>
+
+            <div role="tabpanel" class="tab-pane fade" id="file">
+                <table class="table table-striped">
+                    <tr><td>@Html.DisplayNameFor(model => model.PageFileId)</td><tr><td>@Html.DisplayFor(model => model.PageFileId)</td></tr>
+
+                    <tr><td>@Html.DisplayNameFor(model => model.FileName)</td><tr><td>@Html.DisplayFor(model => model.FileName)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.MimeType)</td><tr><td>@Html.DisplayFor(model => model.MimeType)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.FileTitle)</td><tr><td>@Html.DisplayFor(model => model.FileTitle)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.FileExtension)</td><tr><td>@Html.DisplayFor(model => model.FileExtension)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.FilePath)</td><tr><td>@Html.DisplayFor(model => model.FilePath)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.ThumbPath)</td><tr><td>@Html.DisplayFor(model => model.ThumbPath)</td></tr>
+
+                    <tr><td>@Html.DisplayNameFor(model => model.FileLastUpdated)</td><tr><td>@Html.DisplayFor(model => model.FileLastUpdated)</td></tr>
+                    <tr><td>@Html.DisplayNameFor(model => model.FileDateCreated)</td><tr><td>@Html.DisplayFor(model => model.FileDateCreated)</td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <form id="delete-page" asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+        </form>
+
+    </div>
+</div>

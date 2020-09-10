@@ -1,0 +1,54 @@
+﻿@model SharerViewModel
+
+<aside id="sharer" class="social-icons clearfix hidden-print">
+    <!-- https://developers.facebook.com/docs/sharing/webmasters/ -->
+    <div class="social-icon color-three">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=@(Model.Url)" target="_blank" class="facebook-share-button" title="Сподели post във facebook">
+            <div class="inner-circle"></div>
+            <i class="fa fa-facebook"></i>
+        </a>
+    </div>
+
+    <!-- https://developer.twitter.com/en/docs/twitter-for-websites/tweet-button/guides/web-intent -->
+    <div class="social-icon color-one">
+        <a href="https://twitter.com/intent/tweet?url=@(Model.Url)&text=@(Model.Descritpion)" target="_blank" class="twitter-share-button" title="Сподели като tweet в Twitter">
+            <div class="inner-circle"></div>
+            <i class="fa fa-twitter"></i>
+        </a>
+    </div>
+
+    <!-- https://developers.pinterest.com/docs/api/pins/ -->
+    <div class="social-icon color-four">
+        <a href="https://pinterest.com/pin/create/link/?url=@(Model.Url)&media=@(Model.Image)&description=@(Model.Descritpion)" target="_blank" class="pinterest-share-button" title="Запази като pin в Pinterest">
+            <div class="inner-circle"></div>
+            <i class="fa fa-pinterest"></i>
+        </a>
+    </div>
+    
+    <br>
+    
+    @{
+        var body = Model.Url;
+        if (!string.IsNullOrWhiteSpace(Model.Descritpion))
+        {
+            body = body.Insert(0, Model.Descritpion + Uri.EscapeDataString(Environment.NewLine));
+        }
+    }
+
+    <!-- ? -->
+    <div class="social-icon color-two">
+        <a href="mailto:?&subject=&body=@(body)" target="_blank" class="email-share-button" title="Сподели чрез email">
+            <div class="inner-circle"></div>
+            <i class="fa fa-envelope"></i>
+        </a>
+    </div>
+    
+    <!-- ? -->
+    <div class="social-icon color-five">
+        <a href="#" onclick="window.print(); return false;" class="print-share-button" title="Принтирай тази страница">
+            <div class="inner-circle"></div>
+            <i class="fa fa-print"></i>
+        </a>
+    </div>
+
+</aside>

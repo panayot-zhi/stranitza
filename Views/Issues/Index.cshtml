@@ -1,0 +1,126 @@
+﻿@model LibraryViewModel
+
+@{
+    ViewData["Title"] = "Библиотека";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a href="@Url.Action("Index", "Issues")">Библиотека</a>
+
+    @if (Model.CurrentYear.HasValue)
+    {
+        <span class="separator">/</span>
+        <a asp-controller="Issues" asp-action="Index" asp-route-year="@Model.CurrentYear">@Model.CurrentYear.Value</a>        
+    }
+}
+
+<div class="col-md-8 blog-main">
+
+    <div id="issues">
+
+        @foreach (var year in Model.IssuesByYear.Keys)
+        {
+            <div id="issues-year-@year" class="row">
+
+                <div class="col-md-12">
+                    <h2 class="underlined">@year</h2>
+
+                </div>
+
+                @foreach (var issue in Model.IssuesByYear[year])
+                {
+                    @await Html.PartialAsync("_Issue", issue)
+                }
+            </div>
+        }
+
+        @await Html.PartialAsync("_Paging", Model)
+
+        @*<div class="row text-center">
+                <div class="progress progress-striped active" style="margin-bottom: 0;">
+                    <div class="progress-bar" style="width: 100%"></div>
+                </div>
+            </div>*@
+    </div>
+
+</div>
+
+<aside class="col-md-4 blog-aside">
+
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Навигация</h3>
+            </header>
+
+            <div class="body">
+                <ul class="tales-list">
+
+                    <li><a asp-controller="Issues" asp-action="Create">Създаване на нов брой</a></li>
+
+                    @* TODO: Add navigation links here *@
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div id="release-year-filter" class="aside-widget">
+        <header>
+            <h3>По години</h3>
+        </header>
+        <div class="body">
+            <ul class="tales-list">
+                <li>
+                    <a class="category @(Model.CurrentYear == null ? "active" : "")" href="@Url.Action("Index", "Issues")">
+                        Всички
+                    </a>
+                </li>
+
+                @foreach (var filter in Model.YearFilter)
+                {
+                    <li>
+                        <a class="category @(Model.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Index", "Issues", new { year = filter.Year })">
+                            @filter.Year (@filter.Count)
+                        </a>
+                    </li>
+                }
+
+            </ul>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+</aside>
+
+@section scripts {
+<script>
+        $(document).ready(function() {
+            $(".thumbnail a.display-page").on('click', function(e) {
+                e.preventDefault();
+
+                var me = $(this);
+                var id = me.attr('id');
+                var href = me.attr('href');
+                var pageId = id.replace("display-page-", "");
+                var img = me.children("img");
+                var heading = img.attr('alt');
+
+                const html = `<a href="${href}"><img src="@Url.Action("Load", "Pages")/${pageId}" class="img-responsive text-center" alt="${heading}"></a>`;
+                modal.preview(heading, html);
+            });
+        })
+</script>
+}

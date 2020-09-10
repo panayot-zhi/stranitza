@@ -1,0 +1,8 @@
+﻿@model IEnumerable<SuggestionsViewModel>
+
+<ul class="tales-list suggestions-list">
+    @foreach (var suggestion in Model)
+    {
+        <li><a class="suggestion-link" href="@suggestion.Href">@Html.Raw(suggestion.Content)</a></li>
+    }
+</ul>

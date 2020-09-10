@@ -1,0 +1,54 @@
+﻿@model CommentViewModel
+
+<form asp-action="Create" method="post" accept-charset="utf-8" id="comment-form">
+
+    <input asp-for="IssueId" type="hidden" />
+    <input asp-for="EPageId" type="hidden" />
+    <input asp-for="PostId" type="hidden" />
+
+    <div class="row" id="reply-comment-info">
+        <div class="col-md-12">
+            
+            @* NOTE: This is initial value, it get's updated as soon as comments are retrieved *@
+            <input type="text" id="comment-display-name" class="form-control " value="@User.GetUserName()" disabled="disabled">
+
+            <p class="help-block"><small>Можете да промените начина по който се показват коментарите Ви в системата от <a class="underlined" asp-area="Identity" asp-page="/Account/Manage/Info" target="_blank">тук</a>.</small></p>
+        </div>
+    </div>
+
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
+    {
+        <div class="row" id="comment-reply-container" style="display: none;">
+            <div class="col-md-12">
+
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <a id="comment-reference" class="btn btn-tales-one" href="#">
+                            <i class="fa fa-level-up fa-flip-horizontal"></i>
+                        </a>
+                    </span>
+
+                    <input type="text" name="comment-reply-to" id="comment-reply-to" class="form-control" readonly="readonly" disabled="disabled">
+
+                    <span class="input-group-btn">
+                        <label class="btn btn-tales-two" id="comment-reply-clear">
+                            Отказ <input asp-for="ParentId" type="hidden" disabled="disabled"/>
+                        </label>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    @*<input type="url" name="name" id="comment-url" placeholder="Website" class="form-control input-lg">*@
+
+    <textarea asp-for="Content" class="form-control input-lg" rows="10" placeholder="Коментар..."></textarea>
+    <span asp-validation-for="Content" class="text-danger"></span>
+    <p class="help-block"><small><span id="comment-length">1000</span> Оставащи символа.</small></p>
+
+    <div class="clearfix">
+        <button type="submit" class="btn btn-xlarge btn-tales-one">Изпрати</button>
+        <button type="reset" class="btn btn-xlarge btn-tales-two">Изчисти</button>
+    </div>
+
+</form>

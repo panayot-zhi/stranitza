@@ -1,0 +1,168 @@
+﻿@model IssuePagesViewModel
+
+@{
+    ViewData["Title"] = "Страници в брой";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Issues">Библиотека</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="Issues" asp-route-year="@Model.ReleaseYear">@Model.ReleaseYear</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Issues" asp-route-id="@Model.Id">Брой @Model.GetIssueTitleShort()</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Edit" asp-controller="Issues" asp-route-id="@Model.Id">Редакция</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="Pages" asp-route-id="@Model.Id">Страници</a>
+}
+
+<div class="col-md-8 blog-main">
+
+    <div id="issues">
+        <div id="issue-@Model.Id" class="row">
+            @foreach (var record in Model.Records)
+            {
+                @* TODO: In a partial view *@
+                <div class="blog-teaser-container col-sm-12 col-lg-6">
+                    <article id="page-@record.PageNumber" class="blog-teaser">
+                        <header>
+                            <div class="thumbnail">
+                                <a href="@Url.GetGallerySlide(Model.Id, record.SlideNumber)" class="display-page" id="display-page-@record.Id">
+                                    <img src="@Url.Action("Load", "Pages", new {id = record.Id, thumb = true})" alt="Брой @Model.GetIssueTitle() стр. @record.PageNumber" class="img-responsive squared" />
+                                </a>
+                            </div>
+
+                            <hr>
+
+                        </header>
+
+                        @await Html.PartialAsync("_Page", record, new ViewDataDictionary(ViewData)
+                        {
+                            { "Next", "Назад" },
+                            { "Previous", "Напред" }
+                        })
+
+                    </article>
+
+                </div>
+
+            }
+
+        </div>
+
+        @await Html.PartialAsync("_Paging", Model)
+
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+
+            // enlarge modal
+            $("#previewModal .modal-dialog").addClass('modal-lg');
+            $("#previewModal .modal-footer")
+                .prepend('<a href="#delete-page" class="btn btn-tales-one submit-link">Изтриване</button>');
+
+            $(".thumbnail a.display-page").on('click',
+                function(e) {
+                    e.preventDefault();
+
+                    var me = $(this);
+                    var id = me.attr('id');
+                    //var href = me.attr('href');
+                    var pageId = id.replace("display-page-", "");
+                    var img = me.children("img");
+                    var heading = img.attr('alt');
+
+                    $.ajax({
+                        url: "@Url.Action("Details", "Pages")/" + pageId,
+                        success: function(r) {
+                            modal.preview(heading, r);
+                        },
+                        done: function() {
+                            modal.wait.hide();
+                        }
+                    });
+                });
+
+            $("form.edit-page input, form.edit-page select").on('change',
+                function(e) {
+
+                    var me = $(this);
+                    var form = me.closest('form');
+                    var submit = form.find('input[type="submit"]');
+
+                    submit.removeAttr("disabled");
+                });
+
+            $("form.edit-page").on('submit',
+                function(e) {
+                    e.preventDefault();
+
+                    var me = $(this);
+                    var form = me.serialize();
+                    var submit = me.find('input[type="submit"]');
+                    modal.wait.show();
+
+                    $.ajax({
+                        url: "@Url.Action("Edit", "Pages")",
+                        method: "POST",
+                        data: form,
+                        success: function(r) {
+
+                            modal.wait.hide();
+
+                            if (r.success) {
+                                modal.popup("Промените бяха записани успешно.", "success");
+                                submit.attr("disabled", "disabled");
+                                return;
+                            }
+
+                            var errors = r.errors.join('<br>');
+                            modal.popup(errors, "danger");
+
+                        },
+                        done: function() {
+                            modal.wait.hide();
+                        }
+                    });
+                });
+
+            $(document).on('submit',
+                'form#delete-page',
+                function(e) {
+                    e.preventDefault();
+
+                    var me = $(this);
+                    var form = me.serialize();
+                    modal.wait.show();
+
+                    $.ajax({
+                        url: "@Url.Action("Delete", "Pages")",
+                        method: "POST",
+                        data: form,
+                        success: function(r) {
+                            if (r.success) {
+                                window.location.reload(true);
+                                return;
+                            }
+
+                            var errors = r.errors.join('<br>');
+                            modal.popup(errors, "danger");
+                        }
+                    });
+                });
+        })
+    </script>
+}

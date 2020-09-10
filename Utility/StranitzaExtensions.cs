@@ -23,9 +23,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
-//using Serilog;
+using Serilog;
 using stranitza.Models.Database;
-//using stranitza.Models.ViewModels;
+using stranitza.Models.ViewModels;
 
 namespace stranitza.Utility
 {
@@ -73,10 +73,10 @@ namespace stranitza.Utility
             return entry.Properties.Any(x => x.Metadata.Name == property);
         }
 
-        /*public static string Extension(this IFormFile formFile)
+        public static string Extension(this IFormFile formFile)
         {
             return GetFileExtension(formFile.FileName);
-        }*/
+        }
 
         public static string Capitalize(this string source)
         {
@@ -88,7 +88,7 @@ namespace stranitza.Utility
             return source[0].ToString().ToUpper() + source.Substring(1);
         }
 
-        /*public static string GetGallerySlide(this IUrlHelper url, int issueId, int slideNumber)
+        public static string GetGallerySlide(this IUrlHelper url, int issueId, int slideNumber)
         {            
             return $"{url.Action("Details", "Issues", new { id = issueId })}#lg=1&slide={slideNumber}";
         }
@@ -96,7 +96,7 @@ namespace stranitza.Utility
         public static string GetPdfPage(this IUrlHelper url, int issueId, int pageNumber)
         {            
             return $"{url.Action("DownloadPdf", "Issues", new { id = issueId })}#page={pageNumber}";
-        }*/
+        }
 
         public static string GetPostImage(this IUrlHelper url, string imageFileName, bool absolute = false)
         {
@@ -158,7 +158,6 @@ namespace stranitza.Utility
             AddModalMessage(tempData, message, type.ToString().ToLowerInvariant());
         }*/
 
-        /*
         public static void AddModalMessage(this ITempDataDictionary tempData, string message, string type = null)
         {
             if (tempData == null)
@@ -176,7 +175,6 @@ namespace stranitza.Utility
 
             tempData["ModalMessage"] = jsonMessage;
         }
-        */
 
         public static void Add(this ZipArchive zip, byte[] file, string filename)
         {
@@ -212,7 +210,6 @@ namespace stranitza.Utility
                 modelState.AddIdentityError(identityError);
             }
         }
-        /*
         public static void AddIdentityErrors(this ITempDataDictionary tempData, IEnumerable<IdentityError> errors)
         {
             foreach (var identityError in errors)
@@ -220,7 +217,6 @@ namespace stranitza.Utility
                 tempData.AddModalMessage($"[{identityError.Code}]: {identityError.Description}", "danger");
             }
         }
-        */
 
 
         public static string GetUserId(this ClaimsPrincipal user)
@@ -248,7 +244,7 @@ namespace stranitza.Utility
             return null;
         }
 
-        /*public static async Task<string> GetDisplayName(this UserManager<ApplicationUser> userManager, ClaimsPrincipal user)
+        public static async Task<string> GetDisplayName(this UserManager<ApplicationUser> userManager, ClaimsPrincipal user)
         {
             if (!user.Identity.IsAuthenticated)
             {
@@ -400,7 +396,7 @@ namespace stranitza.Utility
         {
             var releaseNumber = source.ReleaseNumber > 0 ? source.ReleaseNumber.ToString() : "+";
             return $"{releaseNumber}/{source.ReleaseYear}";
-        }*/
+        }
 
         /// <summary>
         /// Generates a fully qualified URL to an action method by using the specified action name, controller name and
@@ -527,7 +523,7 @@ namespace stranitza.Utility
 
         #endregion
 
-        /*#region Static
+        #region Static
 
         public static PostEvictionCallbackRegistration RegisterDefaultPostEvictionCallback()
         {
@@ -683,10 +679,10 @@ namespace stranitza.Utility
             }
         }
 
-        #endregion*/
+        #endregion
     }
 
-    /*public static class QueryableExtensions
+    public static class QueryableExtensions
     {
         public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> query, string propertyName, SortOrder sortOrder, IComparer<object> comparer = null)
         {
@@ -769,6 +765,6 @@ namespace stranitza.Utility
                     )
                 );
         }
-    }*/
+    }
 
 }

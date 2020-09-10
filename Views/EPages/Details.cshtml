@@ -1,0 +1,146 @@
+﻿@model EPageDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="EPages">е-страница</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="EPages" asp-route-year="@Model.ReleaseYear">@Model.ReleaseYear</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="EPages" asp-route-id="@Model.Id">@Model.Title</a>
+}
+
+<div class="col-md-8 blog-main">
+
+    <article class="blog-post">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-4 col-xs-12">
+                <hr>
+            </div>
+        </div>
+
+        <div id="epage-@Model.Id" class="row">
+            <div class="col-sm-12 text-right epage-heading">
+                <h2>@Model.Title</h2>
+                <div class="epage-meta"><small>@Model.CategoryName, <span class="author-firstName">@Model.FirstName</span> <span class="author-lastName">@Model.LastName</span></small></div>
+                <div class="epage-dateCreated"><small>@Model.DateCreated.ToString("d MMMM")</small></div>
+            </div>
+
+            <div class="col-sm-12 epage-content">
+                @Html.Raw(Model.Content)
+            </div>
+
+            @*<div class="col-sm-12 epage-notes">
+                    @Model.Notes
+                </div>*@
+        </div>
+    </article>
+
+    @await Html.PartialAsync("_Sharer", new SharerViewModel()
+    {
+        Title = Uri.EscapeDataString(Model.Title),
+        Descritpion = Uri.EscapeDataString(Model.Description ?? string.Empty),
+        Url = Url.Action("Details", "EPages", new { id = Model.Id }, Context.Request.Scheme),
+        Image = Url.AbsoluteContent("~/images/main-logo.png")
+    })
+
+    @{
+        var getCommentsUrl = Url.Action("GetEPageComments", "Comments", new { id = Model.Id });
+    }
+
+    <partial name="_Comments" view-data='new ViewDataDictionary(ViewData) {
+            { "EPageId", Model.Id },
+            { "GetCommentsUrl", getCommentsUrl },
+            { "CommentsCount", Model.CommentsCount },
+        }' />
+</div>
+
+<aside class="col-md-4 blog-aside">
+
+    <div class="aside-widget">
+        <header>
+            <h3>Навигация</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                @if (User.IsAtLeast(StranitzaRoles.Editor))
+                {
+                    <li><a asp-controller="EPages" asp-action="Create">Създаване на нова публикация</a></li>
+                }
+
+                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                {
+                    <li><a asp-controller="EPages" asp-action="Delete" asp-route-id="@Model.Id">Изтриване на публикацията</a></li>
+                }
+
+                <li><a href="#sharer">Сподели</a></li>
+                <li><a href="#comments">Коментари</a></li>
+                <li><a href="#create-comment">Напиши коментар</a></li>
+
+                @if (!string.IsNullOrEmpty(Model.AuthorId))
+                {
+                    <li><a href="#">Автор</a></li> @* TODO: Implement user preview *@
+                }
+            </ul>
+        </div>
+    </div>
+
+    <cache expires-after="@TimeSpan.FromMinutes(20)">
+        @{
+            var suggestionsByAuthor = StatsService.GetEPagesSuggestionsByAuthor(Model.Id);
+        }
+
+        @if (suggestionsByAuthor.Any())
+        {
+
+            <div class="aside-widget">
+                <header>
+                    <h3>Още от автора...</h3>
+                </header>
+
+                <div class="body">
+                    @await Html.PartialAsync("_Suggestions", suggestionsByAuthor)
+                </div>
+            </div>
+        }
+    </cache>
+
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Бележки</h3>
+            </header>
+
+            <div class="body">
+                <p>@Model.Notes</p>
+            </div>
+        </div>
+    }
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+</aside>
+
+@section scripts {
+    @await Html.PartialAsync("_ValidationScripts")
+}

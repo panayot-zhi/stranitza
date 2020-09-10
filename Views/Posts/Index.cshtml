@@ -1,0 +1,70 @@
+﻿@model NewsViewModel
+
+@{
+    ViewData["Title"] = "Новини";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-controller="Posts" asp-action="Index">Новини</a>
+}
+
+<div class="blog-main col-md-8">
+
+    <div class="blog-container row">
+        @foreach (var post in Model.Records)
+        {
+            @await Html.PartialAsync("_Post", post)
+        }
+    </div>
+
+    @await Html.PartialAsync("_Paging", Model)
+
+</div>
+
+<aside class="col-md-4 blog-aside">
+
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Навигация</h3>
+            </header>
+
+
+            <div class="body">
+                <ul class="tales-list">
+
+                    <li><a asp-controller="Posts" asp-action="Create">Създаване на нова статия</a></li>
+
+                    @* TODO: Add navigation links here *@
+                </ul>
+            </div>
+        </div>
+    }
+
+    @*<cache expires-after="@TimeSpan.FromMinutes(20)">*@
+    <div class="aside-widget editors-pick-widget">
+        <header>
+            <h3>Избрано от редактора...</h3>
+        </header>
+
+        <div class="body">
+            @await Html.PartialAsync("_Suggestions", StatsService.GetEditorsPickSuggestions())
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+</aside>

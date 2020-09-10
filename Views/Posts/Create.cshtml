@@ -1,0 +1,138 @@
+﻿@model PostCreateViewModel
+
+@{
+    ViewData["Title"] = "Създаване на статия";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@section head {
+    <script src="~/lib/ckeditor/ckeditor.js"></script>
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Posts">Новини</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Create" asp-controller="Posts">Създаване</a>
+}
+
+<div class="col-lg-10 blog-main">
+    <article class="blog-post" id="post">
+
+        <h2 class="underlined">Създаване на статия</h2>
+        <form asp-action="Create" enctype="multipart/form-data">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group" str-validation-for="Title" str-error-class="has-error">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" str-validation-for="Origin" str-error-class="has-error">
+                <label asp-for="Origin" class="control-label"></label>
+                <input asp-for="Origin" class="form-control" />
+                <span asp-validation-for="Origin" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" str-validation-for="ImageFile" str-error-class="has-error">
+                <label asp-for="ImageFile" class="control-label"></label>
+                <div class="input-group">
+                    <input type="text" name="ImageFileName" id="ImageFileName" class="form-control" readonly="readonly">
+
+                    <span class="input-group-btn">
+                        <label class="btn btn-tales-one">
+                            Качи <input asp-for="ImageFile" accept="image/*" style="display: none;" />
+                        </label>
+                    </span>
+                </div>
+                <p class="help-block"><small>Позволени изображения до 6Mb, за най-добри резултати в съотношение 4:3 (напр. 800 х 600 пиксела).</small></p>
+            </div>
+
+            <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content" class="str-validation-ignore"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <div class="form-group text-right">
+                <a asp-controller="Posts" asp-action="Index" class="btn btn-default">Отказ</a>
+                <input type="submit" value="Запис" class="btn btn-tales-one" />
+            </div>
+        </form>
+    </article>
+</div>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        CKEDITOR.replace('Content', {
+            customConfig: '/js/ck.js'
+        });
+
+        function keepAlive() {
+            setInterval(function() {
+                $.get('@Url.Action("Ping", "Home")');
+            }, 5E3);
+        }
+
+        function setInputGroupState() {
+            const selected = $('input[name="Type"]:checked');
+            const val = selected.val();
+
+            const imageFileInput = $('input[name="ImageFile"]');
+            const imageUrlInput = $('input[name="ImageUrl"]');
+
+            if (val === "ImageUrl") {
+                // disable
+                imageFileInput.attr('disabled', 'disabled');
+                imageFileInput.closest('label').addClass('disabled');
+
+                // enable
+                imageUrlInput.removeAttr('disabled');
+
+            } else if (val === "ImageFile") {
+                // disable
+                imageUrlInput.attr('disabled', 'disabled');
+
+                // enable
+                imageFileInput.removeAttr('disabled', 'disabled');
+                imageFileInput.closest('label').removeClass('disabled');
+
+            } else {
+                // dafaq u doin here?
+            }
+        }
+
+        $(document).ready(function () {
+            setInputGroupState();
+            keepAlive();
+
+            $('input[name="Type"]').on('click', setInputGroupState);
+            $("#ImageFile").on('change', function (e) {
+                const fileInput = $(this);
+                const fileNameInput = $("#ImageFileName");
+
+                var filename = fileInput.val();
+                const lastIndex = filename.lastIndexOf("\\");
+                if (lastIndex >= 0) {
+                    filename = filename.substring(lastIndex + 1);
+                }
+
+                fileNameInput.val(filename);
+            });
+        });
+    </script>
+}

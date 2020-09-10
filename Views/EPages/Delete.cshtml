@@ -1,0 +1,100 @@
+﻿@model EPageDeleteViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на публикация";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="EPages">е-страница</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="EPages" asp-route-id="@Model.Id">@Model.Title</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Delete" asp-controller="EPages" asp-route-id="@Model.Id">Изтриване</a>
+}
+
+    <div class="col-lg-10 blog-main">
+
+        <h2 class="underlined">@ViewData["Title"]</h2>
+        <h3>@Model.Title</h3>
+        <h5>@Model.Description</h5>
+
+        <hr />
+
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" readonly="readonly" />
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" readonly="readonly" type="text" />
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="CategoryName" class="control-label"></label>
+                <input asp-for="CategoryName" class="form-control" readonly="readonly" type="text" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-3">
+                <label asp-for="ReleaseNumber" class="control-label"></label>
+                <input asp-for="ReleaseNumber" class="form-control text-center" readonly="readonly" />
+            </div>
+
+            <div class="form-group col-md-3">
+                <label asp-for="ReleaseYear" class="control-label"></label>
+                <input asp-for="ReleaseYear" class="form-control text-center" readonly="readonly" type="text" />
+            </div>
+
+            <div class="form-group col-md-2">
+                <label asp-for="IsTranslation" class="control-label"></label>
+                <input asp-for="IsTranslation" class="form-control text-center" readonly="readonly" type="text" value="@(Model.IsTranslation ? "Да" : "Не")"/>
+            </div>
+            
+            <div class="form-group col-md-4">
+                <label asp-for="UploaderUserName" class="control-label"></label>   @*TODO: Link to profile*@
+                <input asp-for="UploaderUserName" class="form-control" readonly="readonly" />
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="form-group col-md-4">
+                <label asp-for="AuthorUserName" class="control-label"></label>      @*TODO: Link to profile*@
+                <input asp-for="AuthorUserName" class="form-control text-center" readonly="readonly" type="text" value="@(Model.AuthorUserName ?? "Не е открит" )" />
+            </div>
+
+
+            <div class="form-group col-md-3 col-md-offset-5">
+                <label asp-for="DateCreated" class="control-label"></label>
+                <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+            </div>
+        </div>
+
+        <h5>Сигурни ли сте, че искате да изтриете избраната публикация? Всички коментари, както и съврзаният източник към нея, ще бъдат изтрити.</h5>
+
+        <hr />
+
+        <div class="row text-right">
+
+            @if (Model.SourceId.HasValue)
+            {
+                <a asp-action="Details" asp-controller="Sources" asp-route-id="@Model.SourceId.Value" class="btn btn-tales-two pull-left">Преглед на свързан източник</a>
+            }
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <a asp-action="Index">Отказ</a> |
+                <input type="submit" value="Потвърди" class="btn btn-danger" />
+            </form>
+        </div>
+
+    </div>

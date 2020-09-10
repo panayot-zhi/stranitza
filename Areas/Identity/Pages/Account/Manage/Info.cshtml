@@ -1,0 +1,72 @@
+﻿@page
+@using stranitza.Utility
+@model InfoModel
+
+@{
+    ViewData["Title"] = "Допълнителна информация";
+    ViewData["ActivePage"] = ManageNavPages.Info;
+}
+
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="Info">Допълнителна информация</a>
+}
+
+<partial name="_Messages" />
+
+<div class="row">
+
+    <div class="col-sm-6">
+
+        @*<h4>@Model.CurrentDisplayName</h4>
+
+            <hr>*@
+
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group" str-validation-for="Input.DisplayNameType" str-error-class="has-error">
+                <label asp-for="Input.DisplayNameType"></label>
+                <select asp-for="Input.DisplayNameType" class="form-control" asp-items="Html.GetEnumSelectList<StranitzaDisplayNameType>()"></select>
+                <span asp-validation-for="Input.DisplayNameType" class="text-danger"></span>
+
+                <p class="help-block"><small>@Model.CurrentDisplayName</small></p>
+            </div>
+
+            <div class="form-group" str-validation-for="Input.Description" str-error-class="has-error">
+                <label asp-for="Input.Description"></label>
+                <textarea asp-for="Input.Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Input.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" str-validation-for="Input.PhoneNumber" str-error-class="has-error">
+                <label asp-for="Input.PhoneNumber"></label>
+                <input asp-for="Input.PhoneNumber" class="form-control" maxlength="14" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <hr>
+
+            <div class="text-right">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-default">Отказ</a>
+                <button type="submit" class="btn btn-tales-one">Запис</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        <p class="help-block"><small>Страница не събира лична информация, различна от тази, която ни предоставяте. Всички данни, които се съхраняват за Вас, можете да <a class="underlined" asp-page="./PersonalData">изтеглите от тук</a> в машинно четим вид.</small></p>
+        <p class="help-block"><small>Всички данни от тази форма са <span class="underlined">незадължителни за функционирането на сайтът</span> на Списание Страница.</small></p>
+        <p class="help-block"><small>При избор как да се показват личните Ви данни на сайта, винаги имате възможност за Вас да се показва единствено 'Анонимен'.</small></p>
+        <p class="help-block"><small>Ако желаете, можете да въведете кратко биографично описание с до 1000 символа за себе си.</small></p>
+        <p class="help-block"><small>Ако решите да въведете телефон, имайте предвид, че Списание Страница <b>не разпространява номерът Ви на трети страни и не го използва за маркетингови цели</b>. Телефонният номер се използва за подсигуряване на профилът Ви, ексклузивно по Ваше желание.</small></p>
+    </div>
+
+</div>
+
+@section scripts {
+    <partial name="_ValidationScripts" />
+}

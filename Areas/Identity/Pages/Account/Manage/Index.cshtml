@@ -1,30 +1,126 @@
 ﻿@page
 @model IndexModel
+
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Потребител";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
-<h4>@ViewData["Title"]</h4>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="Index">Потребител</a>
+}
+
+<partial name="_Messages" />
+
 <div class="row">
-    <div class="col-md-6">
+
+    <div class="col-sm-6">
         <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Username"></label>
-                <input asp-for="Username" class="form-control" disabled />
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group" str-validation-for="Input.FirstName" str-error-class="has-error">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" class="form-control capitalize-input" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.PhoneNumber"></label>
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+
+            <div class="form-group" str-validation-for="Input.LastName" str-error-class="has-error">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control capitalize-input" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
+
+            <div class="form-group" str-validation-for="Input.Username" str-error-class="has-error">
+                <label asp-for="Input.Username"></label>
+                <input asp-for="Input.Username" class="form-control" />
+                <span asp-validation-for="Input.Username" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" str-validation-for="Input.Email" str-error-class="has-error">
+                <label asp-for="Input.Email"></label>
+                @if (Model.IsEmailConfirmed)
+                {
+                    <div class="input-group">
+                        <input asp-for="Input.Email" class="form-control input-lg" />
+                        <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-ok text-success" data-popover="true" data-title="Email адресът е потвърден"></span></span>
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                }
+                else
+                {
+                    <div class="input-group">
+                        <input asp-for="Input.Email" class="form-control input-lg" />
+                        <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-alert text-warning" data-popover="true" data-title="Email адресът все още не е потвърден"></span></span>
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Преизпрати верификационен email</button>
+                }
+
+            </div>
+
+            <div class="form-group text-right" str-validation-for="Input.DisplayEmail" str-error-class="has-error">
+                <div class="checkbox">
+                    <label class="control-label" asp-for="Input.DisplayEmail">
+                        <input asp-for="Input.DisplayEmail" />
+                        <b>@Html.DisplayNameFor(x => x.Input.DisplayEmail)</b>
+                    </label>
+                    <span asp-validation-for="Input.DisplayEmail" class="text-danger"></span>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="text-right">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-default">Отказ</a>
+                <button type="submit" class="btn btn-tales-one">Запис</button>
+            </div>
         </form>
     </div>
+
+    <div class="col-md-6">
+        <p class="help-block"><small>Всички данни в тази форма са задължителни, за да може сайтът на Списание Страница да удостовери самоличността Ви.</small></p>
+        <p class="help-block"><small>Моля, <span class="underlined">въвеждайте имената си на кирилица</span>.</small></p>
+        <p class="help-block"><small>Псевдонимът Ви ще се показва публично на други потребители, ако не желаете да се показва Вашето име.</small></p>
+        <p class="help-block"><small>Можете да управлявате това от <a class="underlined" asp-page="./Info">допълнителните настройки тук</a>.</small></p>
+        <p class="help-block"><small>Ако решите да промените email адресът си, <span class="underlined">ще трябва да го потвърдите чрез верификационен email отново</span>, преди да можете да влезете в сайта.</small></p>
+        <p class="help-block"><small>Email адресът Ви няма да бъде показван публично на други потребители, освен ако изрично не посочите, че това е Вашето желание.</small></p>
+    </div>
+
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@section scripts {
+    <partial name="_ValidationScripts" />
+
+    <script src="~/js/cyrlat.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            $(".capitalize-input").on('blur', function (e) {
+                var me = $(this);
+                var name = me.val();
+                if (!name) {
+                    return;
+                }
+
+                name = toCyrillic(name);
+
+                var capitalizedName = name[0].toLocaleUpperCase() + name.substring(1).toLocaleLowerCase();
+                me.val(capitalizedName);
+                me.valid();
+            });
+
+            $("form#profile-form").on('submit', function (e) {
+                var me = $(this);
+
+                if (me.valid()) {
+                    modal.wait.show();
+                }
+            });
+        });
+    </script>
 }

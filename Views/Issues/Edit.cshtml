@@ -1,0 +1,411 @@
+﻿@model IssueEditViewModel
+
+@{
+    ViewData["Title"] = "Редакция на брой";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section head {
+
+        <link rel="stylesheet" href="~/lib/lightgallery/css/lightgallery.min.css" />
+        <link rel="stylesheet" href="~/lib/lightgallery/css/lg-fb-comment-box.min.css" />
+        <link rel="stylesheet" href="~/lib/lightgallery/css/lg-transitions.min.css" />
+
+    <script defer src="~/lib/lightgallery/js/lightgallery-all.min.js"></script>
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Issues">Библиотека</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="Issues" asp-route-year="@Model.ReleaseYear">@Model.ReleaseYear</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Issues" asp-route-id="@Model.Id">Брой @Model.GetIssueTitleShort()</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Edit" asp-controller="Issues" asp-route-id="@Model.Id">Редакция</a>
+}
+
+<div class="col-lg-8 blog-main">
+    <div id="issue">
+
+        <h2 class="underlined">Редакция на брой</h2>
+
+            @*<div id="pages-gallery" class="list-unstyled row">
+
+                @foreach (var page in Model.Pages)
+                {
+                    if (page.Type == StranitzaPageType.Regular)
+                    {
+                        <a href="@Url.Action("Load", "Pages", new {id = page.Id})" data-id="@(page.Id)"
+                           data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
+                            <img src="@Url.Action("Load", "Pages", new {id = page.Id, thumb = true})" style="display: none;" alt="Страница № @(page.PageNumber)" />
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Load", "Pages", new {id = page.Id})"
+                           data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
+                            <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber)" />
+                        </a>
+                    }
+                }
+
+            </div>*@
+
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <form id="edit-issue-form" asp-action="Edit" enctype="multipart/form-data" novalidate="novalidate">
+                    <div asp-validation-summary="All" class="text-danger"></div>                        
+                        
+                    <input type="hidden" asp-for="IssueNumber"/>
+
+                    <div class="form-group">
+                        <b>Брой № <span>@Model.GetIssueTitleLong()</span></b>
+                    </div>
+
+                    <div class="checkbox text-right">
+                        <label asp-for="IsAvailable" class="control-label">
+                            <input asp-for="IsAvailable" /> <b> @Html.DisplayNameFor(x => x.IsAvailable) </b>
+                        </label>
+                    </div>
+
+                    <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Незадължително, допълнително описание за конкретния брой..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-xs-2">
+                            <div class="" str-validation-for="ReleaseNumber" str-error-class="has-error">
+                                <label asp-for="ReleaseNumber" class="control-label">Номер </label>
+                                <input asp-for="ReleaseNumber" class="form-control" type="text" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="form-group col-xs-10">
+                            <div class="" str-validation-for="ReleaseYear" str-error-class="has-error">
+                                <label asp-for="ReleaseYear" class="control-label">и година на издаване</label>
+                                <div class="input-group">
+                                    <input asp-for="ReleaseYear" class="form-control" aria-describedby="calendar-addon" type="text" readonly="readonly" />
+                                    <span class="input-group-addon" id="calendar-addon"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <span asp-validation-for="ReleaseYear" class="text-danger text-right"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" str-validation-for="Tags" str-error-class="has-error">
+                        <label asp-for="Tags" class="control-label"></label>
+                        <input asp-for="Tags" class="form-control" />
+                        <span asp-validation-for="Tags" class="text-danger"></span>
+                        <p class="help-block"><small>Моля, отделяйте всяка ключова дума със запетая.</small></p>
+                    </div>
+
+                    <div class="form-group" str-validation-for="PdfFile" str-error-class="has-error">
+                        <label asp-for="PdfFile" class="control-label"></label>
+                        <div class="input-group @(Model.HasPdf ? "has-success" : string.Empty )">
+                            <span class="input-group-addon">
+                                @if (Model.HasPdf)
+                                {
+                                    <a href="@Url.Action("PreviewPdf", "Issues", new { id = Model.Id })" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-file-pdf-o"></i>
+                                }
+                            </span>
+                            <input type="text" name="PdfFileName" id="PdfFileName" class="form-control" readonly="readonly" disabled="disabled" value="@(Model.PdfFilePreviewId.HasValue ? $"{Model.PdfFileName} (Общ брой на страниците: {Model.PdfPagesCount})" : "Няма прикачен PDF")">
+                            <span class="input-group-btn">
+                                <label class="btn btn-tales-two">
+                                    Качи <input asp-for="PdfFile" accept=".pdf" style="display: none;" />
+                                </label>
+                            </span>
+                        </div>
+                        <span asp-validation-for="PdfFile" class="text-danger"></span>
+
+                        <input type="hidden" asp-for="PdfFilePreviewId" />
+                        <input type="hidden" asp-for="PdfFileName" />
+                    </div>
+                        
+                    @if (Model.HasPdf)
+                    {
+                        var availablePagesCount = Model.AvailablePages?.Count() ?? 0;
+                        var availablePagesValue = Model.AvailablePages.Join();
+
+                        <div id="pages-edit">
+                            <div class="form-group">
+                                <label asp-for="AvailablePages" class="control-label"></label>
+                                <input type="hidden" asp-for="AvailablePages" value="@availablePagesValue"/>
+                                <span class="pull-right">@availablePagesCount / @Model.PdfPagesCount</span>
+                            </div>
+                            
+                            <div class="text-right">
+                                @for (int index = 1; index <= Model.PdfPagesCount; index++)
+                                {
+                                    if (Model.AvailablePages?.Contains(index) == true)
+                                    {
+                                        <a href="#" class="btn btn-default btn-circle active">@index</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="btn btn-default btn-circle">@index</a>
+                                    }
+                                }
+
+                            </div>
+                        </div>                        
+                    }    
+                        
+                    @*<div class="form-group row pt10">
+                        <div class="col-md-3" str-validation-for="CoverPageNumber" str-error-class="has-error">
+                            <label asp-for="CoverPageNumber" class="control-label"></label>
+                        </div>
+
+                        <div class="col-md-2" str-validation-for="CoverPageNumber" str-error-class="has-error">
+                            <input asp-for="CoverPageNumber" class="form-control" />  
+                            <input type="hidden" asp-for="CoverPageId" />
+                        </div>
+
+                        <div class="col-md-3 col-md-offset-1" str-validation-for="IndexPageNumber" str-error-class="has-error">
+                            <label asp-for="IndexPageNumber" class="control-label"></label>
+                        </div>
+
+                        <div class="col-md-2" str-validation-for="IndexPageNumber" str-error-class="has-error">
+                            <input asp-for="IndexPageNumber" class="form-control" />
+                            <input type="hidden" asp-for="IndexPageId" />
+                        </div>
+                    </div>*@
+
+                    <div class="form-group pt10" str-validation-for="PageFiles" str-error-class="has-error">
+                        <label asp-for="PageFiles" class="control-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <label class="btn btn-tales-one">
+                                    Качи <input asp-for="PageFiles" multiple="multiple" accept="image/*" style="display: none;" />
+                                </label>
+                            </span>
+                            <input type="text" name="PageFileNames" id="PageFileNames" class="form-control" disabled="disabled" readonly="readonly" value="@string.Format("Общ брой на страниците (изображения): {0}", Model.ImagePagesCount)">
+                            <span class="input-group-addon">
+                                <a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">
+                                    <i class="fa fa-file-image-o"></i>
+                                </a>
+                            </span>
+                        </div>
+                        <p class="help-block"><small>Изображения ще бъдат добавени към вече прикачените към броя.</small></p>
+                        <span asp-validation-for="PageFiles" class="text-danger"></span>
+
+                        <input type="hidden" asp-for="PdfPagesCount" />
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-5">
+                            <label asp-for="LastUpdated"></label>
+                            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+                        </div>
+
+                        <div class="col-sm-5 col-sm-offset-2 text-right">
+                            <label asp-for="DateCreated"></label>
+                            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="form-group text-right">
+                        <a asp-controller="Issues" asp-action="Index" class="btn btn-default">Отказ</a>
+                        <input type="submit" value="Запис" class="btn btn-tales-one" />
+                    </div>
+
+                    </form>
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+<aside class="col-lg-4 blog-aside">
+
+    <div class="aside-widget">
+        <header>
+            <h3>Навигация</h3>
+        </header>
+        <div class="body">
+            <ul class="tales-list">                
+                <li><a asp-action="Index" asp-controller="Pages" asp-route-id="@Model.Id">Редакция на страници</a></li>
+                <li><a href="#" target="_blank">Преглед на свързани източници</a></li>
+                @if (Model.HasPdf)
+                {
+                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Преглед на PDF (цял)</a></li>
+                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id, thumb = true})" target="_blank">Преглед на PDF (орязан)</a></li>
+                }
+                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Преглед на всички изображения (ZIP)</a></li>
+                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                {
+                    <li><a href="#">Възстановяване на броя от файловата система</a></li>
+                    <li><a asp-action="Delete" asp-controller="Issues" asp-route-id="@Model.Id">Изтриване на броя</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+    
+    @if (Model.CoverPage != null)
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Корица</h3>
+            </header>
+            <div class="body">
+                <a href="@Url.Action("Index", "Pages", new {id = Model.Id})" class="display-page" id="display-page-@Model.CoverPage.Id">
+                    <img src="@Url.Action("Load", "Pages", new {id = Model.CoverPage.Id})" alt="Страница № @(Model.CoverPage.PageNumber)"/>
+                </a>
+                <p class="help-block text-center">Страница № @Model.CoverPage.PageNumber</p>
+            </div>
+        </div>
+    }
+    
+    @if (Model.IndexPage != null)
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Съдържание</h3>
+            </header>
+            <div class="body">
+                <a href="@Url.Action("Index", "Pages", new {id = Model.Id})" class="display-page" id="display-page-@Model.IndexPage.Id">
+                    <img src="@Url.Action("Load", "Pages", new {id = Model.IndexPage.Id})" alt="Страница № @(Model.IndexPage.PageNumber)"/>
+                </a>
+                <p class="help-block text-center">Страница № @Model.IndexPage.PageNumber</p>
+            </div>
+        </div>
+    }
+
+</aside>
+
+@section scripts {
+<script>
+    var $plg;
+    var $plgoptions = {
+        autoplay: false,
+        autoplayControls: false,
+        hideBarsDelay: 1.8e+6,
+        addClass: "stranitza-lg",
+        share: false
+    };
+
+    var pdfFileSize = 0;
+    var pageFilesSize = 0;
+    window.confirmFormSubmission = false;
+
+    function accumulate(acc, file) {
+        return acc + file.size;
+    }
+
+    function keepAlive() {
+        setInterval(function() {
+            $.get('@Url.Action("Ping", "Home")');
+        }, 5E3);
+    }
+
+    $(document).ready(function () {
+        keepAlive();
+
+        $plg = $("#pages-gallery");
+        $plg.lightGallery($plgoptions);
+
+        $("a.display-page").on('click', function (e) {
+            e.preventDefault();
+
+            var me = $(this);
+            var id = me.attr('id');
+            var href = me.attr('href');
+            var pageId = id.replace("display-page-", "");
+            var img = me.children("img");
+            var heading = img.attr('alt');            
+
+            const html = `<a href="${href}"><img src="@Url.Action("Load", "Pages")/${pageId}" class="img-responsive text-center" alt="${heading}"></a>`;
+            modal.preview(heading, html);
+        });
+
+        $('#PdfFile').on('change', function (e) {
+            const target = $("#PdfFileName");
+            target.val(getFileName(e.target.files));
+            pdfFileSize = Array.from(e.target.files).reduce(accumulate, 0);
+        });
+
+        $('#PageFiles').on('change', function (e) {
+            const target = $("#PageFileNames");
+            target.val(getFileName(e.target.files));
+            pageFilesSize = Array.from(e.target.files).reduce(accumulate, 0);
+        });
+
+        $("#edit-issue-form").on('submit', function (e) {
+
+            var currentFilesSize = pageFilesSize + pdfFileSize;
+            if (currentFilesSize > requestLimit && !confirmFormSubmission) {
+                e.preventDefault();
+
+                let me = this;
+                function confirm() {
+                    window.confirmFormSubmission = true;
+                    $(me).submit();
+                }
+
+                function reset() {
+                    window.currentFilesSize = 0;
+                    $('input[type="file"]').val('');
+                    $("#PageFileNames").val('');
+                    $("#PdfFileName").val('');                        
+                }
+
+                const message = "Прикачвате файлове с размер (" +
+                    getFriendlySizeName(currentFilesSize) +
+                    ") надвишаващ позволения размер за прикачване на файлове (" +
+                    getFriendlySizeName(requestLimit) +
+                    "). Възможно е заявката да не може да се осъществи, желаете ли да продължите?";
+
+                modal.confirm(message, confirm, reset);
+                    
+                return false;
+            }
+
+            modal.wait.show("Броят се записва, моля изчакайте...");
+
+            return true;
+        });
+
+
+        @if (Model.HasPdf)
+        {
+            <text>
+                $("#PdfFile").on("change", function (e) {
+                    var me = $(this);
+                    me.closest(".input-group").removeClass("has-success").addClass("has-warning");
+                    modal.notification.warning("Прикачването на нов PDF файл ще подмени стария.");
+                });
+
+                $("#pages-edit .btn-circle").on('click', function (e) {
+
+                    e.preventDefault();
+                    $(this).toggleClass("active");
+
+                    var markedPages = [];
+                    $("#pages-edit .btn-circle.active").each(function (index, item) {
+                        markedPages.push(parseInt($(item).text()));
+                    });
+
+                    $("#AvailablePages").val(markedPages);
+                });
+
+            </text>
+        }
+
+    });
+</script>
+}

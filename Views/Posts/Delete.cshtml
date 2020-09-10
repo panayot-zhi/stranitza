@@ -1,0 +1,72 @@
+﻿@model PostEditViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на статия";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Posts">Новини</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Posts" asp-route-id="@Model.Id">@Model.Title</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Delete" asp-controller="Posts" asp-route-id="@Model.Id">Изтриване</a>
+}
+
+
+<div class="col-lg-10 blog-main">
+
+    <h2 class="underlined">@ViewData["Title"]</h2>
+    <h3>@Model.Title</h3>
+    <h5>@Model.Description</h5>    
+
+    <hr />
+    
+    <div class="row">
+        <div class="form-group col-md-4 @(Model.CommentsCount > 0 ? "has-error" : string.Empty)">
+            <label asp-for="CommentsCount" class="control-label"></label>
+            <input asp-for="CommentsCount" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-md-8">
+            <label class="control-label">Изображение</label>
+            <input class="form-control" readonly="readonly" type="text" value="@($"{Model.ImageTitle} (#{Model.ImageFileId})")"/>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label asp-for="Uploader" class="control-label"></label>
+            <input asp-for="Uploader" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="LastUpdated" class="control-label"></label>
+            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="DateCreated" class="control-label"></label>
+            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+    </div>
+    
+    <h5>Сигурни ли сте, че искате да изтриете избраната статия? Всички коментари, както и заглавното изображение към нея, ако има прикачено, ще бъдат изтрити.</h5>
+
+    <hr />
+    
+    <div class="row text-right">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index">Отказ</a> |
+            <input type="submit" value="Потвърди" class="btn btn-danger" />
+        </form>
+    </div>
+
+</div>
+

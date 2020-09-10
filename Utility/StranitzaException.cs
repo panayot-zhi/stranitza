@@ -1,5 +1,5 @@
 ﻿using System;
-// using Serilog;
+using Serilog;
 
 namespace stranitza.Utility
 {
@@ -7,12 +7,12 @@ namespace stranitza.Utility
     {
         public StranitzaException(string message) : base(message)
         {
-            // Log.Logger.Error(message);
+            Log.Logger.Error(message);
         }
 
         public StranitzaException(string message, Exception innerException) : base(message, innerException)
         {
-            // Log.Logger.Error(innerException, message);
+            Log.Logger.Error(innerException, message);
         }
     }
 }

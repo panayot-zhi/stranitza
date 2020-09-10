@@ -1,0 +1,187 @@
+﻿@page
+@using stranitza.Utility
+@model AvatarModel
+
+@{
+    ViewData["Title"] = "Снимка";
+    ViewData["ActivePage"] = ManageNavPages.Avatar;
+}
+
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="Avatar">Снимка</a> 
+}
+
+<partial name="_Messages" />
+
+<div class="row">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="col-sm-6">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
+
+
+            <label class="control-label" asp-for="Input.AvatarType"></label>
+
+            <div class="row">
+                <div class="col-md-4 col-md-offset-1">
+                    <div class="form-group">
+                        <img id="preview-@StranitzaAvatarType.Default.ToString()" src="@Model.DefaultAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Gravatar.ToString()" src="@Model.GravatarAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Facebook.ToString()" src="@Model.FacebookAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Twitter.ToString()" src="@Model.TwitterAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Google.ToString()" src="@Model.GoogleAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Internal.ToString()" src="@Model.InternalAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="radio">
+                        <label>
+                            <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Default">
+                            Анонимен @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.Default)" alt="Снимка" class="img-responsive">*@
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Gravatar">
+                            Gravatar @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.Gravatar)" alt="Снимка" class="img-responsive">*@
+                        </label>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.FacebookAvatarPath))
+                    {
+                        <div class="radio">
+                            <label>
+                                <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Facebook">
+                                Facebook @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.External)" alt="Снимка" class="img-responsive">*@
+                            </label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.TwitterAvatarPath))
+                    {
+                        <div class="radio">
+                            <label>
+                                <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Twitter">
+                                Twitter @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.External)" alt="Снимка" class="img-responsive">*@
+                            </label>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.GoogleAvatarPath))
+                    {
+                        <div class="radio">
+                            <label>
+                                <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Google">
+                                Google @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.External)" alt="Снимка" class="img-responsive">*@
+                            </label>
+                        </div>
+                    }
+                    <div class="radio">
+                        <label>
+                            <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Internal">
+                            Вътрешна
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="internalAvatarFile" class="form-group" str-validation-for="Input.AvatarFile" str-error-class="has-error" style="display: none;">
+                <label asp-for="Input.AvatarFile" class="control-label"></label>
+                <div class="input-group">
+                    <input type="text" name="AvatarFileName" id="AvatarFileName" class="form-control" readonly="readonly" disabled="disabled">
+                    <span class="input-group-btn">
+                        <label class="btn btn-tales-two">
+                            Избор <input asp-for="Input.AvatarFile" accept="image/x-png,image/gif,image/jpeg" style="display: none;" />
+                        </label>
+                    </span>
+                </div>
+                <span asp-validation-for="Input.AvatarFile" class="text-danger"></span>
+                <p class="help-block"><small>Позволени са изображения до 160Kb, за най-добри резултати в съотношение 1:1 (напр. 100 х 100 пиксела).</small></p>
+            </div>
+
+            <hr>
+
+            <div class="text-right">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-default">Отказ</a>
+                <button type="submit" class="btn btn-tales-one">Запис</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        <p class="help-block"><small>Настройката Ви позволява да управлявате асоциираното с Вашият потребителски акаунт изображение.</small></p>
+        <p class="help-block"><small>Ако вече имате свързана с Вашият email адрес снимка от <a class="underlined" href="https://www.gravatar.com">gravatar</a> може да я използвате и тук.</small></p>
+        @if (Model.HasExternalAvatar)
+        {
+            <p class="help-block"><small>Използвате външни услуги за вход. Може да използвате снимката, която сте задали там. Управление на услугите за външен вход може да <a class="underlined" asp-page="./ExternalLogins">извършите от тук</a>.</small></p>
+        }
+        <p class="help-block"><small>Възможно е и да прикачите собствено изображение <b>до 160Kb</b>. Моля, преди да го направите, запознайте се с <a class="underlined" target="_blank" href="@Url.Action("TaC", controller: "Home")">Общите условия на сайта</a>.</small></p>
+    </div>
+
+</div>
+
+@section scripts {
+    <partial name="_ValidationScripts" />
+
+    <script>
+        var avatarFileSize = 0;
+        var currentAvatarPreviewId = "#preview-@Model.Input.AvatarType.ToString()";
+        var internalAvatarId = "#preview-@StranitzaAvatarType.Internal";
+
+        function switchAvatarPreview(avatarId) {
+            $(".avatar-preview").hide();
+            $(avatarId).show();
+
+            if (avatarId === internalAvatarId) {
+                $("#internalAvatarFile").show();
+            } else {
+                $("#internalAvatarFile").hide();
+            }
+        }
+
+
+        $(document).ready(function() {
+
+            switchAvatarPreview(currentAvatarPreviewId);
+            $('input[name="Input.AvatarType"]').on('click',
+                function(e) {
+                    var me = $(this);
+                    var value = me.val();
+                    var avatarId = "#preview-" + value;
+                    switchAvatarPreview(avatarId);
+                });
+
+            $('#Input_AvatarFile').on('change',
+                function(e) {
+                    const target = $("#AvatarFileName");
+                    target.val(getFileName(e.target.files));
+
+                    var file = e.target.files[0];
+                    if (!file) {
+                        // you jokester
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(readerEvt) {
+                        var base64String = readerEvt.target.result;
+                        base64String = base64String.split(',')[1];
+
+                        $(internalAvatarId).attr("src",
+                            `data:${file.type};charset=utf-8;base64, ${base64String}`);
+
+                    };
+
+                    reader.onerror = function(error) {
+                        console.warn("stranitza | Error occured while trying to display the image to the user: ", error);
+                    };
+
+                    reader.readAsDataURL(file);
+
+                });
+        });
+    </script>
+}

@@ -1,7 +1,44 @@
 ﻿@page
 @model ConfirmEmailModel
+
 @{
-    ViewData["Title"] = "Confirm email";
+    ViewData["Title"] = "Потвърден email";
 }
 
-<h1>@ViewData["Title"]</h1>
+@section breadcrumb {
+    <a asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+    <span class="separator">/</span>
+    <span>Потвърждение</span>
+}
+
+<div class="col-sm-3">
+    <img class="pt20 img-responsive" src="~/images/okay-logo-left.png" alt="Успех" />
+</div>
+
+<div class="col-sm-8">
+    <h2>Потвърден email</h2>
+    <p>Вашият email адрес беше успешно потвърден. </p>
+    <p>Моля, <a class="underlined" asp-page="./Login">последвайте тази връзка за да влезете в приложението</a>.</p>
+    <p>
+        Ако все още не сте, моля, запознаете се с:
+    </p>
+    <ul>
+        <li><a class="underlined" asp-controller="Home" asp-action="TaC">Общите правила</a> на сайта</li>
+        <li><a class="underlined" asp-controller="Home" asp-action="Privacy">Политиката за поверителност</a></li>
+        <li><a class="underlined" asp-controller="Home" asp-action="Help">Секцията с помощ</a></li>
+        <li><a class="underlined" asp-controller="Home" asp-action="FAQ">Често задавани въпроси</a></li>
+        <li><a class="underlined" asp-controller="Home" asp-action="About">История на Списание Страница</a></li>
+    </ul>
+    <p>
+        пожелаваме Ви приятно разглеждане на страниците на списанието.
+    </p>
+</div>
+
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".container.main").removeClass("main").addClass("about");
+        });
+    </script>
+}

@@ -1,0 +1,86 @@
+﻿@model IssueIndexViewModel
+@*TODO: Maybe link to the index somewhere?*@
+
+<div class="blog-teaser-container col-sm-12 col-lg-6">
+    <article class="blog-teaser">
+        <header>
+            <div class="thumbnail">
+                @if (Model.CoverPage != null)
+                {
+                    <a href="@Url.GetGallerySlide(Model.Id, Model.CoverPage.SlideNumber)" class="display-page" id="display-page-@Model.CoverPage.Id">
+                        <img src="@Url.Action("Load", "Pages", new {id = Model.CoverPage.Id, thumb = true})" alt="@Model.GetIssueTitlePrefixed() корица" class="img-responsive squared" />
+                    </a>
+                }
+
+                @if (Model.IndexPage != null)
+                {
+                    <a href="@Url.GetGallerySlide(Model.Id, Model.IndexPage.SlideNumber)" class="display-page" id="display-page-@Model.IndexPage.Id">
+                        <img id="display-page-@Model.IndexPage.Id" src="@Url.Action("Load", "Pages", new {id = Model.IndexPage.Id, thumb = true})" alt="@Model.GetIssueTitlePrefixed() съдържание" class="img-responsive squared" />
+                    </a>
+                }
+            </div>
+
+            <h3><a class="display-issue" href="@Url.Action("Details", "Issues", new {id = Model.Id})">@Model.GetIssueTitle()</a></h3>
+
+            <hr>
+        </header>
+
+        <div class="body">
+            @*<ul class="tales-list">
+            <li>PDF: @(Model.PdfFile != null ? "Да" : "Не")</li>
+            <li>Страници: @Model.PagesCount</li>
+            <li>Преглеждан: @Model.ViewCount</li>
+            <li>Свалян: @Model.DownloadCount</li>
+        </ul>*@
+
+            @*PDF: @(Model.PdfFile != null ? "Да" : "Не")<br>
+            Страници: @Model.PagesCount<br>
+            Преглеждан: @Model.ViewCount<br>
+            Свалян: @Model.DownloadCount<br>*@
+
+            @*TODO: Reconsider*@
+            <p>
+                @Model.Description
+                @if (Model.HasPdf)
+                {
+                    @:Броят е <b>достъпен в PDF</b> вариант (@(Model.AvailablePages?.Length ?? 0) страници за регистрирани потребители).
+                }
+                else
+                {
+                    @:Страниците са достъпни само като <b>изображения</b>.
+                }
+                Общ брой на страниците <b>@Model.PagesCount</b>, от които
+                @if (Model.IsAvailable)
+                {
+                    // Issue is freely available
+                    <i class="text-success">всички</i>
+                }
+                else if (Model.AvailablePages != null)
+                {
+                    // Issue has pdf with marked available pages
+                    <i class="text-success">@(Model.AvailablePages.Length)</i>
+                }
+                else
+                {
+                    // Regardless, all 
+                    <i class="text-success">@(Model.PagesCount)</i>
+                }
+                със свободен достъп.
+                Броят е преглеждан @Model.ViewCount пъти и е свалян @Model.DownloadCount.
+            </p>
+
+            @*<small>
+            PDF: @(Model.PdfFile != null ? "Да" : "Не")<br>
+            Страници: @Model.PagesCount<br>
+            Преглеждан: @Model.ViewCount<br>
+            Свалян: @Model.DownloadCount<br>
+        </small>    *@
+        </div>
+
+        <div class="clearfix">
+            <a href="@Url.Action("Details", "Issues", new {id = Model.Id})" class="btn btn-tales-one">
+                Виж броя
+            </a>
+        </div>
+    </article>
+</div>

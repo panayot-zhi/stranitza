@@ -1,0 +1,51 @@
+﻿<div id="mobile-nav-toggle" class="text-center">
+    <a href="#" data-toggle="collapse" data-target=".tales-nav .navbar-collapse">
+        <i class="fa fa-bars"></i>
+    </a>
+</div>
+
+<nav class="pull-right tales-nav">
+    <div class="collapse navbar-collapse">
+        <ul class="nav nav-pills navbar-nav">
+            @*TODO: Link these to controllers*@
+
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Posts" asp-action="Index" title="Преглед на актуални новини от литературния свят">Новини</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Issues" asp-action="Index" title="Преглед на налични броеве на списанието">Библиотека</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="EPages" asp-action="Index" title="Преглед на публикации в електронен вариант">е-страница</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Sources" asp-action="Index" title="Преглед на автори и източници">Индекс</a>
+            </li>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Управление на акаунт">Профил</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link submit-link" href="#logout-form" title="Изход от акаунт">Изход</a>
+                    
+                    <form id="logout-form" class="form-inline" asp-area="Identity"
+                          asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"></form>
+
+                </li>
+
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register" title="Регистрация на нов акаунт">Регистрация</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login" asp-all-route-data="@(new Dictionary<string, string>() { { "returnUrl", Context.Request.Path } })" title="Вход със съществуващ акаунт">Вход</a>
+                </li>
+            }
+
+        </ul>
+    </div>
+</nav>

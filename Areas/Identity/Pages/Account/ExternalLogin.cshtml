@@ -1,33 +1,115 @@
 ﻿@page
 @model ExternalLoginModel
+
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Регистрация";
 }
 
-<h1>@ViewData["Title"]</h1>
-<h4 id="external-login-title">Associate your @Model.ProviderDisplayName account.</h4>
-<hr />
+@section breadcrumb {
+    <a asp-area="Identity" asp-page="/Account/Login">Вход</a>
+    <span class="separator">/</span>
+    <span>@Model.LoginProvider</span>
+}
 
-<p id="external-login-description" class="text-info">
-    You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
-    Please enter an email address for this site below and click the Register button to finish
-    logging in.
-</p>
+<div class="col-sm-12">
+    <h2>Регистрация</h2>
+    <h4>Асоциирайте Вашият @Model.LoginProvider акаунт.</h4>
+    <hr />
+</div>
+<div class="col-sm-12">
+    <p class="help-text">
+        Вие успешно се удостоверихте с <<<strong>@Model.LoginProvider</strong>>>.
+        Моля, въведете допълнителните данни за този сайт и натиснете бутона по-долу, за да завършите
+        процеса по регистрация в приложението.
+    </p>
+</div>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group" str-validation-for="Input.FirstName" str-error-class="has-error">
+                    <label asp-for="Input.FirstName"></label>
+                    <input asp-for="Input.FirstName" class="form-control capitalize-input" />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" str-validation-for="Input.LastName" str-error-class="has-error">
+                    <label asp-for="Input.LastName"></label>
+                    <input asp-for="Input.LastName" class="form-control capitalize-input" />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" str-validation-for="Input.UserName" str-error-class="has-error">
+                    <label asp-for="Input.UserName"></label>
+                    <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
+                    <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" str-validation-for="Input.Email" str-error-class="has-error">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group" str-validation-for="Input.PrivacyConsent" str-error-class="has-error">
+                    <div class="checkbox">
+                        <label asp-for="Input.PrivacyConsent">
+                            <input asp-for="Input.PrivacyConsent" required="required" />
+                            Прочетох и приемам <a class="underlined" target="_blank" href="@Url.Action("Privacy", controller: "Home")">Политиката за поверителност</a> на сайта и <a class="underlined" target="_blank" href="@Url.Action("TaC", controller: "Home")">Общите му условия</a>
+                        </label>
+                        <span asp-validation-for="Input.PrivacyConsent" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-tales-one">Регистрация</button>
+
+            </form>
+        </div>
+        
+        <div class="col-md-4 col-md-offset-4 pt30">
+            <div id="external-login-help" class="text-right">
+                С използването на външен източник за вход, Вие се съгласявате с общите му условия, политиката му за поверителност и използването на бисквитки. Моля, преди да свържете потребителят си с външен източник, се уверете, че сте наясно и с нашите:
+                <ul>
+                    <li><a class="underlined" asp-controller="Home" asp-action="TaC">Общи правила на сайта</a></li>
+                    <li><a class="underlined" asp-controller="Home" asp-action="Privacy">Политика за поверителност</a></li>
+                    <li><a class="underlined" asp-controller="Home" asp-action="Cookies">Бисквитки</a></li>
+                </ul>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+        </div>
+
+
     </div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@section scripts {
+    <partial name="_ValidationScripts" />
+
+    <script src="~/js/cyrlat.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $(".capitalize-input").on('blur', function (e) {
+                var me = $(this);
+                var name = me.val();
+                if (!name) {
+                    return;
+                }
+
+                name = toCyrillic(name);
+
+                var capitalizedName = name[0].toLocaleUpperCase() + name.substring(1).toLocaleLowerCase();
+                me.val(capitalizedName);
+                me.valid();
+            });
+
+            $(".capitalize-input").blur();
+
+        });
+    </script>
 }
+

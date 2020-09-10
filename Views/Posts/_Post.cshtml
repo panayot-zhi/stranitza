@@ -1,0 +1,32 @@
+﻿@model PostIndexViewModel
+@*TODO: Add CommentCount and ViewCount here somewhere*@
+
+<div class="blog-teaser-container list-group">
+    <article class="blog-teaser">
+        <header>
+            <div class="thumbnail">
+                <a href="@Url.Action("Details", "Posts", new {id = Model.Id})">                   
+                    <img src="@Url.GetPostImage(Model.ImageFileName)" alt="@Model.Title" class="img-responsive"/>
+                </a>
+            </div>
+
+            <h3><a href="@Url.Action("Details", "Posts", new { id = Model.Id })">@Model.Title</a></h3>
+            <span class="meta">@(Model.DateCreated.ToString("dd MMMMM yyyy")), @Html.Raw(Model.Origin)</span>
+            <hr>
+        </header>
+
+        <div class="body">            
+            <p>
+                @Model.Description               
+            </p>
+
+            <hr>
+        </div>
+
+        <div class="clearfix">
+            <a href="@Url.Action("Details", "Posts", new { id = Model.Id })" class="btn btn-tales-one">
+                Прочети повече
+            </a>
+        </div>
+    </article>
+</div>

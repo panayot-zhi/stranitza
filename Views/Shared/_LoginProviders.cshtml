@@ -1,0 +1,93 @@
+﻿@model stranitza.Models.ViewModels.LoginProvidersViewModel
+
+@{
+    var returnUrl = ViewData["ReturnUrl"];
+}
+
+<section>
+    <h4>Използвайте друг доставчик на услуги, за да влезете:</h4>
+    <hr />
+    @{
+        if (Model.ExternalLogins == null || !Model.ExternalLogins.Any())
+        {
+            <div>
+                <p>
+                    За момента няма възможност да се използват външни услуги за вход в сайта. Съжаляваме за неудобството и Ви молим, да опитате пак по-късно.
+                </p>
+            </div>
+        }
+        else
+        {
+            <form id="external-login" asp-page="/Account/ExternalLogin" asp-area="Identity" asp-route-returnUrl="@returnUrl" method="post" class="form-horizontal text-center">
+
+                <input id="provider" type="hidden" name="provider" />
+
+                @* FACEBOOK *@
+                <div class="social-icon color-three">
+                    <a href="#" target="_blank" class="facebook-share-button" title="Вход с @Model.ExternalLogins.Facebook().DisplayName акаунт">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-facebook"></i>
+                    </a>
+                </div>
+
+                @* TWITTER *@
+                <div class="social-icon color-one">
+                    <a href="#" target="_blank" class="twitter-share-button" title="Вход с @Model.ExternalLogins.Twitter().DisplayName акаунт">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-twitter"></i>
+                    </a>
+                </div>
+                
+                @* GOOGLE *@
+                <div class="social-icon color-four">
+                    <a href="#" target="_blank" class="google-share-button" title="Вход с @Model.ExternalLogins.Google().DisplayName акаунт">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-google"></i>
+                    </a>
+                </div>
+
+                @*foreach (var provider in Model)
+                {
+                    <button type="submit" class="btn btn-default" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                }*@
+            </form>
+        }
+    }
+</section>
+
+<hr />
+
+<div id="external-login-help" class="text-right">
+    С използването на външен източник за вход, Вие се съгласявате с общите му условия, политиката му за поверителност и използването на бисквитки. Моля, преди да свържете потребителят си с външен източник, се уверете, че сте наясно и с нашите:
+    <ul>
+        <li><a class="underlined" asp-controller="Home" asp-action="TaC">Общи правила на сайта</a></li>
+        <li><a class="underlined" asp-controller="Home" asp-action="Privacy">Политика за поверителност</a></li>
+        <li><a class="underlined" asp-controller="Home" asp-action="Cookies">Бисквитки</a></li>
+    </ul>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $(".facebook-share-button").on('click', function (e) {
+            e.preventDefault();
+            modal.wait.show('Свързване с @Model.ExternalLogins.Facebook().DisplayName, моля изчакайте...', { progressType: "info" });
+            $("#provider").val('@Model.ExternalLogins.Facebook().Name');
+            $("form#external-login").submit();
+        });
+
+        $(".twitter-share-button").on('click', function (e) {
+            e.preventDefault(); 
+            modal.wait.show('Свързване с @Model.ExternalLogins.Twitter().DisplayName, моля изчакайте...', { progressType: "success" });
+            $("#provider").val('@Model.ExternalLogins.Twitter().Name');
+            $("form#external-login").submit();
+        });
+            
+        $(".google-share-button").on('click', function (e) {
+            e.preventDefault(); 
+            modal.wait.show('Свързване с @Model.ExternalLogins.Google().DisplayName, моля изчакайте...', { progressType: "danger" });
+            $("#provider").val('@Model.ExternalLogins.Google().Name');
+            $("form#external-login").submit();
+        });
+    })
+</script>

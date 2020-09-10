@@ -1,0 +1,110 @@
+﻿@model IssueEditViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на брой";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Issues">Библиотека</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="Issues" asp-route-year="@Model.ReleaseYear">@Model.ReleaseYear</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Issues" asp-route-id="@Model.Id">Брой @Model.ReleaseNumber (@Model.IssueNumber)</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Delete" asp-controller="Issues" asp-route-id="@Model.Id">Изтриване</a>
+}
+
+@{
+    string availablePages;
+    if (Model.HasPdf)
+    {
+        var joinedPages = Model.AvailablePages.Join();
+        availablePages = joinedPages != null ? ("№ " + joinedPages) : "0";
+    }
+    else
+    {
+        availablePages = "Няма PDF";
+    }
+}
+
+<div class="col-lg-10 blog-main">
+    
+    <h2 class="underlined">@ViewData["Title"]</h2>
+    <h3>Брой @Model.ReleaseNumber / @Model.ReleaseYear (@Model.IssueNumber)</h3>
+    <h5>@Model.Description</h5>    
+
+    <hr />
+    
+    <div class="row">
+        <div class="form-group col-md-4 @(Model.CommentsCount > 0 ? "has-error" : string.Empty)">
+            <label asp-for="CommentsCount" class="control-label"></label>
+            <input asp-for="CommentsCount" class="form-control" readonly="readonly" />
+        </div>
+        
+        <div class="form-group col-md-4 @(Model.SourcesCount > 0 ? "has-warning" : string.Empty)">
+            <label asp-for="SourcesCount" class="control-label"></label>
+            <input asp-for="SourcesCount" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="ZipFileName" class="control-label"></label>
+            <input asp-for="ZipFileName" class="form-control" readonly="readonly" />
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label asp-for="IsAvailable" class="control-label"></label>
+            <input asp-for="IsAvailable" class="form-control" readonly="readonly" type="text" value="@(Model.IsAvailable ? "Да" : "Не" )"/>
+        </div>
+        
+        <div class="form-group col-md-4">
+            <label asp-for="HasPdf" class="control-label"></label>
+            <input asp-for="HasPdf" class="form-control" readonly="readonly" type="text" value="@(Model.HasPdf ? $"Да ({Model.PdfPagesCount} страници)" : "Не" )"/>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="AvailablePages" class="control-label"></label>
+            <input asp-for="AvailablePages" class="form-control" readonly="readonly" value="@availablePages" />
+        </div>        
+
+    </div>
+    
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label asp-for="ImagePagesCount" class="control-label"></label>
+            <input asp-for="ImagePagesCount" class="form-control" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="LastUpdated" class="control-label"></label>
+            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+
+        <div class="form-group col-md-4">
+            <label asp-for="DateCreated" class="control-label"></label>
+            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+    </div>
+    
+    <h5>Сигурни ли сте, че искате да изтриете броя? Всички коментари, свързани източници и страници към него, както и броят в pdf, ако има прикачен, <b>ще бъдат изтрити</b>.</h5>
+
+    <hr />
+    
+    <div class="row text-right">
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index">Отказ</a> |
+            <input type="submit" value="Потвърди" class="btn btn-danger" />
+        </form>
+    </div>
+
+</div>

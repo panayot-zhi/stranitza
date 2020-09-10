@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Списание Страница</title>
+
+    <meta name="description" content="">    @* TODO: Fill *@
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,600|PT+Serif:400,400italic' rel='stylesheet'
+          type='text/css'>
+
+    @await Html.PartialAsync("_Stylesheets")
+    @await Html.PartialAsync("_Javascripts")
+    
+    <environment include="Development"><link rel="stylesheet" href="~/css/styles-bluered.css" /></environment>
+    <environment exclude="Development"><link rel="stylesheet" href="~/css/styles-bluered.min.css" /></environment>
+
+    @await RenderSectionAsync("head", required: false)
+
+</head>
+<body>
+    <header>
+        <div class="widewrapper masthead">
+            <div class="container">
+                <div class="row">
+                    <a href="@Url.Action("Index", "Home")" id="logo">
+                        <img src="@Url.Content("~/images/main-logo.png")" alt="Спсание Страница" />
+                    </a>
+
+                    @await Html.PartialAsync("_Navigation")
+                </div>
+            </div>
+        </div>
+
+        <div class="widewrapper subheader">
+            <div class="container">
+                <div class="row">
+                    <div id="breadCrumb" class="tales-breadcrumb col-md-9">
+                        <a href="@Url.Action("Index", "Home")">Списание Страница</a>
+                        <span class="separator">/</span>
+
+                        @await RenderSectionAsync("breadcrumb", required: false)
+                    </div>
+
+                    @* TODO: Search functionality *@
+                    <div class="tales-searchbox">
+                        <form name="search-form" method="post" accept-charset="utf-8">
+                            <button class="searchbutton" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <input name="q" class="searchfield" id="searchbox" type="text" placeholder="Търсене">                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    @await Html.PartialAsync("_Dialogs")
+
+    <div class="widewrapper main">
+        <div class="container main">
+            <div class="row">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="widewrapper footer hidden-print">
+            <div class="container">
+                <div class="row">
+                    <cache expires-after="@TimeSpan.FromHours(1)">
+                        <div class="col-md-3 footer-widget">
+                            <h3><i class="fa fa-cog"></i>Статистика</h3>
+
+                            <div class="stats">
+
+                                <div class="line">
+                                    <span class="counter">@StatsService.GetIssuesCount()</span>
+                                    <span class="caption">Броя</span>
+                                </div>
+
+                                <div class="line">
+                                    <span class="counter">@StatsService.GetEPagesCount()</span>
+                                    <span class="caption">e-страници</span>
+                                </div>
+
+                                <div class="line">
+                                    <span class="counter">@StatsService.GetPostsCount()</span>
+                                    <span class="caption">Статии</span>
+                                </div>
+
+                                @*<div class="line">
+                                    <span class="counter">@StatsService.GetUsersCount()</span>
+                                    <span class="caption">Потребители</span>
+                                </div>*@
+
+                            </div>
+                        </div>
+                    </cache>
+
+                    <cache expires-after="@TimeSpan.FromMinutes(20)">
+                        <div class="col-md-5 footer-widget">
+                            <h3><i class="fa fa-star"></i> Предложения</h3>
+                            <ul class="tales-list">
+                                @await Html.PartialAsync("_Suggestions", StatsService.GetSourcesSuggestions())
+                            </ul>
+                        </div>
+                    </cache>
+
+                    <div class="col-md-3 footer-widget">
+                        <h3><i class="fa fa-envelope"></i>Контакт</h3>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <span>Ще се радваме на обратна връзка за мнения, предложения и критики! Пишете ни на адрес:</span>
+
+                            <span class="email">
+                                <a target="_blank" href="mailto:@StranitzaConstants.HeadEditorEmail">@StranitzaConstants.HeadEditorEmail.Replace("@", " at ")</a>
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                Ще се радваме на обратна връзка за мнения, предложения и критики! <br><br>
+                                За съжаление поради големия брой злоупотреби за връзка с нас Ви молим, първо се регистрирайте.
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <cache expires-after="@TimeSpan.FromDays(30)">
+            <div class="widewrapper copyright">
+                <div class="container">
+                    <div class="row">
+                        <span class="pull-left">p.ivanov; версия: @StatsService.GetAppVersion()</span>
+
+                        <span class="pull-right">
+                            <a id="privacy-link" href="@Url.Action("Privacy", "Home")" target="_blank">Поверителност</a>
+                            <span>|</span>
+                            <a id="help-link" href="@Url.Action("Help", "Home")" target="_blank">Помощ</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </cache>
+    </footer>
+
+    @await RenderSectionAsync("scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+﻿<div id="smallModal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="smallModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <div id="modalHeader" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="modalTITLE"></h4>
+            </div>
+
+            <div id="modalCONTENT" class="modal-body text-center"></div>
+
+            <div class="modal-footer">
+                <button id="modalNO" type="button" class="btn btn-default" data-dismiss="modal"></button>
+                <button id="modalYES" type="button" class="btn btn-primary" data-dismiss="modal"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="previewModal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="previewModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <div class="modal-body text-center">
+                
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Затвори</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@* TODO: Revise this, should user be able to login via AJAX?
+@if (!User.Identity.IsAuthenticated)
+{
+    <div id="registerModal" class="modal fade in" tabindex="-1" role="dialog"
+         aria-labelledby="registerModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Регистрация</h4>
+                </div>
+
+                <div class="modal-body text-center">
+                    <div class="row">
+                        <div id="registerAlert" class="col-md-12 tales-superblock">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 tales-superblock" id="contact">
+                            
+                            $1$TODO: Wire to action#1#
+                            <form action="" method="post"
+                                  id="registerForm" accept-charset="utf-8" class="contact-form">
+                                <input type="text" name="firstName" id="firstName" placeholder="Име"
+                                       class="form-control input-lg validate" required autocomplete='given-name'>
+                                <input type="text" name="lastName" id="lastName" placeholder="Фамилия"
+                                       class="form-control input-lg validate" required autocomplete='family-name'>
+                                <input type="text" name="username" id="username" placeholder="Псевдоним"
+                                       data-popover="true" data-content="Това е името, с което ще се видим за другите потребители в системата."
+                                       class="form-control input-lg validate" required autocomplete="username">
+                                <input type="email" name="email" id="email" placeholder="Email"
+                                       data-popover="true" data-content="Моля въведете валиден email за регистрация, с който да можете да влизате в системата."
+                                       class="form-control input-lg validate" autocomplete="email" required>
+                                <input type="password" name="password" id="password" placeholder="Парола"
+                                       data-popover="true" data-content="Паролата Ви трябва да съдържа поне една цифра и един специален символ."
+                                       class="form-control input-lg validate" autocomplete="on" required>
+                                <input type="password" name="password2" id="password2" placeholder="Парола (отново)"
+                                       data-popover="true" data-content="Повторете горната парола за сигурност."
+                                       class="form-control input-lg validate" autocomplete="on" required>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 tales-superblock">
+                            <div class="social-icons clearfix">
+                                <a href="#" onclick="notImplemented(event)" class="social-icon color-three">
+                                    <div class="inner-circle"></div>
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+
+                                <a href="#" onclick="notImplemented(event)" class="social-icon color-two">
+                                    <div class="inner-circle"></div>
+                                    <i class="fa fa-google-plus"></i>
+                                </a>
+
+                                <a href="#" onclick="notImplemented(event)" class="social-icon color-one">
+                                    <div class="inner-circle"></div>
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Отказ</button>
+                    <button id="registerSubmit" type="button" class="btn btn-primary btn-tales-one">Регистрация</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function notImplemented(e) {
+            e.preventDefault();
+            $("#registerAlert").html(_template.alert("Функционалността не е достъпна за момента.", "INFO"));
+        }
+
+        function submitRegistration(e) {
+            if (!validate.form("#registerForm")) {
+                return false;
+            }
+
+            e.preventDefault();
+            var form = $("#registerForm");
+            var data = $(form).serialize();
+            var submitBtn = $("#registerSubmit");
+            submitBtn.attr('disabled', 'disabled');
+            submitBtn.attr('readonly', 'true');
+            submitBtn.text("Изпращане...");
+            $("#registerAlert").html('');
+
+            $.ajax({
+
+                /*TODO: Wire to action*/
+                url: "${createLink(controller: 'register', action: 'registerAjax')}",
+                type: "post",
+                dataType: "json",
+                data: data,
+
+                success: function(data) {
+                    //console.log(data);
+
+                    var displayMessage;
+
+
+                    var cssClass;
+                    if (data.success === true) {
+                        cssClass = 'success';
+                        displayMessage = data.message || "Регистрацията протече успещно!";
+
+                        setTimeout(function() {
+                                $("#registerModal").modal('hide');
+                            },
+                            4E3);
+
+                    } else {
+                        cssClass = 'danger';
+                        displayMessage = data.message || "Възникна грешка при изпълнение на операцията!";
+
+                        submitBtn.removeAttr('disabled');
+                        submitBtn.removeAttr('readonly');
+                        submitBtn.text("Регистрация");
+                    }
+
+                    $("#registerAlert").html(_template.alert(displayMessage, cssClass));
+                },
+                error: function(data) {
+                    //console.log(data);
+
+                    var message = data.message ||
+                        "Възникна грешка при изпълнение на операцията, моля опитайте отново по-късно.";
+                    $("#registerAlert").html(_template.alert(message, "DANGER"));
+                }
+            });
+
+            return false;
+        }
+
+        $(function() { // document ready
+            $("#registerSubmit").on('click', submitRegistration);
+        });
+    </script>
+}*@

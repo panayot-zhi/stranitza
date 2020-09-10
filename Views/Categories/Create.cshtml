@@ -1,0 +1,62 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewData["Title"] = "Създаване на категория";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Categories">Категории</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Create" asp-controller="Categories">Създаване</a>
+}
+
+
+<div class="col-lg-8 blog-main">
+    <article class="blog-post" id="post">
+
+        <h2 class="underlined">Създаване на категория</h2>
+
+        <form asp-action="Create">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-right">
+                <a asp-controller="Categories" asp-action="Index" class="btn btn-default">Отказ</a>
+                <input type="submit" value="Запис" class="btn btn-tales-one" />
+            </div>
+        </form>
+
+    </article>
+</div>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        function keepAlive() {
+            setInterval(function() {
+                $.get('@Url.Action("Ping", "Home")');
+            }, 5E3);
+        }
+
+        $(document).ready(function() {
+            keepAlive();
+        });
+    </script>
+}

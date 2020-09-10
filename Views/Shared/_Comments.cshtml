@@ -1,0 +1,322 @@
+﻿@{
+    var postId = ViewData["PostId"] as int?;
+    var issueId = ViewData["IssueId"] as int?;
+    var epageId = ViewData["EPageId"] as int?;
+    var getCommentsUrl = ViewData["GetCommentsUrl"] as string;
+    var uploaderDisplayName = ViewData["CurrentUserDisplayName"] as string;
+    var commentsCount = ViewData["CommentsCount"] as int?;
+
+    var commentsViewModel = new CommentViewModel() { PostId = postId, IssueId = issueId, EPageId = epageId };
+}
+
+<aside class="comments" id="comments">
+
+    <hr>
+
+    <h2><i class="fa fa-comments"></i> Коментари</h2>
+
+    <div id="comments-container">
+        <div class="load-container">
+            <div class="loader">Зареждане...</div>
+        </div>
+    </div>
+
+</aside>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <aside class="create-comment hidden-print" id="create-comment">
+
+        <hr>
+
+        <h2><i class="fa fa-heart"></i> Добави коментар</h2>
+
+        <p class="text-center">
+            За да добавите коментар, моля <a asp-area="Identity" asp-page="/Account/Login" asp-all-route-data="@(new Dictionary<string, string>() {{"returnUrl", Context.Request.Path}})" style="text-decoration: underline;">влезте</a> или се
+            <a asp-area="Identity" asp-page="/Account/Register" style="text-decoration: underline;">регистрирайте</a>.
+        </p>
+    </aside>
+}
+else
+{
+    <aside class="create-comment" id="create-comment">
+
+        <hr>
+
+        <h2><i class="fa fa-heart"></i> Добави коментар</h2>
+
+        <partial name="../Comments/_Create.cshtml" model='commentsViewModel' />
+
+    </aside>
+
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
+    {
+        // NOTE: Replying to comments is currently restricted
+        // to administrative roles (Editor and above)
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // REPLY to comment
+                const parentIdField = $("#ParentId");
+                $("#comments-container").on("click", "article.comment a.comment-reply", function(e) {
+                    e.preventDefault();
+
+                    const me = $(this);
+                    const comment = me.closest("article.comment");
+                    const commentId = comment.find("input.comment-id").val();
+                    const author = comment.find("a.comment-author").text();
+                    const date = comment.find("span.date:not(.strikethrough)").text().trim();
+                    const message = "в отговор на коментар @@" + author + " от " + date;
+
+                    $("#comment-reference").attr("href", "#comment-" + commentId);
+
+                    parentIdField.val(commentId);
+                    $("#comment-reply-to").val(message);
+                    parentIdField.removeAttr('disabled');
+                    $("#comment-reply-container").show();
+
+                    // scroll to comment form
+                    $('html, body').animate({
+                        scrollTop: $("#create-comment").offset().top
+                    }, 1200, 'swing');
+                });
+
+                // CLEAR REPLY to comment
+                $("#comment-reply-clear").on('click', function (e) {
+
+                    parentIdField.val('');
+                    $("#comment-reply-to").val('');
+                    parentIdField.attr('disabled', 'disabled');
+
+                    $("#comment-reply-container").hide();
+                });
+
+                // EDIT comment
+                $("#comments-container").on("click", "article.comment button.comment-edit", function (e) {
+                    e.preventDefault();
+
+                    var me = $(this);
+                    var comment = me.closest("article.comment");
+                    var commentId = comment.find(".comment-id").val();
+                    var parentId = comment.find(".comment-parent-id").val();
+
+                    var note = prompt("Моля, опишете причината за промяната на този коментар:");
+                    if (note == null) {
+                        return;
+                    }
+
+                    if (!note) {
+                        modal.popup("Причината за промяна на коментар е задължителна.<br>", "danger");
+                        return;
+                    }
+
+                    modal.wait.show();
+
+                    $.ajax({
+                        url: "@Url.Action("Edit", "Comments")",
+                        method: "POST",
+                        data: { id: commentId, note: note },
+                        success: function (r) {
+                            modal.wait.hide();
+                            comment.replaceWith(r);
+                        },
+                        done: function() {
+                            modal.wait.hide();
+                        }
+                    });
+                });
+
+                // DELETE comment
+                $("#comments-container").on("click", "article.comment button.comment-delete", function (e) {
+                    e.preventDefault();
+
+                    var me = $(this);
+                    var comment = me.closest("article.comment");
+                    var commentId = comment.find(".comment-id").val();
+                    var parentId = comment.find(".comment-parent-id").val();
+
+                    function confirm() {
+                        modal.wait.show();
+
+                        $.ajax({
+                            url: "@Url.Action("Delete", "Comments")",
+                            method: "POST",
+                            data: { id: commentId },
+                            success: function () {
+                                modal.wait.hide();
+
+                                if (!parentId) {
+                                    // animate deletion of all replies
+                                    comment.nextUntil("article.comment:not(.reply), .load-more").slideUp(900, function() {
+                                        $(this).remove();
+                                    });
+                                } 
+
+                                // animate deletion of comment
+                                comment.slideUp(900, function() {
+                                    $(this).remove();
+                                });
+                            },
+                            done: function() {
+                                modal.wait.hide();
+                            }
+                        });
+                    }
+
+                    modal.confirm("Сигурни ли сте, че желаете да изтриете коментара и всички негови отговори?", confirm);
+
+                });
+
+            })
+        </script>
+    }
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            // COUNT symbols
+            $("#Content").keyup(function () {
+
+                let me = $(this);
+                const length = me.val().length;
+                const remaining = Math.max(0, 1000 - length); 
+
+                $("#comment-length").text(remaining);
+            });
+
+            // CREATE comment
+            const parentIdField = $("#ParentId");
+            $("#comment-form").on('submit', function(e) {
+                e.preventDefault();
+
+                var me = $(this);
+                if (!me.valid()) {
+                    return;
+                }
+
+                var form = me.serialize();
+                var parentId = parentIdField.val();
+
+                modal.wait.show();
+
+                $.ajax({
+                    url: "@Url.Action("Create", "Comments")",
+                    method: "POST",
+                    data: form,
+                    success: function (r) {
+                        modal.wait.hide();
+
+                        // clear content
+                        $("#Content").val('');
+
+                        if (parentId) {
+
+                            // clear reply-to
+                            parentIdField.val('');
+                            $("#comment-reply-to").val('');
+                            parentIdField.attr('disabled', 'disabled');
+
+                            // hide reply-to
+                            $("#comment-reply-container").hide();
+
+                            // find parent
+                            const comment = $('article.comment[id="comment-' + parentId + '"]');
+
+                            // append comment
+                            comment.after(r);
+
+                            // scroll to parent
+                            $('html, body').animate({
+                                scrollTop: comment.offset().top
+                            }, 1800, 'swing');
+
+                        } else {
+                            // top-level comment
+                            $("#comments-container").prepend(r);
+
+                            // scroll to top
+                            $('html, body').animate({
+                                scrollTop: $("#comments").offset().top
+                            }, 1800, 'swing');
+                        }
+
+                    },
+                    done: function() {
+                        modal.wait.hide();
+                    }
+                });
+            });
+
+            $("#comment-form").on('reset', function (e) {
+                e.preventDefault();
+
+                $("#Content").val('');
+                $("#comment-reply-clear").click();
+            });
+        });
+    </script>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var getCommentsUrl = "@getCommentsUrl";
+
+        // LOAD comments
+        $.ajax({
+            url: getCommentsUrl,
+            method: "GET",
+            success: function(r) {
+                $("#comments-container").html(r);
+            },
+            done: function() {
+                modal.wait.hide();
+            }
+        });
+
+        // LOAD more comments
+        $("#comments-container").on("click", "a.comments-load-more", function(e) {
+            e.preventDefault();
+
+            let me = $(this);
+            let icon = me.find("i.fa");
+            const container = me.closest(".load-more");
+            const commentsCount = $("#comments article.comment:not(.reply)").length;
+
+            icon.addClass("fa-spin");
+
+            $.ajax({
+                url: getCommentsUrl + "?offset=" + commentsCount,
+                method: "GET",
+                success: function (r) {
+                    container.replaceWith(r);
+                }
+            });
+        });
+
+        // LOAD more replies
+        $("#comments-container").on("click", "a.comments-load-more-replies", function(e) {
+            e.preventDefault();
+
+            let me = $(this);
+            let icon = me.find("i.fa");
+            const parentId = me.data("parent-id");
+            const container = me.closest(".load-more-replies");
+            const repliesCount = container.prevUntil("article.comment:not(.reply)").length;
+
+            icon.addClass("fa-spin");
+
+            $.ajax({
+                url: getCommentsUrl + "?parentId=" + parentId  + "&offset=" + repliesCount,
+                method: "GET",
+                success: function (r) {
+                    container.replaceWith(r);
+                }
+            });
+        });
+
+
+    })
+</script>

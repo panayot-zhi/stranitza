@@ -1,0 +1,83 @@
+﻿@model CommentViewModel
+
+@{
+    var isReply = Model.ParentId.HasValue;
+    var avatarPath = Model.UploaderAvatarPath ?? 
+        Url.Content("~/images/default-user.png");
+}
+
+<article id="comment-@Model.Id" class="comment @(isReply ? "reply" : string.Empty )">
+    <header class="clearfix">
+
+        <img src="@avatarPath" class="comment-avatar" alt="Аватар"/>
+
+        <div class="meta">
+
+            <input type="hidden" class="comment-id" value="@Model.Id" />
+            <input type="hidden" class="comment-parent-id" value="@Model.ParentId" />
+
+        @*@if (User.IsAtLeast(StranitzaRoles.Editor))
+        {            
+            <button type="button" class="close comment-delete" aria-label="Затвори">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        }*@
+
+            @if (User.IsAtLeast(StranitzaRoles.Editor))
+            {
+                /* TODO: Revise this */
+                <button type="button" class="close comment-edit" aria-label="Редакция">
+                    <span aria-hidden="true"><i class="fa fa-edit"></i></span>
+                </button>
+            }
+
+            <h3>
+                @* TODO: Wire this to an author preview page *@
+                <a class="comment-author" asp-area="Identity" asp-page="/Account/Manage/Index">@Model.UploaderDisplayName</a>
+            </h3>
+
+            @if (Model.ModeratorId != null)
+            {
+                <span class="date strikethrough">@Model.DateCreated.ToString("dd MMMM yyyy HH:mm")</span>@:,
+                <span class="date">@Model.LastUpdated.ToString("dd MMMM yyyy HH:mm") <small>(@Model.ModeratorDisplayName)</small></span>
+            }
+            else
+            {
+                <span class="date">@Model.DateCreated.ToString("dd MMMM yyyy HH:mm")</span>
+            }
+
+            @if (!isReply && User.IsAtLeast(StranitzaRoles.Editor))
+            {
+                <span class="separator">
+                    -
+                </span>
+
+                <a href="#create-comment" class="comment-reply">Отговори</a>
+            }
+
+        </div>
+    </header>
+    <div class="body">
+        @if (Model.ModeratorId != null)
+        {
+            <small>@Model.Content</small>
+        }
+        else
+        {
+            @Model.Content
+        }
+    </div>
+    
+    <div class="body">
+        @if (Model.ModeratorId != null)
+        {
+            @Model.Note
+        }
+    </div>
+
+</article>
+
+@if (Model.Children?.Comments != null)
+{
+    <partial name="_Comments" model="Model.Children" />
+}

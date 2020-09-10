@@ -1,0 +1,73 @@
+﻿@model CategoryViewModel
+
+@{
+    ViewData["Title"] = $"Преглед на категория „{Model.Name}“";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-controller="Categories" asp-action="Index">Категории</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Categories" asp-route-id="@Model.Id">@Model.Name</a>
+}
+
+<div class="col-lg-8">
+    <h2>@Model.Name</h2>
+
+    <pre class="help-block">@Model.Description</pre>
+    
+    <hr />
+    
+    <p class="help-block">
+        @Html.DisplayNameFor(x => x.EPagesCount): @Model.EPagesCount
+    </p>
+
+    <p class="help-block">
+        @Html.DisplayNameFor(x => x.SourcesCount): @Model.SourcesCount
+    </p>
+    
+    <p class="help-block">
+        @Html.DisplayNameFor(x => x.AllSourcesCount): @Model.AllSourcesCount
+    </p>
+
+    <hr />
+    
+    <div class="form-group row">
+        <div class="col-sm-4">
+            <label asp-for="LastUpdated"></label>
+            <input asp-for="LastUpdated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+
+        <div class="col-sm-4 col-md-offset-4 text-right">
+            <label asp-for="DateCreated"></label>
+            <input asp-for="DateCreated" class="form-control text-center" readonly="readonly" type="text" />
+        </div>
+    </div>
+
+</div>
+
+<aside class="col-lg-4 blog-aside pt10">
+
+    <div class="aside-widget">
+        <header>
+            <h3>Навигация</h3>
+        </header>
+        <div class="body">
+            <ul class="tales-list">
+                <li><a asp-action="Edit" asp-controller="Categories" asp-route-id="@Model.Id">Редакция на категория</a></li>
+                <li><a asp-action="Sources" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани източници (@Model.SourcesCount)</a></li>
+                <li><a asp-action="EPages" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани е-страници (@Model.EPagesCount)</a></li>
+                <li><a asp-controller="Categories" asp-action="Create">Създаване на нова категория</a></li>
+                <li><a asp-action="Index" asp-controller="Categories">Към списък</a></li>
+                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                {
+                    <li><a asp-action="Delete" asp-controller="Categories" asp-route-id="@Model.Id">Изтриване</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+
+
+</aside>

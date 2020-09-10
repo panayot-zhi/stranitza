@@ -1,0 +1,141 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model PagedViewModel
+
+@{
+    // Because most resources are chronologically ordered
+    // Back (Назад) makes more sense for advancing pages
+
+    var nextLabel = ViewData["Next"] ?? "Назад";
+    var previousLabel = ViewData["Previous"] ?? "Напред";
+
+    var hasNext = Model.HasNextPage;
+    var hasPrevious = Model.HasPreviousPage;
+    var currentStep = Model.PageIndex;
+    var lastStep = Model.TotalPages;
+
+    const int firstStep = 1;
+    const int maxSteps = 8;
+    const string pageParameter = "page";
+
+    var beginStep = currentStep - (int)Math.Round((decimal)maxSteps / 2) + (maxSteps % 2);
+    var endStep = currentStep + (int)Math.Round((decimal)maxSteps / 2) - 1;
+
+    string GetUrl(int pageNumber)
+    {
+        var queryString = Context.Request.QueryString;
+        if (!queryString.HasValue)
+        {
+            return $"{Context.Request.PathBase}{Context.Request.Path}?{pageParameter}={pageNumber}";
+        }
+
+        var currentPageNumberParameter = $"{pageParameter}={currentStep}";
+        if (queryString.Value.Contains(currentPageNumberParameter))
+        {
+            return Context.Request.GetEncodedUrl().Replace(currentPageNumberParameter, $"{pageParameter}={pageNumber}");
+        }
+        else
+        {
+            return $"{Context.Request.GetEncodedUrl()}&{pageParameter}={pageNumber}";
+        }
+    }
+}
+
+@*<span>firstStep: @firstStep</span>
+<span>lastStep: @lastStep</span>
+<span>beginStep: @beginStep</span>
+<span>endStep: @endStep</span>
+<span>maxsteps: @maxSteps</span>*@
+
+<div class="paging text-center">
+
+
+    @if (hasPrevious)
+    {
+        <a class="newer" href="@GetUrl(Model.PageIndex - 1)">
+            <i class="fa fa-long-arrow-left"></i> @previousLabel
+        </a>
+    }
+    else
+    {
+        <a class="newer disabled" href="#">
+            <i class="fa fa-long-arrow-left"></i> @previousLabel
+        </a>
+    }
+
+    <span>•</span>
+
+    @if (lastStep > firstStep)
+    {
+        if (beginStep < firstStep)
+        {
+            beginStep = firstStep;
+            endStep = maxSteps;
+        }
+
+        if (endStep > lastStep)
+        {
+            beginStep = lastStep - maxSteps + 1;
+            if (beginStep < firstStep)
+            {
+                beginStep = firstStep;
+            }
+
+            endStep = lastStep;
+        }
+
+        // display link to the firstStep
+        // when beginStep is not firststep
+        if (beginStep > firstStep)
+        {
+            <a href="@GetUrl(firstStep)" class="step">@firstStep</a>
+            <span>•</span>
+            if (beginStep > firstStep + 1)
+            {
+                <span>...</span>
+                <span>•</span>
+            }
+        }
+
+        for (int i = beginStep; i <= endStep; i++)
+        {
+            if (i == currentStep)
+            {
+                <span class="active">@i</span>
+                <span>•</span>
+            }
+            else
+            {
+                <a href="@GetUrl(i)" class="step">@i</a>
+                <span>•</span>
+            }
+        }
+
+        // display link to lastStep
+        // when endstep is not laststep
+        if (endStep < lastStep)
+        {
+            if (endStep < lastStep - 1)
+            {
+                <span>...</span>
+                <span>•</span>
+            }
+
+            <a href="@GetUrl(lastStep)" class="step">@lastStep</a>
+            <span>•</span>
+        }
+
+    }
+
+    @if (hasNext)
+    {
+        <a class="older" href="@GetUrl(Model.PageIndex + 1)">
+            @nextLabel <i class="fa fa-long-arrow-right"></i>
+        </a>
+    }
+    else
+    {
+        <a class="older disabled" href="#">
+            @nextLabel <i class="fa fa-long-arrow-right"></i>
+        </a>
+    }
+</div>

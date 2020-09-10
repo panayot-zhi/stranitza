@@ -1,0 +1,121 @@
+﻿@model EPageCreateViewModel
+
+@{
+    ViewData["Title"] = "Създаване на публикация";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section head {
+    <script src="~/lib/ckeditor/ckeditor.js"></script>
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="EPages">е-страница</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Create" asp-controller="EPages">Създаване на публикация</a>
+}
+
+<div class="col-lg-10 blog-main">
+    <article class="blog-post" id="epage">
+        <h2 class="underlined">Създаване на публикация</h2>
+
+        <form id="create-epage-form" asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row">
+                <div class="form-group col-md-4" str-validation-for="FirstName" str-error-class="has-error">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control capitalize-input" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4" str-validation-for="LastName" str-error-class="has-error">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control capitalize-input" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4" str-validation-for="CategoryId" str-error-class="has-error">
+                    <label asp-for="CategoryId" class="control-label"></label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                        <option value="">Моля, изберете категория</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="form-group" str-validation-for="Title" str-error-class="has-error">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="checkbox text-right">
+                <label asp-for="IsTranslation" class="control-label">
+                    <input asp-for="IsTranslation" /> <b> @Html.DisplayNameFor(x => x.IsTranslation) </b>
+                </label>
+            </div>
+
+            <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group pt20">
+                <label asp-for="Content" class="control-label"></label>
+                <textarea asp-for="Content" class="str-validation-ignore"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <div class="form-group" str-validation-for="Notes" str-error-class="has-error">
+                <textarea asp-for="Notes" class="form-control" rows="4" placeholder="@Html.DisplayNameFor(x => x.Notes)"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            <div class="form-group text-right">
+                <a asp-controller="EPages" asp-action="Index" class="btn btn-default">Отказ</a>
+                <input type="submit" value="Запис" class="btn btn-tales-one" />
+            </div>
+
+        </form>
+    </article>
+</div>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        CKEDITOR.replace('Content', {
+            customConfig: '/js/ck.js'
+        });
+
+        function keepAlive() {
+            setInterval(function() {
+                $.get('@Url.Action("Ping", "Home")');
+            }, 5E3);
+        }
+
+        $(document).ready(function () {
+            keepAlive();
+
+            $(".capitalize-input").on('blur', function (e) {
+                var me = $(this);
+                var name = me.val();
+                if (!name) {
+                    return;
+                }
+
+                var capitalizedName = name[0].toLocaleUpperCase() + name.substring(1);
+                me.val(capitalizedName);
+            });
+        });
+    </script>
+}

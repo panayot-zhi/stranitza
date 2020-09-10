@@ -1,45 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using stranitza.Models.Database;
+using stranitza.Utility;
 
 namespace stranitza.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager,
-            ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            ILogger<ExternalLoginModel> logger)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
-            _emailSender = emailSender;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public string ProviderDisplayName { get; set; }
+        public string LoginProvider { get; set; }
 
         public string ReturnUrl { get; set; }
 
@@ -48,9 +40,39 @@ namespace stranitza.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            [Display(Name = "Име")]
+            [Required(ErrorMessage = "Моля, въведете име.")]
+            [RegularExpression(StranitzaConstants.CyrillicNamePattern, ErrorMessage = "Моля, въведете име на кирилица.")]
+            public string FirstName { get; set; }
+
+            [Display(Name = "Фамилия")]
+            [Required(ErrorMessage = "Моля, въведете фамилия.")]
+            [RegularExpression(StranitzaConstants.CyrillicNamePattern, ErrorMessage = "Моля, въведете име на кирилица.")]
+            public string LastName { get; set; }
+
+            [Display(Name = "Псевдоним")]
+            [Required(ErrorMessage = "Моля, въведете псевдоним.")]
+            public string UserName { get; set; }
+
             [EmailAddress]
+            [Display(Name = "Email")]
+            [Required(ErrorMessage = "Моля, въведете email адрес.")]
             public string Email { get; set; }
+
+            // [Required(ErrorMessage = "Моля, въведете парола.")]
+            // [StringLength(100, ErrorMessage = "Полето за {0} трябва да е с поне {2} и най-много {1} символа дължина.", MinimumLength = 6)]
+            // [DataType(DataType.Password)]
+            // [Display(Name = "Парола")]
+            // public string Password { get; set; }
+            //
+            // [DataType(DataType.Password)]
+            // [Display(Name = "Потвърди")]
+            // [Compare("Password", ErrorMessage = "Двете пароли не съвпадат.")]
+            // public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "За да се регистрирате се изисква да сте прочели и да приемате общите условия на сайта и политиката му за поверителност.")]
+            [Display(Name = "Прочетох и приемам Политиката за поверителност на сайта и Общите му условия")]
+            public bool PrivacyConsent { get; set; }
         }
 
         public IActionResult OnGetAsync()
@@ -71,39 +93,59 @@ namespace stranitza.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";
+                ErrorMessage = $"Възникна грешка от {LoginProvider}: {remoteError}";
                 return RedirectToPage("./Login", new {ReturnUrl = returnUrl });
             }
+
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                ErrorMessage = $"Възникна грешка при зареждане на данните от {LoginProvider}.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
             // Sign in the user with this external login provider if the user already has a login.
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
+            // NOTE: Successful social logins should be equivalent to hitting remember me on login, persist them
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true, bypassTwoFactor: true);
             if (result.Succeeded)
             {
+                // Update avatar path on each login
+                //await _userManager.UpdateUserAvatarPathAsync(info);
+
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
-                return LocalRedirect(returnUrl);
+
+                return RedirectToPage("./Redirector", new { redirectUrl = returnUrl });
             }
+
+            if (result.IsNotAllowed)
+            {
+                ErrorMessage = "Променили сте Вашия email адрес. Изпратихме Ви писмо, което съдържа връзка за потвърждение на новият Ви email. " +
+                               "Моля, преди да влезете в сайта, потвърдете електронна си поща.";
+
+                return RedirectToPage("./Login");
+            }
+
             if (result.IsLockedOut)
             {
                 return RedirectToPage("./Lockout");
             }
             else
             {
-                // If the user does not have an account, then ask the user to create an account.
+                // If the user does not have an account,
+                // then ask the user to create an account.
+
                 ReturnUrl = returnUrl;
-                ProviderDisplayName = info.ProviderDisplayName;
+                Input = new InputModel();
+                LoginProvider = info.LoginProvider;
+
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
-                    Input = new InputModel
-                    {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-                    };
+                    Input.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                    Input.UserName = info.Principal.FindFirstValue(ClaimTypes.Name);
+                    Input.FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                    Input.LastName = info.Principal.FindFirstValue(ClaimTypes.Surname);
                 }
+
                 return Page();
             }
         }
@@ -111,6 +153,7 @@ namespace stranitza.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
+
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
@@ -121,46 +164,44 @@ namespace stranitza.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                //var profilePicture = info.Principal.GetProfilePicture();
+                var verifiedEmail = info.Principal.GetVerifiedEmail();
+
+                var user = new ApplicationUser
+                {
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    UserName = Input.UserName,
+
+                    Email = Input.Email,
+
+                    // The presumption is, that a social
+                    // login has the email confirmed
+                    EmailConfirmed = verifiedEmail ?? true,
+
+                    AvatarType = StranitzaExtensions.GetAvatarType(info.LoginProvider)
+                };
 
                 var result = await _userManager.CreateAsync(user);
+
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _userManager.UpdateUserAvatarPathAsync(info);
+
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
-
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
-
-                        return LocalRedirect(returnUrl);
+                        return RedirectToPage("./Redirector", new { redirectUrl = returnUrl });
                     }
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+
+                ModelState.AddIdentityErrors(result.Errors);
             }
 
-            ProviderDisplayName = info.ProviderDisplayName;
+            LoginProvider = info.LoginProvider;
             ReturnUrl = returnUrl;
             return Page();
         }

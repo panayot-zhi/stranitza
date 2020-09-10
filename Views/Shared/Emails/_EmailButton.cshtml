@@ -1,0 +1,19 @@
+﻿@model dynamic
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td bgcolor="#ffffff" align="center" style="padding: 30px 30px 15px 30px">
+            <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td align="center" style="border-radius:30px;" bgcolor="#0088f3">
+                        <a href="@Model.Url" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; display: inline-block;">
+                            @Model.Text
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<p style="word-break:break-all;color:#666666;font-family:'Lato',Helvetica,Arial,sans-serif;font-size:12px;font-weight:400;line-height:18px;text-align:center;padding-bottom:20px;">Бутонът не работи? Опитайте да копирате връзката директно в браузъра:<br />@Model.Url</p>

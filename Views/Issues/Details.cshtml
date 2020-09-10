@@ -1,0 +1,173 @@
+﻿@model IssueDetailsViewModel
+
+@{
+    ViewData["Title"] = $"Преглед на брой {Model.GetIssueTitle()}";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section head {
+
+    <link rel="stylesheet" href="~/lib/lightgallery/css/lightgallery.min.css" />
+    <link rel="stylesheet" href="~/lib/lightgallery/css/lg-fb-comment-box.min.css" />
+    <link rel="stylesheet" href="~/lib/lightgallery/css/lg-transitions.min.css" />
+
+    <script defer src="~/lib/lightgallery/js/lightgallery-all.min.js"></script>
+}
+
+@section breadcrumb {
+    <a href="@Url.Action("Index", "Issues")">Библиотека</a>
+
+    <span class="separator">/</span>
+    <a href="@Url.Action("Index", "Issues", new {year = Model.ReleaseYear})">@Model.ReleaseYear</a>
+
+    <span class="separator">/</span>
+    <span>Брой №@Model.GetIssueTitleShort()</span>
+}
+
+<div class="col-lg-8 blog-main">
+    <div id="issue">
+
+        <h2 class="underlined">Преглед на брой @Model.GetIssueTitleLong()</h2>
+
+        <div id="pages-gallery" class="list-unstyled row">
+
+            @foreach (var page in Model.Pages)
+            {
+                if (page.Type == StranitzaPageType.Regular)
+                {
+                    <a href="@Url.Action("Load", "Pages", new {id = page.Id})" data-id="@(page.Id)"
+                       data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
+                        <img src="@Url.Action("Load", "Pages", new {id = page.Id, thumb = true})" style="display: none;" alt="Страница № @(page.PageNumber)" />
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Load", "Pages", new {id = page.Id})"
+                       data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
+                        <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber)" />
+                    </a>
+                }
+            }
+
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_Sharer", new SharerViewModel()
+    {
+        Title = Uri.EscapeDataString($"{Model.GetIssueTitleLong()}"),
+        Descritpion = string.IsNullOrEmpty(Model.Description) ? string.Empty : Uri.EscapeDataString(Model.Description),     // TODO: Add some generic description if empty here
+        Url = Url.Action("Details", "Issues", new { id = Model.Id }, Context.Request.Scheme),
+    })
+
+    @{
+        var getCommentsUrl = Url.Action("GetIssueComments", "Comments", new { id = Model.Id });
+    }
+
+    <partial name="_Comments" view-data='new ViewDataDictionary(ViewData) {
+            { "IssueId", Model.Id },
+            { "GetCommentsUrl", getCommentsUrl },
+            { "CommentsCount", Model.CommentsCount },
+        }' />
+</div>
+
+<aside class="col-lg-4 blog-aside">
+
+    <div class="aside-widget">
+        <header>
+            <h3>Навигация</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                @if (User.IsAtLeast(StranitzaRoles.Editor))
+                {
+                    <li><a asp-controller="Issues" asp-action="Create">Създаване на нов брой</a></li>
+                    <li><a asp-controller="Issues" asp-action="Edit" asp-route-id="@Model.Id">Редакция на брой</a></li>
+                }
+
+                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                {
+                    <li><a asp-controller="Issues" asp-action="Delete" asp-route-id="@Model.Id">Изтриване на броя</a></li>
+                }
+
+                <li><a href="#sharer">Сподели</a></li>
+                <li><a href="#comments">Коментари</a></li>
+                <li><a href="#create-comment">Напиши коментар</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Индекс</h3>
+        </header>
+        <div class="body">
+
+            @if (Model.Sources == null || !Model.Sources.Any())
+            {
+                <p>За съжаление съдържанието на този брой все още не е индексирано в системата.</p>
+            }
+            else
+            {
+                <ul class="tales-list">
+
+                    @foreach (var source in Model.Sources)
+                    {
+                        <li>
+
+                            @if (Model.ReleaseYear > 2007)
+                            {
+                                <a href="@Url.GetPdfPage(Model.Id, source.StartingPage)" target="_blank">
+                                    @source.Title<br>
+                                    @source.Origin<br>
+                                    стр. @source.Pages
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="open-lightGallery" href="@Url.GetGallerySlide(Model.Id, source.StartingPage)">
+                                    @source.Title<br>
+                                    @source.Origin<br>
+                                    стр. @source.Pages
+                                </a>
+                            }
+                        </li>
+                    }
+
+                </ul>
+            }
+
+        </div>
+    </div>
+
+</aside>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        var $plg;
+        var $plgoptions = {
+            autoplay: false,
+            autoplayControls: false,
+            hideBarsDelay: 1.8e+6,
+            addClass: "stranitza-lg",
+
+            facebookDropdownText: "",
+            twitterDropdownText: "",
+            pinterestDropdownText: "",
+            googlePlus: false
+        };
+
+        $(document).ready(function () {
+            $plg = $("#pages-gallery");
+            $plg.lightGallery($plgoptions);
+
+            $('.open-lightGallery').on('click', function (e) {
+                window.location.href = $(this).attr('href');
+                window.location.reload(true);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,143 @@
+﻿@model SourceCreateViewModel
+
+@{
+    ViewData["Title"] = "Създаване на източник";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@section breadcrumb {
+    <a asp-action="Index" asp-controller="Sources">Индекс</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Create" asp-controller="Sources">Създаване на източник</a>
+}
+
+<div class="col-lg-8 blog-main">
+    <article class="blog-post" id="post">
+
+        <h2 class="underlined">Създаване на източник</h2>
+        <form asp-action="Create">
+
+            <div class="form-group" str-validation-for="Title" str-error-class="has-error">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="checkbox text-right">
+                <label asp-for="IsTranslation" class="control-label">
+                    <input asp-for="IsTranslation" /> <b> @Html.DisplayNameFor(x => x.IsTranslation) </b>
+                </label>
+            </div>
+
+            <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6 col-md-offset-6 text-right" str-validation-for="CategoryId" str-error-class="has-error">
+                    <label asp-for="CategoryId" class="control-label"></label>
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                        <option value="">Моля, изберете категория</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="form-group col-md-5 col-md-offset-1" str-validation-for="FirstName" str-error-class="has-error">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-5" str-validation-for="LastName" str-error-class="has-error">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-10 col-md-offset-1" str-validation-for="Origin" str-error-class="has-error">
+                    <label asp-for="Origin" class="control-label"></label>
+                    <input asp-for="Origin" class="form-control" />
+                    <span asp-validation-for="Origin" class="text-danger"></span>
+
+                    <p class="help-block">
+                        <small>
+                            Двете имена се използват за да се намери и свърже автора на произведението с потребителски акаунт в системата.
+                            Произходът на произведението се показва в индекса.
+                        </small>
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="form-group col-sm-2 col-sm-offset-1" str-validation-for="ReleaseNumber" str-error-class="has-error">
+                    <label asp-for="ReleaseNumber" class="control-label"></label>
+                    <input asp-for="ReleaseNumber" class="form-control" />
+                    <span asp-validation-for="ReleaseNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-3" str-validation-for="ReleaseYear" str-error-class="has-error">
+                    <label asp-for="ReleaseYear" class="control-label"></label>
+                    <input asp-for="ReleaseYear" class="form-control" />
+                    <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-3" str-validation-for="Pages" str-error-class="has-error">
+                    <label asp-for="Pages" class="control-label"></label>
+                    <input asp-for="Pages" class="form-control" />
+                    <span asp-validation-for="Pages" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-2" str-validation-for="StartingPage" str-error-class="has-error">
+                    <label asp-for="StartingPage" class="control-label"></label>
+                    <input asp-for="StartingPage" class="form-control" />
+                    <span asp-validation-for="StartingPage" class="text-danger"></span>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <label asp-for="Notes" class="control-label"></label>
+                    <textarea asp-for="Notes" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group text-right">
+                <a asp-action="Index" class="btn btn-default">Отказ</a>
+                <input type="submit" value="Запис" class="btn btn-tales-one" />
+            </div>
+
+        </form>
+    </article>
+</div>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        function keepAlive() {
+            setInterval(function() {
+                $.get('@Url.Action("Ping", "Home")');
+            }, 5E3);
+        }
+
+        $(document).ready(function() {
+            keepAlive();
+        });
+    </script>
+}
