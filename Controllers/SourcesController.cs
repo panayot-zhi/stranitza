@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
-using stranitza.Models.Database.Repositories;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 using Serilog;
+using stranitza.Repositories;
 using stranitza.Services;
 
 namespace stranitza.Controllers

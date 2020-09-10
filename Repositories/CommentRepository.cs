@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 
-namespace stranitza.Models.Database.Repositories
+namespace stranitza.Repositories
 {
     public static class CommentRepository
     {

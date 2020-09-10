@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using stranitza.Models.Database;
-using stranitza.Models.Database.Repositories;
 using stranitza.Models.ViewModels;
+using stranitza.Repositories;
 
 namespace stranitza.Services
 {

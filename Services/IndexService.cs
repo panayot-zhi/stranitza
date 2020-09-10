@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using stranitza.Models.Database;
-using stranitza.Models.Database.Repositories;
 using Serilog;
+using stranitza.Repositories;
 
 namespace stranitza.Services
 {

@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using stranitza.Models.Database;
-using stranitza.Models.Database.Repositories;
 using stranitza.Models.ViewModels;
+using stranitza.Repositories;
 using stranitza.Services;
 using stranitza.Utility;
 

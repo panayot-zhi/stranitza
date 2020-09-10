@@ -13,12 +13,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using stranitza.Models.Database;
-using stranitza.Models.Database.Repositories;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 using Serilog;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using stranitza.Repositories;
 using Image = SixLabors.ImageSharp.Image;
 
 namespace stranitza.Services

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using stranitza.Models.Database;
 
-namespace stranitza.Models.Database.Repositories
+namespace stranitza.Repositories
 {
     public static class UserRepository
     {
