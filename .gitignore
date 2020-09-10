@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Mine
+*.7z
+appsettings*.json
+*.DotSettings
