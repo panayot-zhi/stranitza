@@ -16,9 +16,9 @@ namespace stranitza.Controllers
     {
         private readonly IMailSender _mailSender;
         private readonly EmailSettings _emailSettings;
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
-        public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings, IHostingEnvironment environment)
+        public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings, IWebHostEnvironment environment)
         {
             _mailSender = mailSender;
             _environment = environment;

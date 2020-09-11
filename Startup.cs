@@ -4,6 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authentication.Twitter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -72,15 +75,14 @@ namespace stranitza
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
-            /* TODO
              services.AddAuthentication()
                 .AddFacebook(options =>
                 {
                     options.AppId = Configuration.GetValue<string>("FacebookAppId");
                     options.AppSecret = Configuration.GetValue<string>("FacebookAppSecret");
                     options.Fields.Add("picture");
-                    options.ClaimActions.MapCustomJson(StranitzaClaimTypes.Picture,
-                        json => json["picture"]["data"]["url"].ToString());
+                    options.ClaimActions.MapCustomJson(StranitzaClaimTypes.Picture, 
+                        json => json.GetProperty("picture").GetProperty("data").GetString("url"));
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
                 })
                 .AddTwitter(options =>
@@ -98,7 +100,7 @@ namespace stranitza
                     options.ClaimActions.MapJsonKey(StranitzaClaimTypes.Picture, "picture");
                     options.ClaimActions.MapJsonKey(StranitzaClaimTypes.VerifiedEmail, "verified_email");
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
-                });*/
+                });
 
 
             services.ConfigureExternalCookie(options =>
@@ -259,11 +261,10 @@ namespace stranitza
             Log.Logger.Information("Services added to the container and configured successfully.");
         }
 
-
-        /*
-            NOTE: Use this for debugging purposes only
+            
+        // NOTE: Use this for debugging purposes only
          
-            private Task OnCreatingTicket(TwitterCreatingTicketContext arg)
+        /*private Task OnCreatingTicket(TwitterCreatingTicketContext arg)
         {
             return Task.CompletedTask;
         }

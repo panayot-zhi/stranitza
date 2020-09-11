@@ -14,8 +14,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="Properties\LocalizedIdentityErrorMessages.en.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Properties\LocalizedIdentityErrorMessages.en.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="iTextSharp.LGPLv2.Core" Version="1.6.7" />
     <PackageReference Include="MailKit" Version="2.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.8" />

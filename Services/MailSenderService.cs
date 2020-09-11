@@ -11,6 +11,7 @@ using MimeKit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using stranitza.Utility;
@@ -22,14 +23,14 @@ namespace stranitza.Services
         private readonly EmailSettings _emailSettings;
         private readonly IRazorViewToStringRenderer _renderer;
         private readonly IHttpContextAccessor _;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly LinkGenerator _link;
 
         public MailSenderService(
             IOptions<EmailSettings> emailSettings,
             IRazorViewToStringRenderer renderer,
             IHttpContextAccessor httpContext,
-            IHostingEnvironment env, LinkGenerator link)
+            IWebHostEnvironment env, LinkGenerator link)
         {
             _emailSettings = emailSettings.Value;
             _renderer = renderer;
@@ -79,14 +80,14 @@ namespace stranitza.Services
 
                 foreach (var email in emails)
                 {
-                    mimeMessage.To.Add(new MailboxAddress(email));
+                    mimeMessage.To.Add(MailboxAddress.Parse(email));
                 }
 
                 if (ccEmails != null)
                 {
                     foreach (var email in ccEmails)
                     {
-                        mimeMessage.Cc.Add(new MailboxAddress(email));
+                        mimeMessage.Cc.Add(MailboxAddress.Parse(email));
                     }
                 }
 
@@ -94,7 +95,7 @@ namespace stranitza.Services
                 {
                     foreach (var email in bccEmails)
                     {
-                        mimeMessage.Bcc.Add(new MailboxAddress(email));
+                        mimeMessage.Bcc.Add(MailboxAddress.Parse(email));
                     }
                 }
 
