@@ -231,7 +231,7 @@ namespace stranitza.Services
             }
 
             var assembly = GetType().Assembly;
-            var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0.0";
             _appVersion = informationalVersion;
             return informationalVersion;
         }
@@ -267,10 +267,8 @@ namespace stranitza.Services
             var key = $"view_count_{issueId}";
             var origin = StranitzaExtensions.Md5Hash($"{clientIp} {userAgent}");
 
-            string[] viewCountOrigins;
-
-            // Look for cache key.
-            if (!_cache.TryGetValue(key, out viewCountOrigins))
+            // Look for cache key
+            if (!_cache.TryGetValue(key, out string[] viewCountOrigins))
             {
                 // Add and be gone
                 AddOrigin(key, origin, null);
@@ -366,6 +364,7 @@ namespace stranitza.Services
         }
 
         // ReSharper disable ArrangeAccessorOwnerBody
+
         private static class Sql
         {
             public static string GetPostsSuggestions
