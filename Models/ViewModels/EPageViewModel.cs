@@ -8,7 +8,7 @@ namespace stranitza.Models.ViewModels
     {
         public Dictionary<string, List<EPageIndexViewModel>> EPagesByCategory { get; set; }
 
-        public IEnumerable<EPagesCountByYear> YearFilter { get; set; }
+        public IEnumerable<CountByYears> YearFilter { get; set; }
 
         public int CurrentYear { get; set; }
 

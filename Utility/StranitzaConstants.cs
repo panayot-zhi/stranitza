@@ -43,6 +43,14 @@ namespace stranitza.Utility
 
     }
 
+    public static class CountQueryType
+    {
+        public const int Sources = 1;
+        public const int EPages = 2;
+        public const int Issues = 3;
+        public const int AvailableIssues = 4;
+    }
+
     public static class StranitzaCacheProfile
     {
         public const string NoCache = "NoCache";

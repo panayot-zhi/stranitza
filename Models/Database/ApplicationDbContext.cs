@@ -32,9 +32,9 @@ namespace stranitza.Models.Database
 
         public DbSet<StranitzaSource> StranitzaSources { get; set; }
 
-        // views
+        // notMapped, views & generic
 
-        public DbSet<EPagesCountByYear> EPagesCountByYears { get; set; }
+        public DbSet<CountByYears> CountByYears { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -185,11 +185,12 @@ namespace stranitza.Models.Database
                 .WithMany(p => p.Sources)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // views
-            builder.Entity<EPagesCountByYear>(x =>
+            // generic & views
+
+            builder.Entity<CountByYears>(x =>
             {
                 x.HasNoKey();
-                x.ToView("EPagesCountByYears");
+                x.ToView("Stupid .NET EF Core");
             });
         }
 

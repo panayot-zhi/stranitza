@@ -26,7 +26,7 @@ namespace stranitza.Controllers
         public async Task<IActionResult> Index(int? year)
         {
             var viewModel = await _context.StranitzaEPages.GetEPagesByYearAsync(year);
-            viewModel.YearFilter = _context.EPagesCountByYears.ToList();
+            viewModel.YearFilter = _context.CountByYears.GetEPagesCountByYears();
 
             return View(viewModel);
         }

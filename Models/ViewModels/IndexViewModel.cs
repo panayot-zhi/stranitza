@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using stranitza.Models.Database.Views;
 using stranitza.Utility;
 
 namespace stranitza.Models.ViewModels
@@ -11,7 +12,7 @@ namespace stranitza.Models.ViewModels
 
         public int? CurrentCategoryId { get; set; }
 
-        public IEnumerable<FilterYearViewModel> YearFilter { get; set; }
+        public IEnumerable<CountByYears> YearFilter { get; set; }
 
         public int? CurrentYear { get; set; }
 

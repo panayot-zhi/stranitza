@@ -13,6 +13,12 @@
     <Compile Remove="Migrations\20200910135630_Discrminato.Designer.cs" />
     <Compile Remove="Migrations\20200911151809_Views.cs" />
     <Compile Remove="Migrations\20200911151809_Views.Designer.cs" />
+    <Compile Remove="Migrations\20200912150924_CheckDbModel.cs" />
+    <Compile Remove="Migrations\20200912150924_CheckDbModel.Designer.cs" />
+    <Compile Remove="Migrations\20200912151141_CheckDbModel.cs" />
+    <Compile Remove="Migrations\20200912151141_CheckDbModel.Designer.cs" />
+    <Compile Remove="Migrations\20200912151434_CheckDbModel.cs" />
+    <Compile Remove="Migrations\20200912151434_CheckDbModel.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

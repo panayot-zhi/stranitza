@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
+using stranitza.Models.Database.Views;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 
@@ -134,18 +135,9 @@ namespace stranitza.Repositories
             };
         }
 
-        public static IEnumerable<FilterYearViewModel> GetYearFilterViewModels(this DbSet<StranitzaSource> sourcesDbSet)
+        public static IEnumerable<CountByYears> GetSourcesCountByYears(this DbSet<CountByYears> dbSet)
         {
-            return sourcesDbSet.GroupBy(
-                (key => key.ReleaseYear),
-                (key, elements) => new FilterYearViewModel()
-                {
-                    Year = key,
-                    Count = elements
-                        .Distinct()
-                        .Count()
-                }
-            ).OrderByDescending(x => x.Year);
+            return dbSet.FromSqlRaw($"CALL CountByReleaseYear('{CountQueryType.Sources}')").ToList();
         }
 
         public static async Task<SourceDetailsViewModel> GetSourceDetailsViewModelAsync(this DbSet<StranitzaSource> dbSet, int id)

@@ -9,8 +9,8 @@ using stranitza.Models.Database;
 namespace stranitza.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200911152707_EPagesCountByYears")]
-    partial class EPagesCountByYears
+    [Migration("20200912155437_CountByReleaseYearStoredProcedure")]
+    partial class CountByReleaseYearStoredProcedure
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
+using stranitza.Models.Database.Views;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 
@@ -50,29 +51,29 @@ namespace stranitza.Repositories
                     AvailablePages = x.AvailablePages,
                     Tags = x.Tags,
 
-                    CoverPage = x.Pages.Select(y => new PageViewModel()
-                    {
-                        Id = y.Id,
-                        IssueId = y.IssueId,
-                        Type = y.Type,
-                        PageNumber = y.PageNumber,
-                        SlideNumber = y.SlideNumber,
-                        IsAvailable = y.IsAvailable,
-                        PageFileId = y.PageFileId,
-                        DateCreated = y.DateCreated
-                    }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
-
-                    IndexPage = x.Pages.Select(y => new PageViewModel()
-                    {
-                        Id = y.Id,
-                        IssueId = y.IssueId,
-                        Type = y.Type,
-                        PageNumber = y.PageNumber,
-                        SlideNumber = y.SlideNumber,
-                        IsAvailable = y.IsAvailable,
-                        PageFileId = y.PageFileId,
-                        DateCreated = y.DateCreated
-                    }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
+                    // CoverPage = x.Pages.Select(y => new PageViewModel()
+                    // {
+                    //     Id = y.Id,
+                    //     IssueId = y.IssueId,
+                    //     Type = y.Type,
+                    //     PageNumber = y.PageNumber,
+                    //     SlideNumber = y.SlideNumber,
+                    //     IsAvailable = y.IsAvailable,
+                    //     PageFileId = y.PageFileId,
+                    //     DateCreated = y.DateCreated
+                    // }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
+                    //
+                    // IndexPage = x.Pages.Select(y => new PageViewModel()
+                    // {
+                    //     Id = y.Id,
+                    //     IssueId = y.IssueId,
+                    //     Type = y.Type,
+                    //     PageNumber = y.PageNumber,
+                    //     SlideNumber = y.SlideNumber,
+                    //     IsAvailable = y.IsAvailable,
+                    //     PageFileId = y.PageFileId,
+                    //     DateCreated = y.DateCreated
+                    // }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
 
                     LastUpdated = x.LastUpdated,
                     DateCreated = x.DateCreated,
@@ -125,24 +126,14 @@ namespace stranitza.Repositories
             };
         }
 
-        public static IEnumerable<FilterYearViewModel> GetYearFilterViewModels(this DbSet<StranitzaIssue> dbSet, bool shouldBeAvailable = false)
+        public static IEnumerable<CountByYears> GetIssuesCountByYears(this DbSet<CountByYears> dbSet, bool onlyAvailable = false)
         {
-            var query = dbSet.AsQueryable();
-            if (shouldBeAvailable)
+            var queryType = CountQueryType.Issues;
+            if (onlyAvailable)
             {
-                query = query.Where(x => x.IsAvailable);
+                queryType = CountQueryType.AvailableIssues;
             }
-
-            return query.GroupBy(
-                (key => key.ReleaseYear),
-                (key, elements) => new FilterYearViewModel()
-                {
-                    Year = key,
-                    Count = elements
-                        .Distinct()
-                        .Count()
-                }
-            ).OrderByDescending(x => x.Year);
+            return dbSet.FromSqlRaw($"CALL CountByReleaseYear('{queryType}')").ToList();
         }
 
         public static async Task<IssueDetailsViewModel> GetIssueDetailsAsync(this DbSet<StranitzaIssue> dbSet, int id)

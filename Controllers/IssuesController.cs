@@ -30,8 +30,7 @@ namespace stranitza.Controllers
             var viewModel = await _context.StranitzaIssues.GetIssuesPagedAsync(year, page,
                 shouldBeAvailable: retrieveOnlyAvailableIssues);
 
-            viewModel.YearFilter =
-                _context.StranitzaIssues.GetYearFilterViewModels(shouldBeAvailable: retrieveOnlyAvailableIssues);
+            viewModel.YearFilter = _context.CountByYears.GetIssuesCountByYears(onlyAvailable: retrieveOnlyAvailableIssues);
             viewModel.CurrentYear = year;
 
             return View(viewModel);

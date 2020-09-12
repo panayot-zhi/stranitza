@@ -9,6 +9,7 @@ using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 using Serilog;
+using stranitza.Models.Database.Views;
 using stranitza.Repositories;
 using stranitza.Services;
 
@@ -35,7 +36,7 @@ namespace stranitza.Controllers
                 year: year, categoryId: category, origin: origin, pageIndex: page);
             
             viewModel.CategoriesFilter = await _context.StranitzaCategories.GetCategoryFilterViewModelAsync();
-            viewModel.YearFilter = _context.StranitzaSources.GetYearFilterViewModels();
+            viewModel.YearFilter = _context.CountByYears.GetSourcesCountByYears();
             viewModel.OriginFilter = new[] { "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ю", "Я", "„“" };
 
             viewModel.CurrentOrigin = origin;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
+using stranitza.Models.Database.Views;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 
@@ -115,6 +116,11 @@ namespace stranitza.Repositories
             {                
                 Records = epages
             };
+        }
+
+        public static IEnumerable<CountByYears> GetEPagesCountByYears(this DbSet<CountByYears> dbSet)
+        {
+            return dbSet.FromSqlRaw($"CALL CountByReleaseYear('{CountQueryType.EPages}')").ToList();
         }
 
         public static async Task<EPageDeleteViewModel> GetEPageForDeleteAsync(this DbSet<StranitzaEPage> dbSet, int id)
