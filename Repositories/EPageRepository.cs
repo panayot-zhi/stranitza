@@ -117,21 +117,6 @@ namespace stranitza.Repositories
             };
         }
 
-
-        public static IEnumerable<FilterYearViewModel> GetYearFilterViewModels(this DbSet<StranitzaEPage> dbSet)
-        {
-            return dbSet.GroupBy(
-                (key => key.ReleaseYear),
-                (key, elements) => new FilterYearViewModel()
-                {
-                    Year = key,
-                    Count = elements
-                        .Distinct()
-                        .Count()
-                }
-            ).OrderByDescending(x => x.Year);
-        }
-
         public static async Task<EPageDeleteViewModel> GetEPageForDeleteAsync(this DbSet<StranitzaEPage> dbSet, int id)
         {
             return await dbSet
@@ -232,6 +217,5 @@ namespace stranitza.Repositories
 
             return entry;
         }
-        
     }
 }

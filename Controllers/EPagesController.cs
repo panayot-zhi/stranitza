@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,7 +26,8 @@ namespace stranitza.Controllers
         public async Task<IActionResult> Index(int? year)
         {
             var viewModel = await _context.StranitzaEPages.GetEPagesByYearAsync(year);
-            viewModel.YearFilter = _context.StranitzaEPages.GetYearFilterViewModels();            
+            viewModel.YearFilter = _context.EPagesCountByYears.ToList();
+
             return View(viewModel);
         }
 

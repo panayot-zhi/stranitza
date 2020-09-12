@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using stranitza.Models.Database.Views;
 using stranitza.Utility;
 
 namespace stranitza.Models.Database
@@ -30,6 +31,10 @@ namespace stranitza.Models.Database
         public DbSet<StranitzaPost> StranitzaPosts { get; set; }
 
         public DbSet<StranitzaSource> StranitzaSources { get; set; }
+
+        // views
+
+        public DbSet<EPagesCountByYear> EPagesCountByYears { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -179,6 +184,13 @@ namespace stranitza.Models.Database
                 .HasOne(a => a.Issue)
                 .WithMany(p => p.Sources)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // views
+            builder.Entity<EPagesCountByYear>(x =>
+            {
+                x.HasNoKey();
+                x.ToView("EPagesCountByYears");
+            });
         }
 
     }
