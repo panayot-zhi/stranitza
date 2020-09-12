@@ -131,7 +131,7 @@
                 </header>
 
                 <div class="body">
-                    @await Html.PartialAsync("_Suggestions", StatsService.GetPostsSuggestions())
+                    @await Html.PartialAsync("_Suggestions", StatsService.GetOtherPostsSuggestions(Model.Id))
                 </div>
             </div>
         }

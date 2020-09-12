@@ -63,14 +63,23 @@ namespace stranitza.Services
             return _dbContext.Users.Count();
         }
 
-        /*public IEnumerable<SuggestionsViewModel> GetIssuesSuggestions(int count = 5)
+        public IEnumerable<SuggestionsViewModel> GetIssuesSuggestions(int count = 5)
         {
             var parameters = new object[]
             {
                 new MySqlParameter("count", count)
             };
 
-            return _dbContext.StranitzaIssues.Select(x => new SuggestionsViewModel()
+            var issues = _dbContext.StranitzaIssues.FromSqlRaw(Sql.GetIssuesSuggestions, parameters).Select(x =>
+                new StranitzaIssue()
+                {
+                    IssueNumber = x.IssueNumber,
+                    ReleaseNumber = x.ReleaseNumber,
+                    ReleaseYear = x.ReleaseYear
+
+                }).ToList();
+                
+            return issues.Select(x => new SuggestionsViewModel()
             {
                 // NOTE: Issue title should be resolved by a method!
                 Content = $"<span class=\"issue-title\">Брой № {x.IssueNumber}, {x.ReleaseNumber} / {x.ReleaseYear}</span>",
@@ -78,8 +87,8 @@ namespace stranitza.Services
                     PathString.Empty, FragmentString.Empty, new LinkOptions()
                         { LowercaseUrls = true })
 
-            }).FromSql(Sql.GetIssuesSuggestions, parameters).ToList();
-        }*/
+            });
+        }
 
         public IEnumerable<SuggestionsViewModel> GetSourcesSuggestions(int count = 5)
         {
@@ -88,12 +97,24 @@ namespace stranitza.Services
                 new MySqlParameter("count", count)
             };
 
-            return _dbContext.StranitzaSources.FromSqlRaw(Sql.GetSourcesSuggestions, parameters).Select(x => new SuggestionsViewModel()
+            var sources = _dbContext.StranitzaSources.FromSqlRaw(Sql.GetSourcesSuggestions, parameters).Select(x =>
+                new StranitzaSource()
+                {
+                    Title = x.Title,
+                    Origin = x.Origin,
+                    ReleaseYear = x.ReleaseYear,
+                    EPageId = x.EPageId,
+                    IssueId = x.IssueId,
+                    Id = x.Id
+
+                }).ToList();
+
+            return sources.Select(x => new SuggestionsViewModel()
             {
                 Content = GetSourceDisplayContent(x),
                 Href = GetSourceHref(_linkGenerator, x)
 
-            }).ToList();
+            });
         }
 
         private static string GetSourceDisplayContent(StranitzaSource x)
@@ -122,21 +143,30 @@ namespace stranitza.Services
                     {LowercaseUrls = true});
         }
 
-        public IEnumerable<SuggestionsViewModel> GetPostsSuggestions(int count = 5)
+        public IEnumerable<SuggestionsViewModel> GetOtherPostsSuggestions(int postId, int count = 5)
         {
             var parameters = new object[]
             {
-                new MySqlParameter("count", count)
+                new MySqlParameter("count", count),
+                new MySqlParameter("postId", postId),
             };
 
-            return _dbContext.StranitzaPosts.FromSqlRaw(Sql.GetPostsSuggestions, parameters).Select(x => new SuggestionsViewModel()
+            var posts = _dbContext.StranitzaPosts.FromSqlRaw(Sql.GetPostsSuggestions, parameters).Select(x =>
+                new StranitzaPost()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    DateCreated = x.DateCreated
+
+                }).ToList();
+
+            return posts.Select(x => new SuggestionsViewModel()
             {
                 Content = $"<span class=\"post-title\">{x.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
                 Href = _linkGenerator.GetPathByAction("Details", "Posts", new { id = x.Id },
                     PathString.Empty, FragmentString.Empty, new LinkOptions()
-                    { LowercaseUrls = true })
+                        { LowercaseUrls = true })
 
-                // ReSharper disable once FormatStringProblem
             });
         }
 
@@ -155,17 +185,23 @@ namespace stranitza.Services
                 new MySqlParameter("origin", post.Origin)
             };
 
-            return _dbContext.StranitzaPosts
-                .FromSqlRaw(Sql.PostsSuggestionsByOrigin, parameters)
-                .OrderByDescending(x => x.DateCreated)
-                .Select(x => new SuggestionsViewModel()
+            var posts = _dbContext.StranitzaPosts.FromSqlRaw(Sql.PostsSuggestionsByOrigin, parameters).Select(x =>
+                new StranitzaPost()
                 {
-                    Content = $"<span class=\"post-title\">{x.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
-                    Href = _linkGenerator.GetPathByAction("Details", "Posts", new { id = x.Id },
-                        PathString.Empty, FragmentString.Empty, new LinkOptions()
-                            { LowercaseUrls = true })
+                    Id = x.Id,
+                    Title = x.Title,
+                    DateCreated = x.DateCreated
 
                 }).ToList();
+
+            return posts.OrderByDescending(x => x.DateCreated).Select(x => new SuggestionsViewModel()
+            {
+                Content = $"<span class=\"post-title\">{x.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
+                Href = _linkGenerator.GetPathByAction("Details", "Posts", new { id = x.Id },
+                    PathString.Empty, FragmentString.Empty, new LinkOptions()
+                        { LowercaseUrls = true })
+
+            });
         }
 
         public IEnumerable<SuggestionsViewModel> GetEditorsPickSuggestions(int count = 5)
@@ -175,17 +211,23 @@ namespace stranitza.Services
                 new MySqlParameter("count", count)
             };
 
-            return _dbContext.StranitzaPosts
-                .FromSqlRaw(Sql.GetEditorsPickSuggestions, parameters)
-                .OrderByDescending(x => x.DateCreated)
-                .Select(x => new SuggestionsViewModel()
+            var posts = _dbContext.StranitzaPosts.FromSqlRaw(Sql.GetEditorsPickSuggestions, parameters).Select(x =>
+                new StranitzaPost()
                 {
-                    Content = $"<span class=\"post-title\">{x.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
-                    Href = _linkGenerator.GetPathByAction("Details", "Posts", new { id = x.Id },
-                        PathString.Empty, FragmentString.Empty, new LinkOptions()
-                            { LowercaseUrls = true })
+                    Id = x.Id,
+                    Title = x.Title,
+                    DateCreated = x.DateCreated
 
-                });
+                }).ToList();
+
+            return posts.OrderByDescending(x => x.DateCreated).Select(x => new SuggestionsViewModel()
+            {
+                Content = $"<span class=\"post-title\">{x.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
+                Href = _linkGenerator.GetPathByAction("Details", "Posts", new { id = x.Id },
+                    PathString.Empty, FragmentString.Empty, new LinkOptions()
+                        { LowercaseUrls = true })
+
+            });
         }
 
         public IEnumerable<SuggestionsViewModel> GetEPagesSuggestionsByAuthor(int epageId, int count = 5)
@@ -209,18 +251,25 @@ namespace stranitza.Services
                 new MySqlParameter("authorId", epage.AuthorId)
             };
 
-            return _dbContext.StranitzaEPages//.Where(x => x.AuthorId == authorId && x.Id != epageId)
-                //.ToList().OrderBy(x => Guid.NewGuid()).Take(count)
-                .FromSqlRaw(Sql.GetEPagesSuggestionsByAuthor, parameters)
-                .OrderByDescending(x => x.DateCreated)  // NOTE: Done after sampling of random records, sort those by dateCreated
-                .Select(x => new SuggestionsViewModel()
+            var epages = _dbContext.StranitzaEPages.FromSqlRaw(Sql.GetEPagesSuggestionsByAuthor, parameters).Select(x =>
+                new StranitzaEPage()
                 {
-                    Content = $"<span class=\"epage-title\">{x.Title}</span><span class=\"epage-category\">{x.Category.Name}</span><span class=\"epage-date\">{x.DateCreated:d MMMM yyyy}</span>",
-                    Href = _linkGenerator.GetPathByAction("Details", "EPages", new { id = x.Id }, 
-                        PathString.Empty, FragmentString.Empty, new LinkOptions()
-                        { LowercaseUrls = true })
+                    Id = x.Id,
+                    CategoryId = x.CategoryId,
+                    Title = x.Title,
+                    AuthorId = x.AuthorId,
+                    DateCreated = x.DateCreated
 
                 }).ToList();
+
+            return epages.OrderByDescending(x => x.DateCreated).Select(x => new SuggestionsViewModel()
+            {
+                Content = $"<span class=\"epage-title\">{x.Title}</span><span class=\"epage-category\">{x.Category.Name}</span><span class=\"epage-date\">{x.DateCreated:d MMMM yyyy}</span>",
+                Href = _linkGenerator.GetPathByAction("Details", "EPages", new { id = x.Id }, 
+                    PathString.Empty, FragmentString.Empty, new LinkOptions()
+                    { LowercaseUrls = true })
+
+            });
         }
 
         public string GetAppVersion()
@@ -378,6 +427,8 @@ namespace stranitza.Services
     x.DateCreated
 FROM
     StranitzaPosts x
+WHERE
+    x.Id <> @postId
 ORDER BY
     rand()
 LIMIT
@@ -392,7 +443,12 @@ LIMIT
                 {
                     return
 @"SELECT
-    *
+    x.Title,
+    x.Origin,
+    x.ReleaseYear,
+    x.EpageId,
+    x.IssueId,
+    x.Id
 FROM
     StranitzaSources x
 ORDER BY

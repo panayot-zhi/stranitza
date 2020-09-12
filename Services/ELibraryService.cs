@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
@@ -9,12 +8,10 @@ namespace stranitza.Services
     public class ELibraryService
     {
         private readonly ApplicationDbContext _db;
-        private readonly IConfiguration _cfg;
 
-        public ELibraryService(ApplicationDbContext db, IConfiguration cfg)
+        public ELibraryService(ApplicationDbContext db)
         {
             _db = db;
-            _cfg = cfg;
         }
 
         public async Task<StranitzaEPage> CreateEPageAsync(EPageCreateViewModel vModel, string uploaderId, string uploaderUserName)
@@ -28,10 +25,13 @@ namespace stranitza.Services
             // assign author, so it can propagate to source also
             entry.AuthorId = author?.Id;
 
+            // save epage
+            await _db.SaveChangesAsync();
+
             // create source
             var source = await _db.StranitzaSources.CreateSourceAsync(entry, uploaderUserName);
 
-            // save source & entry
+            // save source
             await _db.SaveChangesAsync();
 
             // attach for update
