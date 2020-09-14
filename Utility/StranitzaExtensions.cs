@@ -95,7 +95,7 @@ namespace stranitza.Utility
 
         public static string GetPdfPage(this IUrlHelper url, int issueId, int pageNumber)
         {            
-            return $"{url.Action("DownloadPdf", "Issues", new { id = issueId })}#page={pageNumber}";
+            return $"{url.Action("PreviewPdf", "Issues", new { id = issueId })}#page={pageNumber}";
         }
 
         public static string GetPostImage(this IUrlHelper url, string imageFileName, bool absolute = false)

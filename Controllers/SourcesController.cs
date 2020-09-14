@@ -253,7 +253,7 @@ namespace stranitza.Controllers
 
         private string GetPdfPageUrl(int issueId, int pageNumber)
         {
-            var uri = _link.GetUriByAction(HttpContext, "DownloadPdf", "Issues", new { id = issueId },
+            var uri = _link.GetUriByAction(HttpContext, "PreviewPdf", "Issues", new { id = issueId },
                 options: new LinkOptions()
                 {
                     LowercaseUrls = true                    

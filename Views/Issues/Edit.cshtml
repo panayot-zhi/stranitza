@@ -243,8 +243,10 @@
                 <li><a href="#" target="_blank">Преглед на свързани източници</a></li>
                 @if (Model.HasPdf)
                 {
-                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Преглед на PDF (цял)</a></li>
-                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id, thumb = true})" target="_blank">Преглед на PDF (орязан)</a></li>
+                    <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.Id})" target="_blank">Преглед на PDF (цял)</a></li>
+                    <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.Id, thumb = true})" target="_blank">Преглед на PDF (редактиран)</a></li>
+                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Сваляне на PDF (цял)</a></li>
+                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id, reduced = true})" target="_blank">Преглед на PDF (редактиран)</a></li>
                 }
                 <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Преглед на всички изображения (ZIP)</a></li>
                 @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
