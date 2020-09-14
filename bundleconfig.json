@@ -29,6 +29,6 @@
       "enabled": true,
       "renameLocals": true
     },
-    "sourceMap": false
+    "sourceMap": true
   }
 ]
