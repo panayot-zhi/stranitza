@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using stranitza.Models.Database.Views;
 using stranitza.Utility;
 
@@ -139,12 +140,14 @@ namespace stranitza.Models.Database
             builder.Entity<StranitzaIssue>()
                 .Property(p => p.AvailablePages)
                 .HasConversion<string>(array => array.Join(),
-                    dbString => dbString.Separate<int>());
+                    dbString => dbString.Separate<int>())
+                .Metadata.SetValueComparer(IntegerArrayValueComparer);
 
             builder.Entity<StranitzaIssue>()
                 .Property(p => p.Tags)
                 .HasConversion<string>(array => array.Join(),
-                    dbString => dbString.Separate<string>());
+                    dbString => dbString.Separate<string>())
+                .Metadata.SetValueComparer(StringArrayValueComparer);
 
             builder.Entity<StranitzaIssue>()
                 .HasIndex(index => new { index.ReleaseYear, index.ReleaseNumber }).IsUnique();
@@ -193,6 +196,16 @@ namespace stranitza.Models.Database
                 x.ToView("Stupid .NET EF Core");
             });
         }
+
+        private static readonly ValueComparer IntegerArrayValueComparer = new ValueComparer<int[]>(
+            (i1, i2) => i1.SequenceEqual(i2),
+            ints => ints.Aggregate(0, (accumulator, value) => HashCode.Combine(accumulator, value.GetHashCode())),
+            ints => ints.ToArray());
+
+        private static readonly ValueComparer StringArrayValueComparer = new ValueComparer<string[]>(
+            (s1, s2) => s1.SequenceEqual(s2),
+            strings => strings.Aggregate(0, (accumulator, value) => HashCode.Combine(accumulator, value.GetHashCode())),
+            strings => strings.ToArray());
 
     }
 }
