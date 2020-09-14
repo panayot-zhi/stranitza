@@ -4,22 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
     <UserSecretsId>bd3c52be-28a5-4dee-a06e-e6366bbe6f62</UserSecretsId>
+	<!-- panayot: runtimes specified here appear in the publish profile -->
+	<RuntimeIdentifiers>linux-x64;ubuntu.18.04-x64</RuntimeIdentifiers>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Migrations\20200910135630_Discrminato.cs" />
-    <Compile Remove="Migrations\20200910135630_Discrminato.Designer.cs" />
-    <Compile Remove="Migrations\20200911151809_Views.cs" />
-    <Compile Remove="Migrations\20200911151809_Views.Designer.cs" />
-    <Compile Remove="Migrations\20200912150924_CheckDbModel.cs" />
-    <Compile Remove="Migrations\20200912150924_CheckDbModel.Designer.cs" />
-    <Compile Remove="Migrations\20200912151141_CheckDbModel.cs" />
-    <Compile Remove="Migrations\20200912151141_CheckDbModel.Designer.cs" />
-    <Compile Remove="Migrations\20200912151434_CheckDbModel.cs" />
-    <Compile Remove="Migrations\20200912151434_CheckDbModel.Designer.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Properties\LocalizedIdentityErrorMessages.en.resx" />
@@ -30,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="1.6.7" />
-    <PackageReference Include="MailKit" Version="2.8.0" />
+	<PackageReference Include="MailKit" Version="2.8.0" />
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="1.6.7" />    
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="3.1.8" />
@@ -69,4 +58,27 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <!-- panayot: remove dependency to libicu -->
+  <PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  
+  <!-- panayot: do not leak real appsettings during build/publish -->  
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.Production.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="appsettings.Development.json" />
+    <None Include="appsettings.Production.json" />    
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <!-- eof -->
+  
 </Project>
