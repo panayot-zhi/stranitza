@@ -297,6 +297,13 @@ index: {issue.IndexPage?.Id}";
                         entry.PdfFileReduced = await CreatePdfReducedFileRecord(reducedPdfFile);
                     }
 
+                    // if there was a fileId previously
+                    // we need to load it manually here
+                    if (entry.PdfFileReduced == null)
+                    {
+                        entry.PdfFileReduced = await _applicationDbContext.StranitzaFiles.FindAsync(entry.PdfFileReducedId);
+                    }
+
                     StampPdf(entry.PdfFileReduced, entry.GetIssueTitle());
                     updateZipFile = true;
                 }
@@ -314,6 +321,13 @@ index: {issue.IndexPage?.Id}";
                         // create the db file record only if it did not exist previously
                         // the FilePath will point to the replaced pdf if a record was present
                         entry.PdfFileReduced = await CreatePdfReducedFileRecord(reducedPdfFile);
+                    }
+
+                    // if there was a fileId previously
+                    // we need to load it manually here
+                    if (entry.PdfFileReduced == null)
+                    {
+                        entry.PdfFileReduced = await _applicationDbContext.StranitzaFiles.FindAsync(entry.PdfFileReducedId);
                     }
 
                     StampPdf(entry.PdfFileReduced, entry.GetIssueTitle());
@@ -551,6 +565,10 @@ thumb: {page.PageFile.ThumbPath}";
             try
             {
                 var pdf = issue.PdfFilePreview;
+                if (pdf == null)
+                {
+                    pdf = _applicationDbContext.StranitzaFiles.Find(issue.PdfFilePreviewId);
+                }
 
                 const string fileExtension = "pdf";
                 var issueNumber = issue.IssueNumber;
@@ -659,6 +677,11 @@ thumb: {page.PageFile.ThumbPath}";
                     Path.Combine(_applicationConfiguration["RepositoryPath"], StranitzaConstants.ForbiddenPagePdfFileName);
 
                 var pdf = issue.PdfFilePreview;
+                if (pdf == null)
+                {
+                    pdf = _applicationDbContext.StranitzaFiles.Find(issue.PdfFilePreviewId);
+                }
+
                 using (var outputStream = new FileStream(pdf.ThumbPath, FileMode.Create))
                 {
                     pdfReaderTemp = new PdfReader(forbiddenPagePdfFilePath);
@@ -889,7 +912,12 @@ thumb: {page.PageFile.ThumbPath}";
                 if (reducedPdfFileEntry == null || !File.Exists(reducedPdfFileEntry.FilePath))
                 {
                     var reducedPdfFile = CreateReducedPdfFile(issue);
-                    issue.PdfFileReduced = await CreatePdfReducedFileRecord(reducedPdfFile);
+                    reducedPdfFileEntry = await CreatePdfReducedFileRecord(reducedPdfFile);
+
+                    _applicationDbContext.StranitzaIssues.Attach(issue);
+                    issue.PdfFileReduced = reducedPdfFileEntry;
+                    await _applicationDbContext.SaveChangesAsync();
+
                     StampPdf(issue.PdfFileReduced, issue.GetIssueTitle());
                 }
 
