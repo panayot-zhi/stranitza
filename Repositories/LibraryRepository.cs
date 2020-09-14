@@ -51,39 +51,40 @@ namespace stranitza.Repositories
                     AvailablePages = x.AvailablePages,
                     Tags = x.Tags,
 
-                    // CoverPage = x.Pages.Select(y => new PageViewModel()
-                    // {
-                    //     Id = y.Id,
-                    //     IssueId = y.IssueId,
-                    //     Type = y.Type,
-                    //     PageNumber = y.PageNumber,
-                    //     SlideNumber = y.SlideNumber,
-                    //     IsAvailable = y.IsAvailable,
-                    //     PageFileId = y.PageFileId,
-                    //     DateCreated = y.DateCreated
-                    // }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
-                    //
-                    // IndexPage = x.Pages.Select(y => new PageViewModel()
-                    // {
-                    //     Id = y.Id,
-                    //     IssueId = y.IssueId,
-                    //     Type = y.Type,
-                    //     PageNumber = y.PageNumber,
-                    //     SlideNumber = y.SlideNumber,
-                    //     IsAvailable = y.IsAvailable,
-                    //     PageFileId = y.PageFileId,
-                    //     DateCreated = y.DateCreated
-                    // }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
+                    CoverPage = x.Pages.Select(y => new PageViewModel()
+                    {
+                        Id = y.Id,
+                        IssueId = y.IssueId,
+                        Type = y.Type,
+                        PageNumber = y.PageNumber,
+                        SlideNumber = y.SlideNumber,
+                        IsAvailable = y.IsAvailable,
+                        PageFileId = y.PageFileId,
+                        DateCreated = y.DateCreated
+                    }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
+
+                    IndexPage = x.Pages.Select(y => new PageViewModel()
+                    {
+                        Id = y.Id,
+                        IssueId = y.IssueId,
+                        Type = y.Type,
+                        PageNumber = y.PageNumber,
+                        SlideNumber = y.SlideNumber,
+                        IsAvailable = y.IsAvailable,
+                        PageFileId = y.PageFileId,
+                        DateCreated = y.DateCreated
+                    }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
 
                     LastUpdated = x.LastUpdated,
                     DateCreated = x.DateCreated,
                 })
-                .Skip((pageIndex.Value - 1) * pageSize).Take(pageSize)
-                .GroupBy(x => x.ReleaseYear).ToDictionary(x => x.Key, group => group.ToList());
-
+                .Skip((pageIndex.Value - 1) * pageSize).Take(pageSize).ToList();
+                //.GroupBy(x => x.ReleaseYear).ToDictionary(x => x.Key, group => group.ToList());
+                
+            var issuesDictionary = issues.GroupBy(x => x.ReleaseYear).ToDictionary(x => x.Key, group => group.ToList());
             return new LibraryViewModel(count, pageIndex.Value, pageSize)
             {
-                IssuesByYear = issues
+                IssuesByYear = issuesDictionary
             };
         }
 
