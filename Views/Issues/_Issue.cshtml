@@ -40,32 +40,16 @@
 
             @*TODO: Reconsider*@
             <p>
-                @Model.Description
+                @*@Model.Description*@
                 @if (Model.HasPdf)
                 {
-                    @:Броят е <b>достъпен в PDF</b> вариант (@(Model.AvailablePages?.Length ?? 0) страници за регистрирани потребители).
+                    @:Броят е <b>достъпен в PDF</b> вариант. Общ брой на страниците <b>@Model.PagesCount</b>, от които @(Model.AvailablePages?.Length ?? 0) страници със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения на страници, достъпни за <i class="text-success">всеки посетител</i>.
                 }
                 else
                 {
-                    @:Страниците са достъпни само като <b>изображения</b>.
+                    @:Страниците са достъпни само като <b>изображения</b>. Общ брой на страниците <b>@Model.ImagesCount</b>.
                 }
-                Общ брой на страниците <b>@Model.PagesCount</b>, от които
-                @if (Model.IsAvailable)
-                {
-                    // Issue is freely available
-                    <i class="text-success">всички</i>
-                }
-                else if (Model.AvailablePages != null)
-                {
-                    // Issue has pdf with marked available pages
-                    <i class="text-success">@(Model.AvailablePages.Length)</i>
-                }
-                else
-                {
-                    // Regardless, all 
-                    <i class="text-success">@(Model.PagesCount)</i>
-                }
-                със свободен достъп.
+
                 Броят е преглеждан @Model.ViewCount пъти и е свалян @Model.DownloadCount.
             </p>
 

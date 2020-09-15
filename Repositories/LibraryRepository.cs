@@ -46,6 +46,7 @@ namespace stranitza.Repositories
                     DownloadCount = x.DownloadCount,
                     IsAvailable = x.IsAvailable,
                     PagesCount = x.PagesCount,
+                    ImagesCount = x.Pages.Count,
                     HasPdf = x.PdfFilePreview != null,
                     ViewCount = x.ViewCount,
                     AvailablePages = x.AvailablePages,

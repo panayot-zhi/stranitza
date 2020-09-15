@@ -18,6 +18,8 @@ namespace stranitza.Models.ViewModels
 
         public int PagesCount { get; set; }
 
+        public int ImagesCount { get; set; }
+
         public int ViewCount { get; set; }
 
         public int DownloadCount { get; set; }
