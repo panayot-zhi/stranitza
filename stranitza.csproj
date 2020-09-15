@@ -3,12 +3,22 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
-    <UserSecretsId>bd3c52be-28a5-4dee-a06e-e6366bbe6f62</UserSecretsId>
-	<!-- panayot: runtimes specified here appear in the publish profile -->
-	<RuntimeIdentifiers>linux-x64;ubuntu.18.04-x64</RuntimeIdentifiers>
+    <UserSecretsId>bd3c52be-28a5-4dee-a06e-e6366bbe6f62</UserSecretsId>	
+	<RuntimeIdentifiers>linux-x64;ubuntu.18.04-x64</RuntimeIdentifiers>	
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+    <Version>3.1.209-a2b84f0</Version>
+    <Authors>Panayot Ivanov</Authors>
+    <Company />
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="release\**" />
+    <Content Remove="release\**" />
+    <EmbeddedResource Remove="release\**" />
+    <None Remove="release\**" />
+  </ItemGroup> 
 
   <ItemGroup>
     <EmbeddedResource Remove="Properties\LocalizedIdentityErrorMessages.en.resx" />
@@ -27,12 +37,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
@@ -53,12 +62,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <!-- panayot: remove dependency to libicu -->
-  <PropertyGroup>
-    <InvariantGlobalization>true</InvariantGlobalization>
-  </PropertyGroup>
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
+  </ItemGroup>  
   
-  <!-- panayot: do not leak real appsettings during build/publish -->  
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
     <Content Remove="appsettings.Production.json" />
@@ -73,7 +80,19 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="bundleconfig.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-  <!-- eof -->
+
+  <Target Name="RemoveIdentityAssets">
+    <ItemGroup>
+      <StaticWebAsset Remove="@(StaticWebAsset)" Condition="%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'" />
+    </ItemGroup>
+  </Target>
+
+  <Target AfterTargets="PostBuildEvent" Name="PostBuild">
+    <Exec Command="python &quot;$(ProjectDir)Utility\python\version.py&quot; &quot;$(ProjectDir)$(ProjectName).csproj&quot;" />
+  </Target> 
   
 </Project>
