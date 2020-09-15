@@ -82,6 +82,13 @@ namespace stranitza.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGet(string returnUrl = null)
         {
+            returnUrl = returnUrl ?? Url.Content("~/");
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect(returnUrl);
+            }
+
             ReturnUrl = returnUrl;
 
             LoginProviders = new LoginProvidersViewModel()
