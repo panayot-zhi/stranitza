@@ -40,11 +40,18 @@
                         <img src="@Url.Action("Load", "Pages", new {id = page.Id, thumb = true})" style="display: none;" alt="Страница № @(page.PageNumber)" />
                     </a>
                 }
-                else
+                else if (page.Type == StranitzaPageType.Cover)
                 {
                     <a href="@Url.Action("Load", "Pages", new {id = page.Id})"
                        data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
-                        <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber)" />
+                        <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber) (корица)" />
+                    </a>
+                }
+                else if (page.Type == StranitzaPageType.Index)
+                {
+                    <a href="@Url.Action("Load", "Pages", new {id = page.Id})"
+                       data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
+                        <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber) (съдържание)" />
                     </a>
                 }
             }

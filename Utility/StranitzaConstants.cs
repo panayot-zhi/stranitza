@@ -90,8 +90,7 @@ namespace stranitza.Utility
         Index,
         Cover,
 
-        Missing,
-        Forbidden
+        Missing
     }
 
     public enum StranitzaAvatarType

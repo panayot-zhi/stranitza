@@ -23,25 +23,35 @@
             <select class="form-control" name="Type">
                 @switch (Model.Type)
                 {
+                    case StranitzaPageType.Missing:
+                        <option value="@((int)StranitzaPageType.Cover)">Корица</option>
+                        <option value="@((int)StranitzaPageType.Index)">Съдържание</option>
+                        <option value="@((int)StranitzaPageType.Regular)">Обикновена</option>
+                        <option value="@((int)StranitzaPageType.Missing)" selected="selected">Липсваща</option>
+                        break;
                     case StranitzaPageType.Regular:
                         <option value="@((int)StranitzaPageType.Cover)">Корица</option>
                         <option value="@((int)StranitzaPageType.Index)">Съдържание</option>
                         <option value="@((int)StranitzaPageType.Regular)" selected="selected">Обикновена</option>
+                        <option value="@((int)StranitzaPageType.Missing)">Липсваща</option>
                         break;
                     case StranitzaPageType.Index:
                         <option value="@((int)StranitzaPageType.Cover)">Корица</option>
                         <option value="@((int)StranitzaPageType.Index)" selected="selected">Съдържание</option>
                         <option value="@((int)StranitzaPageType.Regular)">Обикновена</option>
+                        <option value="@((int)StranitzaPageType.Missing)">Липсваща</option>
                         break;
                     case StranitzaPageType.Cover:
                         <option value="@((int)StranitzaPageType.Cover)" selected="selected">Корица</option>
                         <option value="@((int)StranitzaPageType.Index)">Съдържание</option>
                         <option value="@((int)StranitzaPageType.Regular)">Обикновена</option>
+                        <option value="@((int)StranitzaPageType.Missing)">Липсваща</option>
                         break;
                     default:
                         <option value="@((int)StranitzaPageType.Cover)">Корица</option>
                         <option value="@((int)StranitzaPageType.Index)">Съдържание</option>
                         <option value="@((int)StranitzaPageType.Regular)">Обикновена</option>
+                        <option value="@((int)StranitzaPageType.Missing)">Липсваща</option>
                         break;
                 }
             </select>
