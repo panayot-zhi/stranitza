@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -9,7 +9,7 @@
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <Version>3.1.215-5e9164f</Version>
+    <Version>3.1.217-5e9164f</Version>
     <Authors>Panayot Ivanov</Authors>
     <Company />
   </PropertyGroup>
