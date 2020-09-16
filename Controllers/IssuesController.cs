@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
@@ -182,6 +183,7 @@ namespace stranitza.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [StranitzaAuthorize]
         public async Task<IActionResult> PreviewPdf(int? id, bool thumb = false)
         {
             var issueEntry = await _context.StranitzaIssues.FindAsync(id);
@@ -205,6 +207,7 @@ namespace stranitza.Controllers
             return new FileContentResult(content, pdfEntry.MimeType);
         }
 
+        [StranitzaAuthorize]
         public async Task<IActionResult> DownloadPdf(int? id, bool reduced = false)
         {
             var issueEntry = await _context.StranitzaIssues.FindAsync(id);
