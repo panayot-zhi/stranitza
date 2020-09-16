@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
@@ -56,6 +57,7 @@ namespace stranitza.Utility
         }
     }
 
+    [AttributeUsage(AttributeTargets.Method)]
     public class StranitzaAuthorizeAttribute : AuthorizeAttribute
     {
         /// <summary>
