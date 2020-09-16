@@ -248,9 +248,9 @@ index: {issue.IndexPage?.Id}";
 
                 await _applicationDbContext.SaveChangesAsync();
 
-                // TODO: Check for sources
+                await AttachSourcesToIssue(entry);
 
-                transaction.Commit();
+                await transaction.CommitAsync();
 
                 return entry;
             }
@@ -279,10 +279,8 @@ index: {issue.IndexPage?.Id}";
                     }
                     else
                     {
-                        // if there was, update only the time created
-                        // column for the existing record in the database
-                        // TODO: DateCreated cannot be modified!
-                        //entry.PdfFile.DateCreated = DateTime.Now;
+                        // NOTE: DateCreated cannot be modified,
+                        // but LastUpdated will reflect this change
                     }
 
                     CreateThumbPdfFile(entry);
@@ -908,9 +906,28 @@ thumb: {page.PageFile.ThumbPath}";
             return false;
         }
 
+        public async Task<int> AttachSourcesToIssue(StranitzaIssue issue)
+        {
+            var sources = _applicationDbContext.StranitzaSources
+                .Where(x => x.ReleaseNumber == issue.ReleaseNumber && x.ReleaseYear == issue.ReleaseYear).ToList();
+
+            if (!sources.Any())
+            {
+                return 0;
+            }
+
+            sources.ForEach(source =>
+            {
+                _applicationDbContext.Attach(source);
+                source.IssueId = issue.Id;
+            });
+
+            return await _applicationDbContext.SaveChangesAsync();
+        }
+
         public async Task<byte[]> GetPreviewPdfForUser(ClaimsPrincipal user, StranitzaFile pdfEntry, bool thumb = false)
         {
-            // TODO: Raise level if necessary
+            // NOTE: Raise level if necessary
             // TODO: Implement a mechanic for the current user to be able to see certain issues
 
             if (user.IsAtLeast(StranitzaRoles.Editor))
@@ -929,7 +946,7 @@ thumb: {page.PageFile.ThumbPath}";
             byte[] content;
             string fileDownloadName;
 
-            // TODO: Raise level if necessary
+            // NOTE: Raise level if necessary
             // TODO: Implement a mechanic for the current user to be able to download certain issues
 
             if (user.IsAtLeast(StranitzaRoles.Editor) && !reduced)
@@ -988,7 +1005,7 @@ thumb: {page.PageFile.ThumbPath}";
                 issue.ZipFile = zipFileEntry;
             }
 
-            // TODO: Raise level if necessary
+            // NOTE: Raise level if necessary
 
             if (user.IsAtLeast(StranitzaRoles.Editor))
             {
