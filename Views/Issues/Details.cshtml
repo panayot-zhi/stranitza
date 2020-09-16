@@ -33,14 +33,7 @@
 
             @foreach (var page in Model.Pages)
             {
-                if (page.Type == StranitzaPageType.Regular)
-                {
-                    <a href="@Url.Action("Load", "Pages", new {id = page.Id})" data-id="@(page.Id)"
-                       data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
-                        <img src="@Url.Action("Load", "Pages", new {id = page.Id, thumb = true})" style="display: none;" alt="Страница № @(page.PageNumber)" />
-                    </a>
-                }
-                else if (page.Type == StranitzaPageType.Cover)
+                if (page.Type == StranitzaPageType.Cover)
                 {
                     <a href="@Url.Action("Load", "Pages", new {id = page.Id})"
                        data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
@@ -52,6 +45,13 @@
                     <a href="@Url.Action("Load", "Pages", new {id = page.Id})"
                        data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
                         <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber) (съдържание)" />
+                    </a>
+                } 
+                else
+                {
+                    <a href="@Url.Action("Load", "Pages", new {id = page.Id})" data-id="@(page.Id)"
+                       data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
+                        <img src="@Url.Action("Load", "Pages", new {id = page.Id, thumb = true})" style="display: none;" alt="Страница № @(page.PageNumber)" />
                     </a>
                 }
             }
