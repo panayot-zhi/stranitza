@@ -284,12 +284,17 @@ namespace stranitza.Utility
             }
         }
 
+        private static string GetDisplayReleaseNumber(int releaseNumber)
+        {
+            return releaseNumber > 0 ? releaseNumber.ToString() : "+";
+        }
+
         /// <summary>
         /// бр. {releaseNumber}/{releaseYear} ({issueNumber})
         /// </summary>
         public static string GetIssueTitle(this StranitzaIssue issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"бр. {releaseNumber}/{issue.ReleaseYear} ({issue.IssueNumber})";
         }
 
@@ -298,7 +303,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitlePrefixed(this IssueIndexViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"Брой {releaseNumber} / {issue.ReleaseYear} ({issue.IssueNumber})";
         }
 
@@ -307,7 +312,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitle(this IssueIndexViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} / {issue.ReleaseYear} ({issue.IssueNumber})";
         }
 
@@ -316,7 +321,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitle(this IssueDetailsViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber}/{issue.ReleaseYear} ({issue.IssueNumber})";
         }
 
@@ -325,7 +330,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleShort(this IssueDetailsViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} ({issue.IssueNumber})";
         }
 
@@ -334,7 +339,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleLong(this IssueDetailsViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} / {issue.ReleaseYear} г. ({issue.IssueNumber})";
         }
 
@@ -343,7 +348,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleShort(this IssueEditViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} ({issue.IssueNumber})";
         }
 
@@ -352,7 +357,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleLong(this IssueEditViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} / {issue.ReleaseYear} г. ({issue.IssueNumber})";
         }
 
@@ -361,7 +366,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitle(this PageViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} / {issue.ReleaseYear} ({issue.IssueNumber})";
         }
 
@@ -370,7 +375,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleShort(this IssuePagesViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} ({issue.IssueNumber})";
         }
 
@@ -379,7 +384,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitle(this IssuePagesViewModel issue)
         {
-            var releaseNumber = issue.ReleaseNumber > 0 ? issue.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
             return $"{releaseNumber} / {issue.ReleaseYear} ({issue.IssueNumber})";
         }
 
