@@ -9,7 +9,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -169,8 +168,12 @@ namespace stranitza.Utility
             var typeString = type ?? "info";
             var jsonMessage = JsonConvert.SerializeObject(new
             {
-                content = HttpUtility.JavaScriptStringEncode(message),
+                content = message,
                 type = typeString
+
+            }, new JsonSerializerSettings
+            {
+                StringEscapeHandling = StringEscapeHandling.EscapeHtml
             });
 
             tempData["ModalMessage"] = jsonMessage;
