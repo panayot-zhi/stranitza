@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
@@ -63,7 +64,12 @@ namespace stranitza.Controllers
             }
 
 #pragma warning disable 4014
-            Task.Run(() => _stats.UpdateIssueViewCountAsync(stranitzaIssue.Id));
+            Task.Run(() =>
+            {
+                _stats.UpdateIssueViewCountAsync(stranitzaIssue.Id);
+                Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
+                    $"прегледа брой ({stranitzaIssue.Id}:{stranitzaIssue.ReleaseNumber}/{stranitzaIssue.ReleaseYear}-{stranitzaIssue.IssueNumber}).");
+            });
 #pragma warning restore 4014
 
             return View(stranitzaIssue);
@@ -197,7 +203,13 @@ namespace stranitza.Controllers
             }
 
 #pragma warning disable 4014
-            Task.Run(() => _stats.UpdateIssueViewCountAsync(issueEntry.Id));
+            Task.Run(() =>
+            {
+                _stats.UpdateIssueViewCountAsync(issueEntry.Id);
+
+                Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
+                    $"прегледа брой ({issueEntry.Id}:{issueEntry.ReleaseNumber}/{issueEntry.ReleaseYear}-{issueEntry.IssueNumber}).");
+            });
 #pragma warning restore 4014
 
             var pdfEntry = await _context.StranitzaFiles.FindAsync(issueEntry.PdfFilePreviewId);
@@ -222,6 +234,9 @@ namespace stranitza.Controllers
 
             _stats.UpdateIssueDownloadCountAsync(issueEntry.Id);
 
+            Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
+                $"свали брой ({issueEntry.Id}:{issueEntry.ReleaseNumber}/{issueEntry.ReleaseYear}-{issueEntry.IssueNumber}).");
+
             return await _service.GetDownloadPdfForUser(User, issueEntry, reduced);
         }
 
@@ -235,6 +250,9 @@ namespace stranitza.Controllers
             }
 
             _stats.UpdateIssueDownloadCountAsync(issue.Id);
+
+            Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
+                $"свали брой ({issue.Id}:{issue.ReleaseNumber}/{issue.ReleaseYear}-{issue.IssueNumber}).");
 
             var content = await _service.GetZipForUser(User, issue, thumb);
             return new FileContentResult(content, issue.ZipFile.MimeType)
