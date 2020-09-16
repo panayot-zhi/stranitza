@@ -33,6 +33,8 @@ namespace stranitza.Models.ViewModels
 
         public int? PdfFileDownloadId { get; set; }
 
+        public bool HasPdf => PdfFilePreviewId.HasValue;
+
 
         public DateTime LastUpdated { get; set; }
 
