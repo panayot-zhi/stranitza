@@ -338,38 +338,6 @@ namespace stranitza.Repositories
 
             dbSet.Attach(entry);
 
-            // TODO: Cover Pages?
-            /*var coverPage = entry.CoverPage;
-            if (coverPage.PageNumber != vModel.CoverPageNumber)
-            {
-                var newCoverPage = entry.Pages.SingleOrDefault(x => x.PageNumber == vModel.CoverPageNumber);
-                if (newCoverPage == null)
-                {
-                    throw new StranitzaException($"Няма страница с указаният номер '{vModel.CoverPageNumber}' (CoverPageNumber).");
-                }
-
-                if (newCoverPage.Type != StranitzaPageType.Regular)
-                {
-                    throw new StranitzaException($"Указаната страница с номер '{vModel.CoverPageNumber}' не може да бъде сменена защото понастоящем е {newCoverPage.Type} (CoverPageNumber).");
-                }
-            }
-
-            // TODO: Index Pages?
-            var indexPage = entry.IndexPage;
-            if (indexPage.PageNumber != vModel.IndexPageNumber)
-            {
-                var newIndexPage = entry.Pages.SingleOrDefault(x => x.PageNumber == vModel.IndexPageNumber);
-                if (newIndexPage == null)
-                {
-                    throw new StranitzaException($"Няма страница с указаният номер '{vModel.IndexPageNumber}' (IndexPageNumber).");
-                }
-
-                if (newIndexPage.Type != StranitzaPageType.Regular)
-                {
-                    throw new StranitzaException($"Указаната страница с номер '{vModel.IndexPageNumber}' не може да бъде сменена защото понастоящем е {newIndexPage.Type} (CoverPageNumber).");
-                }
-            }*/
-
             entry.Description = vModel.Description;
             entry.IsAvailable = vModel.IsAvailable;
 

@@ -52,8 +52,6 @@ namespace stranitza.Repositories
                     CategoryId = x.CategoryId,               
                     AuthorId = x.AuthorId,    
 
-                    AuthorNames = null,     // TODO: Revise, do we really need this?                    
-                    UploaderNames = null,   // TODO: Revise, do we really need this?
                     CategoryName = x.Category.Name,
 
                     DateCreated = x.DateCreated

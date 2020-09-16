@@ -60,7 +60,7 @@ namespace stranitza.Services
                 entry.Issue = issueByReleaseYearAndNumber;
             }
 
-            /*  TODO: Resolve index entries connection to existing epages
+            /*  NOTE: EPage creates it's own index entry and manages it. This is not a concern for this method.
 
             // NOTE: resolve epage by ReleaseNumber and ReleaseYear, which MUST form a unique combination
             var existingEpageEntry = _applicationDbContext.StranitzaEPages.SingleOrDefault(epage =>
