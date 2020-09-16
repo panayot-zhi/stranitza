@@ -57,7 +57,19 @@ namespace stranitza.Utility
     }
 
     public class StranitzaAuthorizeAttribute : AuthorizeAttribute
-    {        
+    {
+        /// <summary>
+        /// Requires one to be logged in.
+        /// </summary>
+        public StranitzaAuthorizeAttribute()
+        {
+
+        }
+
+        /// <summary>
+        /// Requires one to have the specified role OR (default) be higher than it.
+        /// Pass flag andAbove as false to change the default behaviour to authorize for specific role only. 
+        /// </summary>
         public StranitzaAuthorizeAttribute(StranitzaRoles role, bool andAbove = true)
         {
             var roles = StranitzaRolesHelper.GetRoleName(role);
@@ -68,7 +80,6 @@ namespace stranitza.Utility
             }
 
             this.Roles = roles;
-
         }
     }
 }
