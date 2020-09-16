@@ -258,33 +258,5 @@ namespace stranitza.Repositories
 
             return entry;
         }
-
-        public static async Task<StranitzaSource> UpdateSourceAsync(this DbSet<StranitzaSource> dbSet,
-            SourceEditViewModel vModel)
-        {
-            var entry = await dbSet.FindAsync(vModel.Id);
-
-            if (entry.EPageId.HasValue)
-            {
-                throw new StranitzaException("Източници свързани към e-страници не могат да бъдат променяни.");
-            }
-
-            dbSet.Attach(entry);
-
-            entry.FirstName = vModel.FirstName;
-            entry.LastName = vModel.LastName;
-            entry.Origin = vModel.Origin;
-            entry.Title = vModel.Title;            
-            entry.Description = vModel.Description;
-            entry.Notes = vModel.Notes;
-
-            entry.Pages = vModel.Pages;
-            entry.StartingPage = vModel.StartingPage;
-
-            entry.IsTranslation = vModel.IsTranslation;
-            entry.CategoryId = vModel.CategoryId;
-
-            return entry;
-        }
     }
 }

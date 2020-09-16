@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using stranitza.Models.Database;
 using Serilog;
+using stranitza.Models.ViewModels;
 using stranitza.Repositories;
+using stranitza.Utility;
 
 namespace stranitza.Services
 {
@@ -96,6 +98,53 @@ namespace stranitza.Services
 
             Log.Logger.Information("Generated index record {IndexId}.", entry.Id);
         }
+
+        public async Task<StranitzaSource> UpdateIndexRecord(SourceEditViewModel vModel)
+        {
+            var entry = await _applicationDbContext.StranitzaSources.FindAsync(vModel.Id);
+
+            if (entry.EPageId.HasValue)
+            {
+                throw new StranitzaException("Източници свързани към e-страници не могат да бъдат променяни.");
+            }
+
+            _applicationDbContext.StranitzaSources.Attach(entry);
+
+            if (entry.FirstName != vModel.FirstName || entry.LastName != vModel.LastName)
+            {
+                // NOTE: perform a new search for an author
+                entry.Author = await _applicationDbContext.Users.FindAuthorAsync(vModel.FirstName, vModel.LastName);
+            }
+
+            entry.FirstName = vModel.FirstName;
+            entry.LastName = vModel.LastName;
+
+            entry.Origin = vModel.Origin;
+            entry.Title = vModel.Title;
+            entry.Description = vModel.Description;
+            entry.Notes = vModel.Notes;
+
+            if (entry.ReleaseNumber != vModel.ReleaseNumber || entry.ReleaseYear != vModel.ReleaseYear)
+            {
+                // NOTE: resolve the issue again by ReleaseNumber and ReleaseYear, which MUST form a unique combination
+                entry.IssueId = _applicationDbContext.StranitzaIssues.SingleOrDefault(issue =>
+                    issue.ReleaseNumber == vModel.ReleaseNumber && issue.ReleaseYear == vModel.ReleaseYear)?.Id;
+            }
+
+            entry.ReleaseNumber = vModel.ReleaseNumber;
+            entry.ReleaseYear = vModel.ReleaseYear;
+
+            entry.Pages = vModel.Pages;
+            entry.StartingPage = vModel.StartingPage;
+
+            entry.IsTranslation = vModel.IsTranslation;
+            entry.CategoryId = vModel.CategoryId;
+
+            await _applicationDbContext.SaveChangesAsync();
+
+            return entry;
+        }
+
         public bool CheckForExistingSource(StranitzaSource entry)
         {
             var existingSourceEntries = _applicationDbContext.StranitzaSources.Where(

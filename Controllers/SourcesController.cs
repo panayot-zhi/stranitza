@@ -16,14 +16,16 @@ namespace stranitza.Controllers
 {
     public class SourcesController : Controller
     {
+        private readonly IndexService _index;
         private readonly LibraryService _library;
         private readonly ApplicationDbContext _context;
         private readonly LinkGenerator _link;
 
-        public SourcesController(ApplicationDbContext context, LinkGenerator link, LibraryService library)
+        public SourcesController(ApplicationDbContext context, LinkGenerator link, LibraryService library, IndexService index)
         {
             _link = link;
             _library = library;
+            _index = index;
             _context = context;            
         }
 
@@ -121,8 +123,7 @@ namespace stranitza.Controllers
             {
                 try
                 {
-                    await _context.StranitzaSources.UpdateSourceAsync(vModel);
-                    await _context.SaveChangesAsync();
+                    await _index.UpdateIndexRecord(vModel);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
