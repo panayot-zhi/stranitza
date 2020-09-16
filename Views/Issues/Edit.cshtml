@@ -248,10 +248,10 @@
                     <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Сваляне на PDF (цял)</a></li>
                     <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id, reduced = true})" target="_blank">Преглед на PDF (редактиран)</a></li>
                 }
-                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Преглед на всички изображения (ZIP)</a></li>
+                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Преглед на ZIP архив (цял)</a></li>
+                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id, thumb = true })" target="_blank">Преглед на ZIP архив (за посетители)</a></li>
                 @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
-                    <li><a href="#">Възстановяване на броя от файловата система</a></li>
                     <li><a asp-action="Delete" asp-controller="Issues" asp-route-id="@Model.Id">Изтриване на броя</a></li>
                 }
             </ul>

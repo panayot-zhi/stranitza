@@ -86,6 +86,12 @@
 
         <div class="body">
             <ul class="tales-list">
+                @if (Model.HasPdf && User.Identity.IsAuthenticated)
+                {
+                    <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.Id})" target="_blank">Преглед (PDF)</a></li>
+                    <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Сваляне (PDF)</a></li>
+                }
+
                 @if (User.IsAtLeast(StranitzaRoles.Editor))
                 {
                     <li><a asp-controller="Issues" asp-action="Create">Създаване на нов брой</a></li>
@@ -100,6 +106,9 @@
                 <li><a href="#sharer">Сподели</a></li>
                 <li><a href="#comments">Коментари</a></li>
                 <li><a href="#create-comment">Напиши коментар</a></li>
+                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Сваляне (ZIP)</a></li>
+
+
             </ul>
         </div>
     </div>
