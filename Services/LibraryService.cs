@@ -720,14 +720,47 @@ thumb: {page.PageFile.ThumbPath}";
 
         public async Task<FileInfo> CreateZipFiles(StranitzaIssue issue)
         {
-            // TODO: Create a thumb ZIP file here also, add pdf files
-
             var zipFileName = $"{issue.ReleaseYear}-{issue.ReleaseNumber}.zip";
-            var fileEntries = _applicationDbContext.StranitzaPages.Where(x => x.Issue == issue).Select(x => x.PageFile);
+            var fileEntries = _applicationDbContext.StranitzaPages.Where(x => x.Issue == issue).Select(x => x.PageFile).ToList();
             var rootFolderPath = Path.Combine(_applicationConfiguration["RepositoryPath"], StranitzaConstants.IssuesFolderName);
             var issueFolderPath = Path.Combine(rootFolderPath, $"{issue.ReleaseYear}", $"{issue.ReleaseYear}-{issue.ReleaseNumber}");
+            var zipThumbFilePath = Path.Combine(issueFolderPath, StranitzaConstants.ThumbnailsFolderName, zipFileName);
             var zipFilePath = Path.Combine(issueFolderPath, zipFileName);
 
+            var zipFileEntries = new List<StranitzaFile>(fileEntries);
+            var zipThumbFileEntries = new List<StranitzaFile>(fileEntries);
+
+            var originalPdfEntry = await _applicationDbContext.StranitzaFiles.FindAsync(issue.PdfFilePreviewId);
+            if (originalPdfEntry != null)
+            {
+                zipFileEntries.Add(originalPdfEntry);
+
+                var reducedPdfEntry = await _applicationDbContext.StranitzaFiles.FindAsync(issue.PdfFileReducedId);
+                if (reducedPdfEntry == null)
+                {
+                    // I sincerely think that this should not be done here
+
+                    var reducedPdfFile = CreateReducedPdfFile(issue);
+                    reducedPdfEntry = await CreatePdfReducedFileRecord(reducedPdfFile);
+
+                    _applicationDbContext.StranitzaIssues.Attach(issue);
+                    issue.PdfFileReduced = reducedPdfEntry;
+                    await _applicationDbContext.SaveChangesAsync();
+
+                    StampPdf(issue.PdfFileReduced, issue.GetIssueTitle());
+                }
+
+                zipThumbFileEntries.Add(reducedPdfEntry);
+            }
+
+            await CreateZipFile(zipFileEntries, zipFilePath);
+            await CreateZipFile(zipThumbFileEntries, zipThumbFilePath);
+
+            return new FileInfo(zipFilePath);
+        }
+
+        private static async Task<FileInfo> CreateZipFile(IEnumerable<StranitzaFile> fileEntries, string zipFilePath)
+        {
             using (var memory = new MemoryStream())
             {
                 using (var zip = new ZipArchive(memory, ZipArchiveMode.Create, false, Encoding.UTF8))
@@ -736,14 +769,13 @@ thumb: {page.PageFile.ThumbPath}";
                     {
                         zip.Add(fileEntry.FilePath, fileEntry.FileName);
                     }
-                    
+
                     /*using (var outputFileStream = new FileStream(zipFilePath, FileMode.Create))
                     {
                         // revert memory position, begin seeking
                         memory.Seek(0, SeekOrigin.Begin);
                         await memory.CopyToAsync(outputFileStream);
                     }*/
-
                 }
 
                 // NOTE: Whenever this method is called it should
