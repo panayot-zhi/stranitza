@@ -20,14 +20,12 @@ namespace stranitza.Controllers
             _service = service;
         }
 
-        // GET: Posts
         public async Task<IActionResult> Index(int? page)
         {
             var vModel = await _context.StranitzaPosts.GetPostsPagedAsync(page);
             return View(vModel);
         }
 
-        // GET: Posts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,15 +42,15 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Posts/Create
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public IActionResult Create()
         {
             return View(new PostCreateViewModel());
         }
 
-        // POST: Posts/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Create(PostCreateViewModel vModel)
         {
             if (!ModelState.IsValid)
@@ -90,7 +88,7 @@ namespace stranitza.Controllers
 
         }
 
-        // GET: Posts/Edit/5
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -107,9 +105,9 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Posts/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(PostEditViewModel vModel)
         {
             if (!ModelState.IsValid)
@@ -149,7 +147,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Posts/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -166,7 +164,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Posts/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

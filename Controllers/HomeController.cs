@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Dynamic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Serilog;
 
 namespace stranitza.Controllers
 {    
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly IMailSender _mailSender;

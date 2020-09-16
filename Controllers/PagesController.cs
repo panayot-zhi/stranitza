@@ -21,7 +21,8 @@ namespace stranitza.Controllers
             _context = context;
             _service = service;
         }
-        
+
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Index(int? id, int? page)
         {
             if (!id.HasValue)
@@ -35,7 +36,8 @@ namespace stranitza.Controllers
             return View(viewModel);
         }
 
-        [Ajax]                
+        [Ajax]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -57,6 +59,7 @@ namespace stranitza.Controllers
         [Ajax]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(PageViewModel vModel)
         {
             var r = new StranitzaJsonResult();
@@ -105,6 +108,7 @@ namespace stranitza.Controllers
         [Ajax]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,6 +132,7 @@ namespace stranitza.Controllers
             return Json(r);
         }
 
+        // TODO: Fix response caching after tests
         //[ResponseCache(CacheProfileName = StranitzaCacheProfile.Weekly, VaryByQueryKeys = new [] { "thumb" })]
         public IActionResult Load(int id, bool thumb = false)
         {

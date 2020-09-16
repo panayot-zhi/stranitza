@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using stranitza.Models.Database;
@@ -22,7 +23,7 @@ namespace stranitza.Controllers
             _service = service;
         }
 
-        // GET: EPages
+        [AllowAnonymous]
         public async Task<IActionResult> Index(int? year)
         {
             var viewModel = await _context.StranitzaEPages.GetEPagesByYearAsync(year);
@@ -31,7 +32,7 @@ namespace stranitza.Controllers
             return View(viewModel);
         }
 
-        // GET: EPages/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,7 +49,7 @@ namespace stranitza.Controllers
             return View(entry);
         }
 
-        // GET: EPages/Create
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public IActionResult Create()
         {                        
             return View(new EPageCreateViewModel()
@@ -57,9 +58,9 @@ namespace stranitza.Controllers
             });
         }
 
-        // POST: EPages/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Create(EPageCreateViewModel vModel)
         {
             if (ModelState.IsValid)
@@ -83,8 +84,9 @@ namespace stranitza.Controllers
 
             return View(vModel);
         }
-  
-        // GET: EPages/Delete/5
+
+        [HttpGet]
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -101,7 +103,7 @@ namespace stranitza.Controllers
             return View(entry);
         }
 
-        // POST: EPages/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

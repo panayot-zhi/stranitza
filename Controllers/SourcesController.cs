@@ -9,7 +9,6 @@ using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 using Serilog;
-using stranitza.Models.Database.Views;
 using stranitza.Repositories;
 using stranitza.Services;
 
@@ -28,7 +27,6 @@ namespace stranitza.Controllers
             _context = context;            
         }
 
-        // GET: Sources
         public async Task<IActionResult> Index(int? page, int? year, int? category, string origin)
         {
             origin = System.Net.WebUtility.UrlDecode(origin);
@@ -46,7 +44,7 @@ namespace stranitza.Controllers
             return View(viewModel);            
         }
 
-        // GET: Sources/Details/5
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -64,7 +62,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Sources/Create
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public IActionResult Create()
         {
             return View(new SourceCreateViewModel
@@ -73,9 +71,9 @@ namespace stranitza.Controllers
             });
         }
 
-        // POST: Sources/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Create(SourceCreateViewModel vModel)
         {
             if (ModelState.IsValid)
@@ -94,7 +92,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Sources/Edit/5
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -114,9 +112,9 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Sources/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(SourceEditViewModel vModel)
         {                        
             if (ModelState.IsValid)
@@ -138,7 +136,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Sources/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -156,7 +154,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Sources/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -236,7 +234,8 @@ namespace stranitza.Controllers
                 return Redirect(GetPdfPageUrl(issue.Id, source.StartingPage));
             }
 
-            // TODO: Append a message to the user that this page is not available!
+            TempData.AddModalMessage("За съжаление поисканата от Вас страница все още не е част от дигиталния архив на списанието.");
+
             return RedirectToAction("Details", "Issues", new { id = issue.Id });
         }
 

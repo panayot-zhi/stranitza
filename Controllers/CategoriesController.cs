@@ -17,7 +17,7 @@ namespace stranitza.Controllers
             _context = context;
         }
 
-        // GET: Categories
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Index(string sort, string order)
         {
             Enum.TryParse(order, ignoreCase: true, result: out SortOrder sortOrder);
@@ -26,7 +26,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Categories/EPages/5        
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> EPages(int id, int? page, string sort, string order)
         {
             var entry = await _context.StranitzaCategories.FindAsync(id);
@@ -50,7 +50,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Categories/Sources/5        
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Sources(int id, int? page, string sort, string order)
         {
             var entry = await _context.StranitzaCategories.FindAsync(id);
@@ -74,7 +74,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Categories/Details/5
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -93,15 +93,15 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Categories/Create
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public IActionResult Create()
         {
             return View(new CategoryViewModel());
         }
 
-        // POST: Categories/Create        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Create(CategoryViewModel vModel)
         {
             if (ModelState.IsValid)
@@ -114,7 +114,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Categories/Edit/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -133,9 +133,9 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Categories/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Edit(CategoryViewModel vModel)
         {
             if (ModelState.IsValid)
@@ -155,7 +155,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Categories/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -172,7 +172,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Categories/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

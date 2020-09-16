@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using stranitza.Models.Database;
@@ -20,6 +21,7 @@ namespace stranitza.Controllers
         }
 
         [Ajax]
+        [AllowAnonymous]
         public async Task<IActionResult> GetIssueComments(int? id, int? parentId, int? offset)
         {
             if (!id.HasValue)
@@ -31,6 +33,7 @@ namespace stranitza.Controllers
         }
 
         [Ajax]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPostComments(int? id, int? parentId, int? offset)
         {
             if (!id.HasValue)
@@ -42,6 +45,7 @@ namespace stranitza.Controllers
         }
 
         [Ajax]
+        [AllowAnonymous]
         public async Task<IActionResult> GetEPageComments(int? id, int? parentId, int? offset)
         {
             if (!id.HasValue)
@@ -110,14 +114,10 @@ namespace stranitza.Controllers
 
         [Ajax]
         [HttpPost]
+        [StranitzaAuthorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CommentViewModel vModel)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Challenge();
-            }
-
             if (ModelState.IsValid)
             {
                 var comment = await _context.StranitzaComments.CreateCommentAsync(vModel, User.GetUserId());
@@ -140,18 +140,9 @@ namespace stranitza.Controllers
 
         [Ajax]
         [HttpPost]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(CommentViewModel vModel)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Challenge();
-            }
-
-            if (!User.IsAtLeast(StranitzaRoles.Editor))
-            {
-                return Forbid();
-            }
-
             var comment = await _context.StranitzaComments.UpdateCommentAsync(vModel, User.GetUserId());
             if (comment == null)
             {
@@ -183,20 +174,11 @@ namespace stranitza.Controllers
 
         [Ajax]
         [HttpPost]
+        [StranitzaAuthorize(StranitzaRoles.Administrator)]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return Challenge();
-            }
-
             var comment = await _context.StranitzaComments.FindAsync(id);
             if (comment == null)
-            {
-                return NotFound();
-            }
-
-            if (!User.IsAtLeast(StranitzaRoles.Editor))
             {
                 return NotFound();
             }

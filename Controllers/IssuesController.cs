@@ -24,7 +24,6 @@ namespace stranitza.Controllers
             _stats = stats;
         }
 
-        // GET: Issues
         public async Task<IActionResult> Index(int? page, int? year)
         {
             var retrieveOnlyAvailableIssues = !User.IsAtLeast(StranitzaRoles.Editor);
@@ -37,7 +36,6 @@ namespace stranitza.Controllers
             return View(viewModel);
         }
 
-        // GET: Issues/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -71,7 +69,7 @@ namespace stranitza.Controllers
             return View(stranitzaIssue);
         }
 
-        // GET: Issues/Create
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public IActionResult Create()
         {
             return View(new IssueCreateViewModel());
@@ -81,6 +79,7 @@ namespace stranitza.Controllers
         [HttpPost]
         [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Create(IssueCreateViewModel vModel)
         {
             if (!ModelState.IsValid)
@@ -103,7 +102,7 @@ namespace stranitza.Controllers
 
         }
 
-        // GET: Issues/Edit/5
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -120,10 +119,10 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // POST: Issues/Edit/5
         [HttpPost]
         [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Edit(IssueEditViewModel vModel)
         {
             if (ModelState.IsValid)
@@ -147,7 +146,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        // GET: Issues/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -164,7 +163,7 @@ namespace stranitza.Controllers
             return View(entry);
         }
 
-        // POST: Issues/Delete/5
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -226,6 +225,7 @@ namespace stranitza.Controllers
             return await _service.GetDownloadPdfForUser(User, issueEntry, reduced);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> DownloadZip(int? id, bool thumb = false)
         {
             var issue = await _context.StranitzaIssues.FindAsync(id);
