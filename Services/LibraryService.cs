@@ -354,6 +354,8 @@ index: {issue.IndexPage?.Id}";
                     updateZipFile = true;
                 }
 
+                await _applicationDbContext.SaveChangesAsync();
+
                 if (updateZipFile)
                 {
                     // create zip from available pages always on update
