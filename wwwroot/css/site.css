@@ -500,11 +500,6 @@ article#help .panel {
     padding-bottom: 20px;
 }
 
-.sources-main {
-    padding-top: 36px;
-    padding-bottom: 20px;
-}
-
 body.lg-on {
     overflow-y: hidden;
 }
@@ -1009,4 +1004,12 @@ article.comment .body small {
     display: block;
     left: -20px;
     top: 22px;
+}
+
+#list-source .source-image {
+    padding-right: 0;
+}
+
+#list-source .source-info-wrapper {
+    padding-left: 0;
 }

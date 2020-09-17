@@ -365,7 +365,6 @@ $(document).ready(function () {
 
             }, 400);
         });
-
     });
 
     searchfield.on('blur', function () {
