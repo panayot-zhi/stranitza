@@ -35,6 +35,16 @@ namespace stranitza.Controllers
             var viewModel = await _context.StranitzaSources.GetSourcesPagedAsync(
                 year: year, categoryId: category, origin: origin, pageIndex: page);
             
+            /*
+            // TODO: Functionality suspended, consult with m.vlashki
+             
+            foreach (var sourceIndexViewModel in viewModel.Records.Where(x => !string.IsNullOrEmpty(x.AuthorId)))
+            {
+                var user = await _context.Users.FindAsync(sourceIndexViewModel.AuthorId);
+                sourceIndexViewModel.AuthorDisplayName = StranitzaExtensions.GetDisplayName(user);
+                sourceIndexViewModel.AuthorAvatarPath = Url.GetAvatarPath(user) ?? Url.Content("~/images/default-user.png");
+            }*/
+
             viewModel.CategoriesFilter = await _context.StranitzaCategories.GetCategoryFilterViewModelAsync();
             viewModel.YearFilter = _context.CountByYears.GetSourcesCountByYears();
             viewModel.OriginFilter = new[] { "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ю", "Я", "„“" };

@@ -88,7 +88,7 @@
         </p>
     }
     
-    <partial name="_Paging" model="Model" view-data='new ViewDataDictionary(ViewData) { { "Next", "Напред" }, { "Previous", "Назад" } }'/>
-    @*@await Html.PartialAsync("_Paging", Model, new ViewDataDictionary(ViewData) { { "Next", "Напред" }, { "Previous", "Назад" } })*@
+    @*<partial name="_Paging" model="Model" view-data='new ViewDataDictionary(ViewData) { { "Next", "Напред" }, { "Previous", "Назад" } }'/>*@
+    @await Html.PartialAsync("_Paging", Model, new ViewDataDictionary(ViewData) { { "Next", "Напред" }, { "Previous", "Назад" } })
     
 </div>

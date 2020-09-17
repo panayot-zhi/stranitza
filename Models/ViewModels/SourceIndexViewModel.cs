@@ -48,6 +48,10 @@ namespace stranitza.Models.ViewModels
 
 //        public ApplicationUser Author { get; set; }
 
+        public string AuthorAvatarPath { get; set; }
+
+        public string AuthorDisplayName { get; set; }
+
         public DateTime LastUpdated { get; set; }
 
         public DateTime DateCreated { get; set; }        

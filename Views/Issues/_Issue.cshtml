@@ -43,11 +43,11 @@
                 @*@Model.Description*@
                 @if (Model.HasPdf)
                 {
-                    @:Броят е <b>достъпен в PDF</b> вариант. Общ брой на страниците <b>@Model.PagesCount</b>, от които @(Model.AvailablePages?.Length ?? 0) страници със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения на страници, достъпни за <i class="text-success">всеки посетител</i>.
+                    @:Броят е <b>достъпен в PDF</b> вариант. Общият брой на страниците е <b>@Model.PagesCount</b>, от които @(Model.AvailablePages?.Length ?? 0) страници със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения на страници, достъпни за <i class="text-success">всеки посетител</i>.
                 }
                 else
                 {
-                    @:Страниците са достъпни само като <b>изображения</b>. Общ брой на страниците <b>@Model.ImagesCount</b>.
+                    @:Страниците са достъпни само като <b>изображения</b>. Общият брой на страниците е <b>@Model.ImagesCount</b>.
                 }
 
                 Броят е преглеждан @Model.ViewCount пъти и е свалян @Model.DownloadCount.

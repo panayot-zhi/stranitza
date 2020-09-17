@@ -56,12 +56,15 @@ namespace stranitza.Repositories
 
                     DateCreated = x.DateCreated
 
-                }).GroupBy(x => x.CategoryName).ToDictionaryAsync(x => x.Key, group => group.ToList());
+                }).ToListAsync();
+                
+            var epagesDictionary = epages.GroupBy(x => x.CategoryName)
+                .ToDictionary(x => x.Key, group => group.ToList());
             
             return new EPageViewModel()
             {
                 CurrentYear = year.Value,
-                EPagesByCategory = epages
+                EPagesByCategory = epagesDictionary
             };
         }
 

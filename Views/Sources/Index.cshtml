@@ -27,7 +27,7 @@
     }
 }
 
-<div class="col-md-8 sources-main">
+<div class="col-md-8 blog-main">
 
     <div class="row alphabet-sort">
                
@@ -47,12 +47,27 @@
     </div>
 
     <div id="list-source" class="content" role="main">
-        
+
         @if (Model.Records.Any())
         {
             foreach (var source in Model.Records)
             {
-                @await Html.PartialAsync("_Source", source)
+                <div class="row source-row">
+                    @if (string.IsNullOrEmpty(source.AuthorAvatarPath))
+                    {
+                        @await Html.PartialAsync("_Source", source)
+                    }
+                    else
+                    {
+                        <div class="col-sm-2 source-image">
+                            <img src="@Url.Content(source.AuthorAvatarPath)" class="img-responsive" alt="@source.AuthorDisplayName">
+                        </div>
+
+                        <div class="col-sm-10 source-info-wrapper">
+                            @await Html.PartialAsync("_Source", source)
+                        </div>
+                    }
+                </div>
             }
         }
         else
@@ -63,8 +78,8 @@
         }
 
         @await Html.PartialAsync("_Paging", Model)
-    </div>    
-    
+
+    </div>
 </div>
 
 <aside class="col-md-4 blog-aside">

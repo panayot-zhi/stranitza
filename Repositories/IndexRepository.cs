@@ -71,10 +71,17 @@ namespace stranitza.Repositories
                     Description = x.Description,
                     Notes = x.Notes,
 
-                    CategoryId = x.CategoryId,
-                    CategoryName = x.Category.Name,
                     IssueId = x.IssueId,
                     EPageId = x.EPageId,
+                    AuthorId = x.AuthorId,
+
+                    Uploader = x.Uploader,
+
+                    CategoryId = x.CategoryId,
+                    CategoryName = x.Category.Name,
+
+                    DateCreated = x.DateCreated,
+                    LastUpdated = x.LastUpdated
 
                 }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
 
@@ -117,12 +124,15 @@ namespace stranitza.Repositories
                     Origin = x.Origin,
                     Description = x.Description,
                     Notes = x.Notes,
-                    
+
                     IssueId = x.IssueId,
                     EPageId = x.EPageId,
                     AuthorId = x.AuthorId,
 
                     Uploader = x.Uploader,
+
+                    CategoryId = x.CategoryId,
+                    CategoryName = x.Category.Name,
 
                     DateCreated = x.DateCreated,
                     LastUpdated = x.LastUpdated

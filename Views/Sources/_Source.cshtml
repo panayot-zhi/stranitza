@@ -1,63 +1,63 @@
 ﻿@model SourceIndexViewModel
-@*TODO: When avatars are ready add here Model.Author branch*@
 
-<div class="row source-row">
-    
-    @if (User.IsAtLeast(StranitzaRoles.Editor))
-    {
-        <div class="source-operations">
-            <a asp-action="Details" asp-controller="Sources" asp-route-id="@Model.Id" class="source-show">
-                <i class="fa fa-eye"></i>                   
-            </a>
-        </div>
-    }
+@{
+    var hideOperations = ViewData["HideOperations"] as bool? ?? false;
+}
 
-    <div id="source-@Model.Id" class="source-info">
-        <div class="col-md-12">
-            @Model.Origin
-        </div>
+@if (User.IsAtLeast(StranitzaRoles.Editor) && !hideOperations)
+{
+    <div class="source-operations">
+        <a asp-action="Details" asp-controller="Sources" asp-route-id="@Model.Id" class="source-show">
+            <i class="fa fa-eye"></i>                   
+        </a>
+    </div>
+}
 
-        <div class="col-md-12">
-            <b>@Model.Title</b>
-        </div>
+<div id="source-@Model.Id" class="source-info">
+    <div class="col-md-12">
+        @Model.Origin
+    </div>
 
-        <div class="col-md-12">
-            <small>@Model.CategoryName</small>
-        </div>
+    <div class="col-md-12">
+        <b>@Model.Title</b>
+    </div>
 
-        <div class="col-md-12">
-            <small>
-                @Model.Description
-            </small>
-        </div>
+    <div class="col-md-12">
+        <small>@Model.CategoryName</small>
+    </div>
 
-        <div class="col-md-12">           
+    <div class="col-md-12">
+        <small>
+            @Model.Description
+        </small>
+    </div>
+
+    <div class="col-md-12">           
             
-            @if (Model.EPageId.HasValue)
-            {
-                <a href="@Url.Action("Details", "EPages", new { id = Model.EPageId })" target="_blank">
-                    e-страница (@Model.ReleaseYear)<sup><i class="fa fa-e-stranitza-plus"></i></sup>
-                </a>
-            } 
-            else if (Model.IssueId.HasValue)
-            {
-                // seeks page within an issue
-                <a href=@Url.Action("FindPage", "Sources", new { id = Model.Id }) target="_blank">
-                    бр. @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-external-link"></i></sup>
-                </a>
-            }            
-            else
-            {                
-                // seeks issue
-                <a href="@Url.Action("FindIssue", "Sources", new { id = Model.Id })" target="_blank">
-                    бр. @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-search"></i></sup>
-                </a>
-            }
+        @if (Model.EPageId.HasValue)
+        {
+            <a href="@Url.Action("Details", "EPages", new { id = Model.EPageId })" target="_blank">
+                e-страница (@Model.ReleaseYear)<sup><i class="fa fa-e-stranitza-plus"></i></sup>
+            </a>
+        } 
+        else if (Model.IssueId.HasValue)
+        {
+            // seeks page within an issue
+            <a href=@Url.Action("FindPage", "Sources", new { id = Model.Id }) target="_blank">
+                бр. @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-external-link"></i></sup>
+            </a>
+        }            
+        else
+        {                
+            // seeks issue
+            <a href="@Url.Action("FindIssue", "Sources", new { id = Model.Id })" target="_blank">
+                бр. @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-search"></i></sup>
+            </a>
+        }
 
-        </div>
+    </div>
 
-        <div class="col-md-12">
-            <small>@Model.Notes</small>
-        </div>
+    <div class="col-md-12">
+        <small>@Model.Notes</small>
     </div>
 </div>
