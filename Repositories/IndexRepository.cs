@@ -260,8 +260,7 @@ namespace stranitza.Repositories
 
                 EPageId = epage.Id,
                 AuthorId = epage.AuthorId,
-                Uploader = uploader, 
-                
+                Uploader = uploader,
             };
 
             await dbSet.AddAsync(entry);
@@ -269,7 +268,7 @@ namespace stranitza.Repositories
             return entry;
         }
 
-        public static async Task<SourceSearchViewModel> SearchSourcesPagedAsync(this DbSet<StranitzaSource> sourcesDbSet,
+        public static async Task<SourceSearchViewModel> SearchSourcesPagedAsync(this DbSet<StranitzaSource> dbSet,
             string searchQuery, int? pageIndex, int pageSize = 10)
         {
             if (!pageIndex.HasValue)
@@ -277,17 +276,19 @@ namespace stranitza.Repositories
                 pageIndex = 1;
             }
 
-            var query = sourcesDbSet.Where(x => 
-                EF.Functions.Like(x.Origin, $"%{searchQuery}%") || 
-                EF.Functions.Like(x.Title, $"%{searchQuery}%") || 
-                EF.Functions.Like(x.Description, $"%{searchQuery}%") || 
-                EF.Functions.Like(x.Notes, $"%{searchQuery}%")
-                /*EF.Functions.Like(x.FirstName, $"%{searchQuery}%") || */
-                /*EF.Functions.Like(x.LastName, $"%{searchQuery}%")*/
-            ).OrderByDescending(x => x.ReleaseYear).ThenByDescending(x => x.ReleaseNumber);
+            var query = dbSet.Where(x =>
+                    EF.Functions.Like(x.Title, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Origin, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Description, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Notes, $"%{searchQuery}%")
+                    /*EF.Functions.Like(x.FirstName, $"%{searchQuery}%") || */
+                    /*EF.Functions.Like(x.LastName, $"%{searchQuery}%")*/
+            );
 
             var count = await query.CountAsync();
             var sources = query
+                .OrderByDescending(x => x.ReleaseYear)
+                    .ThenByDescending(x => x.ReleaseNumber)
                 .Select(x => new SourceIndexViewModel()
                 {
                     Id = x.Id,

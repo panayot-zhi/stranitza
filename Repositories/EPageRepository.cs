@@ -31,8 +31,6 @@ namespace stranitza.Repositories
 
             var epages = await dbSet
                 .Include(x => x.Category)
-                .Include(x => x.Author)
-                .Include(x => x.Uploader)
                 .Where(x => x.ReleaseYear == year)
                 .OrderBy(x => x.DateCreated)
                 .Select(x => new EPageIndexViewModel()
@@ -129,9 +127,6 @@ namespace stranitza.Repositories
             return await dbSet
                 .Include(x => x.Author)
                 .Include(x => x.Uploader)
-                // Maybe just only the id will do?
-                //.Include(x => x.Source)   
-                .Include(x => x.Category)
                 .Select(x => new EPageDeleteViewModel()
                 {
                     Id = x.Id,
@@ -161,8 +156,6 @@ namespace stranitza.Repositories
             return await dbSet
                 .Include(x => x.Author)
                 .Include(x => x.Uploader)
-                // Maybe just only the id will do?
-                //.Include(x => x.Source)   
                 .Include(x => x.Category)
                 .Select(x => new EPageDetailsViewModel()
                 {
@@ -224,5 +217,57 @@ namespace stranitza.Repositories
 
             return entry;
         }
+
+        public static async Task<EPageSearchViewModel> SearchEPagesPagedAsync(this DbSet<StranitzaEPage> dbSet, 
+            string searchQuery, int? pageIndex, int pageSize = 10)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            var query = dbSet.Where(x =>
+                    EF.Functions.Like(x.Title, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Description, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Notes, $"%{searchQuery}%")
+                    /*EF.Functions.Like(x.Content, $"%{searchQuery}%") || */
+                    /*EF.Functions.Like(x.FirstName, $"%{searchQuery}%") || */
+                    /*EF.Functions.Like(x.LastName, $"%{searchQuery}%")*/
+            );
+
+            var count = await query.CountAsync();
+            var epages = query
+                .Include(x => x.Category)
+                .Include(x => x.Uploader)
+                .OrderBy(x => x.DateCreated)
+                .Select(x => new EPageIndexViewModel()
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Title = x.Title,
+
+                    ReleaseYear = x.ReleaseYear,
+                    ReleaseNumber = x.ReleaseNumber,
+                    IsTranslation = x.IsTranslation,
+                    Description = x.Description,
+                    Notes = x.Notes,
+
+                    UploaderId = x.UploaderId,
+                    CategoryId = x.CategoryId,
+                    AuthorId = x.AuthorId,
+
+                    CategoryName = x.Category.Name,
+
+                    DateCreated = x.DateCreated
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
+
+            return new EPageSearchViewModel(count, pageIndex.Value, pageSize)
+            {
+                Records = await epages.ToListAsync()
+            };
+        }
+
     }
 }

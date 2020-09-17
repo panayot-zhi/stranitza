@@ -42,6 +42,7 @@ namespace stranitza.Repositories
                 Category = x.Name,
                 CategoryId = x.Id,
                 Count = x.Sources.Count
+
             }).ToListAsync();
         }
 

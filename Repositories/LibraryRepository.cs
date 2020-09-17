@@ -62,6 +62,7 @@ namespace stranitza.Repositories
                         IsAvailable = y.IsAvailable,
                         PageFileId = y.PageFileId,
                         DateCreated = y.DateCreated
+
                     }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
 
                     IndexPage = x.Pages.Select(y => new PageViewModel()
@@ -74,15 +75,18 @@ namespace stranitza.Repositories
                         IsAvailable = y.IsAvailable,
                         PageFileId = y.PageFileId,
                         DateCreated = y.DateCreated
+
                     }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
 
                     LastUpdated = x.LastUpdated,
                     DateCreated = x.DateCreated,
-                })
-                .Skip((pageIndex.Value - 1) * pageSize).Take(pageSize).ToList();
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize).ToList();
                 //.GroupBy(x => x.ReleaseYear).ToDictionary(x => x.Key, group => group.ToList());
                 
-            var issuesDictionary = issues.GroupBy(x => x.ReleaseYear).ToDictionary(x => x.Key, group => group.ToList());
+            var issuesDictionary = issues.GroupBy(x => x.ReleaseYear)
+                .ToDictionary(x => x.Key, group => group.ToList());
+
             return new LibraryViewModel(count, pageIndex.Value, pageSize)
             {
                 IssuesByYear = issuesDictionary
@@ -115,6 +119,7 @@ namespace stranitza.Repositories
                     PageNumber = y.PageNumber,
                     SlideNumber = y.SlideNumber,
                     IsAvailable = y.IsAvailable,
+
                 }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
 
             return new IssuePagesViewModel(count, pageIndex.Value, pageSize)
@@ -131,10 +136,12 @@ namespace stranitza.Repositories
         public static IEnumerable<CountByYears> GetIssuesCountByYears(this DbSet<CountByYears> dbSet, bool onlyAvailable = false)
         {
             var queryType = CountQueryType.Issues;
+
             if (onlyAvailable)
             {
                 queryType = CountQueryType.AvailableIssues;
             }
+
             return dbSet.FromSqlRaw($"CALL CountByReleaseYear('{queryType}')").ToList();
         }
 
@@ -180,6 +187,7 @@ namespace stranitza.Repositories
                         SlideNumber = y.SlideNumber,
                         DateCreated = y.DateCreated,
                         Type = y.Type,
+
                     }).ToList(),
 
                 CommentsCount = issue.Comments.Count,
@@ -202,6 +210,7 @@ namespace stranitza.Repositories
 
                         DateCreated = x.DateCreated,
                         LastUpdated = x.LastUpdated,
+
                     }).ToList(),
             };
 
@@ -237,6 +246,7 @@ namespace stranitza.Repositories
                     FileDateCreated = y.PageFile.DateCreated,
                     LastUpdated = y.LastUpdated,
                     DateCreated = y.DateCreated,
+
                 }).SingleOrDefaultAsync(x => x.Id == id);
         }
 
@@ -280,6 +290,7 @@ namespace stranitza.Repositories
                         IsAvailable = y.IsAvailable,
                         PageFileId = y.PageFileId,
                         DateCreated = y.DateCreated
+
                     }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
 
                     IndexPage = x.Pages.Select(y => new PageViewModel()
@@ -292,6 +303,7 @@ namespace stranitza.Repositories
                         IsAvailable = y.IsAvailable,
                         PageFileId = y.PageFileId,
                         DateCreated = y.DateCreated
+
                     }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
 
                     CommentsCount = x.Comments.Count,
@@ -399,6 +411,78 @@ namespace stranitza.Repositories
             entry.Title = vModel.FileTitle;
 
             return entry;
+        }
+
+        public static async Task<IssueSearchViewModel> SearchIssuesPagedAsync(this DbSet<StranitzaIssue> dbSet,
+            string searchQuery, int? pageIndex, int pageSize = 10)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            var query = dbSet.Where(x => 
+                    EF.Functions.Like(x.Tags, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Description, $"%{searchQuery}%")
+                    /*EF.Functions.Like(x.FirstName, $"%{searchQuery}%") || */
+                    /*EF.Functions.Like(x.LastName, $"%{searchQuery}%")*/
+            );
+
+            var count = await query.CountAsync();
+            var issues = query
+                .Include(x => x.Pages)
+                .OrderByDescending(x => x.IssueNumber)
+                .Select(x => new IssueIndexViewModel()
+                {
+                    Id = x.Id,
+                    ReleaseYear = x.ReleaseYear,
+                    IssueNumber = x.IssueNumber,
+                    ReleaseNumber = x.ReleaseNumber,
+                    Description = x.Description,
+                    DownloadCount = x.DownloadCount,
+                    IsAvailable = x.IsAvailable,
+                    PagesCount = x.PagesCount,
+                    ImagesCount = x.Pages.Count,
+                    HasPdf = x.PdfFilePreview != null,
+                    ViewCount = x.ViewCount,
+                    AvailablePages = x.AvailablePages,
+                    Tags = x.Tags,
+
+                    CoverPage = x.Pages.Select(y => new PageViewModel()
+                    {
+                        Id = y.Id,
+                        IssueId = y.IssueId,
+                        Type = y.Type,
+                        PageNumber = y.PageNumber,
+                        SlideNumber = y.SlideNumber,
+                        IsAvailable = y.IsAvailable,
+                        PageFileId = y.PageFileId,
+                        DateCreated = y.DateCreated
+
+                    }).FirstOrDefault(y => y.Type == StranitzaPageType.Cover),
+
+                    IndexPage = x.Pages.Select(y => new PageViewModel()
+                    {
+                        Id = y.Id,
+                        IssueId = y.IssueId,
+                        Type = y.Type,
+                        PageNumber = y.PageNumber,
+                        SlideNumber = y.SlideNumber,
+                        IsAvailable = y.IsAvailable,
+                        PageFileId = y.PageFileId,
+                        DateCreated = y.DateCreated
+
+                    }).FirstOrDefault(y => y.Type == StranitzaPageType.Index),
+
+                    LastUpdated = x.LastUpdated,
+                    DateCreated = x.DateCreated,
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize).ToList();
+
+            return new IssueSearchViewModel(count, pageIndex.Value, pageSize)
+            {
+                Records = issues
+            };
         }
     }
 }

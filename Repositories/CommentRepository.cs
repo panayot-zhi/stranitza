@@ -14,23 +14,25 @@ namespace stranitza.Repositories
             var query = dbSet.Where(x => x.PostId == postId && x.ParentId == parentId && x.IssueId == issueId && x.EPageId == epageId).AsQueryable();
 
             var count = await query.CountAsync();
-            var records = await query.Select(x => new CommentViewModel()
-            {
-                Id = x.Id,
-                IssueId = x.IssueId,
-                PostId = x.PostId,
-                EPageId = x.EPageId,
-                ParentId = x.ParentId,
-                UploaderId = x.AuthorId,
-                ModeratorId = x.ModeratorId,
+            var records = await query
+                .OrderByDescending(x => x.DateCreated)
+                .Select(x => new CommentViewModel()
+                {
+                    Id = x.Id,
+                    IssueId = x.IssueId,
+                    PostId = x.PostId,
+                    EPageId = x.EPageId,
+                    ParentId = x.ParentId,
+                    UploaderId = x.AuthorId,
+                    ModeratorId = x.ModeratorId,
 
-                Content = x.Content,
-                Note = x.Note,
+                    Content = x.Content,
+                    Note = x.Note,
 
-                LastUpdated = x.LastUpdated,
-                DateCreated = x.DateCreated,
+                    LastUpdated = x.LastUpdated,
+                    DateCreated = x.DateCreated,
 
-            }).OrderByDescending(x => x.DateCreated).Skip(offset).Take(limit).ToListAsync();
+                }).Skip(offset).Take(limit).ToListAsync();
 
             return new CommentsWrapViewModel(records, count, limit, offset)
             {

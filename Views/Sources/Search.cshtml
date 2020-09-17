@@ -64,12 +64,18 @@
         </header>
 
         <div class="body">
-            <p>За '@Model.SearchQuery' бяха намерени @Model.TotalRecords резултата.</p>
+            <p>За ключовите думи '@Model.SearchQuery' бяха намерени <b>@Model.TotalRecords</b> резултата.</p>
             <p>
-                Ако не намирате това което търсите, може да повторите търсенето и за 
-                <a href="@Url.Action("Search", "Issues", new {q = Model.SearchQuery})">броеве</a>,
-                <a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">е-страници</a> или
-                <a href="@Url.Action("Search", "Posts", new { q = Model.SearchQuery })">новини</a>,
+                Ако не намирате това което търсите, може да повторите търсенето и за
+                <ul class="tales-list">
+                    <li><a href="@Url.Action("Search", "Issues", new {q = Model.SearchQuery})">броеве</a></li>
+                    <li><a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">е-страници</a></li>
+                    <li><a href="@Url.Action("Search", "Posts", new { q = Model.SearchQuery })">новини</a></li>
+                    @if (User.IsAtLeast(StranitzaRoles.Editor))
+                    {
+                        <li><a href="#">потребители</a></li>
+                    }
+                </ul>
             </p>
         </div>
     </div>
@@ -80,9 +86,20 @@
         </header>
 
         <div class="body">
-            <ul class="tales-list">
-                @await Html.PartialAsync("_Suggestions", StatsService.GetSourcesSuggestions())
-            </ul>
+            @await Html.PartialAsync("_Suggestions", StatsService.GetSourcesSuggestions())
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
         </div>
     </div>
 </aside>

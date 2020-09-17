@@ -22,6 +22,7 @@ namespace stranitza.Repositories
             var posts = query
                 .Include(x => x.Uploader)
                 .Include(x => x.ImageFile)
+                .OrderByDescending(x => x.DateCreated)
                 .Select(x => new PostIndexViewModel()
                 {
                     Id = x.Id,
@@ -39,9 +40,8 @@ namespace stranitza.Repositories
                         $"{x.ImageFile.FileName}.{x.ImageFile.Extension}" : null,
                     ImageTitle = x.ImageFileId.HasValue ?
                         $"{x.ImageFile.Title}" : null,
-                })
-                .OrderByDescending(x => x.DateCreated)
-                .Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
 
             return new NewsViewModel(count, pageIndex.Value, pageSize)
             {
@@ -96,6 +96,7 @@ namespace stranitza.Repositories
                 LastUpdated = x.LastUpdated,
 
                 Description = x.Description
+
             }).SingleOrDefaultAsync(x => x.Id == id);
         }
 
@@ -131,5 +132,52 @@ namespace stranitza.Repositories
 
             return entry;
         }
+
+        public static async Task<PostSearchViewModel> SearchPostsPagedAsync(this DbSet<StranitzaPost> postsDbSet,
+            string searchQuery, int? pageIndex, int pageSize = 8)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            var query = postsDbSet.Where(x =>
+                    EF.Functions.Like(x.Title, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Origin, $"%{searchQuery}%") ||
+                    EF.Functions.Like(x.Description, $"%{searchQuery}%")
+                    /*EF.Functions.Like(x.Content, $"%{searchQuery}%")*/
+            );
+
+            var count = await query.CountAsync();
+            var posts = query
+                .Include(x => x.Uploader)
+                .Include(x => x.ImageFile)
+                .OrderByDescending(x => x.DateCreated)
+                .Select(x => new PostIndexViewModel()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Origin = x.Origin,
+                    DateCreated = x.DateCreated,
+                    Description = x.Description,
+                    CommentsCount = x.Comments.Count,
+                    ViewCount = x.ViewCount,
+                    EditorsPick = x.EditorsPick,
+                    LastUpdated = x.LastUpdated,
+                    /*UploaderNames = x.Uploader.Names,*/
+
+                    ImageFileName = x.ImageFileId.HasValue ?
+                        $"{x.ImageFile.FileName}.{x.ImageFile.Extension}" : null,
+                    ImageTitle = x.ImageFileId.HasValue ?
+                        $"{x.ImageFile.Title}" : null,
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
+
+            return new PostSearchViewModel(count, pageIndex.Value, pageSize)
+            {
+                Records = await posts.ToListAsync()
+            };
+        }
+
     }
 }
