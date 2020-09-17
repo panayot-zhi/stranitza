@@ -473,7 +473,12 @@ namespace stranitza.Utility
                 case "Twitter":
                     if (user.TwitterAvatarPath != profilePicture)
                     {
-                        user.TwitterAvatarPath = profilePicture;
+                        const string sizeMarker = "_normal";
+
+                        var sizeMarkerIndex = profilePicture.LastIndexOf(sizeMarker, StringComparison.InvariantCultureIgnoreCase);
+                        user.TwitterAvatarPath = sizeMarkerIndex > -1 ? 
+                            profilePicture.Remove(sizeMarkerIndex, sizeMarker.Length) : profilePicture;
+                        
                         await userManager.UpdateAsync(user);
                     }
                     break;

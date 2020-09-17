@@ -80,7 +80,7 @@ namespace stranitza
                 {
                     options.AppId = Configuration.GetValue<string>("FacebookAppId");
                     options.AppSecret = Configuration.GetValue<string>("FacebookAppSecret");
-                    options.Fields.Add("picture");
+                    options.Fields.Add("picture.width(150).height(150)");
                     options.ClaimActions.MapCustomJson(StranitzaClaimTypes.Picture, 
                         json => json.GetProperty("picture").GetProperty("data").GetString("url"));
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
