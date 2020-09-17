@@ -1,4 +1,4 @@
-/*!
+/*
  *  Tales v2.1
  *
  *  Copyright 2013 Wildmind Alexander Rechsteiner
@@ -379,7 +379,7 @@ hr {
   -webkit-border-bottom-left-radius: 0px;
   -moz-border-radius-bottomleft: 0px;
   border-bottom-left-radius: 0px;
-  margin-left: -4px;
+  margin-left: -5px;
   outline: none;
 }
 .tales-searchbox .searchfield::-webkit-input-placeholder {

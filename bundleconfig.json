@@ -27,7 +27,8 @@
     ],
     "minify": {
       "enabled": true,
-      "renameLocals": true
+      "renameLocals": true,
+      "commentMode": "none"
     },
     "sourceMap": true
   }
