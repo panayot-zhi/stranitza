@@ -287,5 +287,10 @@ namespace stranitza.Controllers
 
             return errorViewModel;
         }
+
+        public IActionResult Search()
+        {
+            return View();
+        }
     }
 }

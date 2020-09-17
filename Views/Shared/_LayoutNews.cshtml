@@ -44,16 +44,21 @@
                         <span class="separator">/</span>
                         @await RenderSectionAsync("breadcrumb", required: false)
                     </div>
+                    
+                    @if (IsSectionDefined("search")) {
+                        @await RenderSectionAsync("search")
+                    }
+                    else { 
+                        <div class="tales-searchbox">
+                            <form name="search-form" method="post" accept-charset="utf-8" asp-controller="Home" asp-action="Search">
+                                <button class="searchbutton" type="submit">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                                <input name="q" class="searchfield" id="searchbox" type="text" placeholder="Търсене">                            
+                            </form>
+                        </div>
+                    }
 
-                    @* TODO: Search functionality *@
-                    <div class="tales-searchbox">
-                        <form name="search-form" method="post" accept-charset="utf-8">
-                            <button class="searchbutton" type="submit">
-                                <i class="fa fa-search"></i>
-                            </button>
-                            <input name="q" class="searchfield" id="searchbox" type="text" placeholder="Търсене">                            
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>

@@ -1,6 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
+﻿
 // Extensions...
 Array.prototype.contains = function (val) {
     return this.indexOf(val) > -1;
@@ -333,6 +331,56 @@ $(document).ready(function () {
 
     $('body').on('click', 'a[href="#"]', function (e) {
         e && e.preventDefault();
+    });
+
+    const breadCrumb = $("#breadCrumb");
+    const searchbox = $(".tales-searchbox");
+    const searchfield = $(".searchfield");
+    const searchbutton = $(".searchbutton");
+    const row = searchbox.closest(".row");
+
+    const searchboxwidth = searchbox.css("width");
+    const searchfieldwidth = searchfield.css("width");
+
+    searchbutton.on('click', function() {
+        breadCrumb.stop();
+        searchbox.stop();
+        searchfield.stop();
+        searchbutton.stop();
+
+        modal.wait.show();
+    });
+
+    searchfield.on('focus', function () {
+        breadCrumb.stop().fadeOut(200, function () {
+
+            let expandWidth = row.width() - 50;
+
+            searchbox.stop().animate({ width: "100%" }, 600);
+
+            setTimeout(function () {
+
+                searchfield.stop().animate({ width: expandWidth, height: "26px" }, 400);
+                searchbutton.stop().animate({ height: "35px" }, 400);
+
+            }, 400);
+        });
+
+    });
+
+    searchfield.on('blur', function () {
+
+        searchfield.stop().animate({ height: "22px" }, 200);
+        searchbutton.stop().animate({ height: "31px" }, 200);
+
+        searchfield.animate({ width: searchfieldwidth }, 400);
+
+        setTimeout(function() {
+            searchbox.stop().animate({ width: searchboxwidth }, 600, function () {
+                breadCrumb.stop().fadeIn(200);
+            });
+        }, 200);
+
     });
 });
 
