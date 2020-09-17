@@ -288,9 +288,9 @@ namespace stranitza.Controllers
             return errorViewModel;
         }
 
-        public IActionResult Search()
+        public IActionResult Search(string q)
         {
-            return View();
+            return RedirectToAction("Search", "Sources", new { q });
         }
     }
 }

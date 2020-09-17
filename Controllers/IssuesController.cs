@@ -260,5 +260,14 @@ namespace stranitza.Controllers
                 FileDownloadName = issue.ZipFile.FileName
             };
         }
+
+        public async Task<IActionResult> Search(string q, int? page)
+        {
+            var vModel = await _context.StranitzaIssues.SearchIssuesPagedAsync(q, page);
+
+            vModel.SearchQuery = q;
+
+            return View(vModel);
+        }
     }
 }

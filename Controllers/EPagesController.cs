@@ -115,5 +115,14 @@ namespace stranitza.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Search(string q, int? page)
+        {
+            var vModel = await _context.StranitzaEPages.SearchEPagesPagedAsync(q, page);
+
+            vModel.SearchQuery = q;
+
+            return View(vModel);
+        }
     }
 }

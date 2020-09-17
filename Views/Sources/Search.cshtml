@@ -1,0 +1,88 @@
+﻿@model SourceSearchViewModel
+
+@{
+    ViewData["Title"] = "Търсене";
+    Layout = "~/Views/Shared/_LayoutNews.cshtml";
+}
+
+@section breadcrumb {
+    <a href="@Url.Action("Search", "Sources", new { q = Model.SearchQuery })">Търсене</a>
+
+    <span class="separator">/</span>
+
+    <span>@Model.SearchQuery</span>
+}
+
+<div class="col-md-8 blog-main">
+
+    <div id="list-source" class="content" role="main">
+
+        @if (Model.Records.Any())
+        {
+            foreach (var source in Model.Records)
+            {
+                <div class="row source-row">
+                    @if (string.IsNullOrEmpty(source.AuthorAvatarPath))
+                    {
+                        @await Html.PartialAsync("_Source", source, new ViewDataDictionary(ViewData)
+                        {
+                            { "HideOperations", true }
+                        })
+                    }
+                    else
+                    {
+                        <div class="col-sm-2 source-image">
+                            <img src="@Url.Content(source.AuthorAvatarPath)" class="img-responsive" alt="@source.AuthorDisplayName">
+                        </div>
+
+                        <div class="col-sm-10 source-info-wrapper">
+                            @await Html.PartialAsync("_Source", source, new ViewDataDictionary(ViewData)
+                            {
+                                { "HideOperations", true }
+                            })
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p>
+                Няма намерени резултати за избраните критерии.
+            </p>
+        }
+
+        @await Html.PartialAsync("_Paging", Model)
+
+    </div>
+</div>
+
+<aside class="col-md-4 blog-aside">
+    <div class="aside-widget">
+        <header>
+            <h3>Резултати</h3>
+        </header>
+
+        <div class="body">
+            <p>За '@Model.SearchQuery' бяха намерени @Model.TotalRecords резултата.</p>
+            <p>
+                Ако не намирате това което търсите, може да повторите търсенето и за 
+                <a href="@Url.Action("Search", "Issues", new {q = Model.SearchQuery})">броеве</a>,
+                <a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">е-страници</a> или
+                <a href="@Url.Action("Search", "Posts", new { q = Model.SearchQuery })">новини</a>,
+            </p>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Предложения</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                @await Html.PartialAsync("_Suggestions", StatsService.GetSourcesSuggestions())
+            </ul>
+        </div>
+    </div>
+</aside>

@@ -268,5 +268,53 @@ namespace stranitza.Repositories
 
             return entry;
         }
+
+        public static async Task<SourceSearchViewModel> SearchSourcesPagedAsync(this DbSet<StranitzaSource> sourcesDbSet,
+            string searchQuery, int? pageIndex, int pageSize = 10)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            var query = sourcesDbSet.Where(x => 
+                EF.Functions.Like(x.Origin, $"%{searchQuery}%") || 
+                EF.Functions.Like(x.Title, $"%{searchQuery}%") || 
+                EF.Functions.Like(x.Description, $"%{searchQuery}%") || 
+                EF.Functions.Like(x.Notes, $"%{searchQuery}%")
+                /*EF.Functions.Like(x.FirstName, $"%{searchQuery}%") || */
+                /*EF.Functions.Like(x.LastName, $"%{searchQuery}%")*/
+            ).OrderByDescending(x => x.ReleaseYear).ThenByDescending(x => x.ReleaseNumber);
+
+            var count = await query.CountAsync();
+            var sources = query
+                .Select(x => new SourceIndexViewModel()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    StartingPage = x.StartingPage,
+                    ReleaseYear = x.ReleaseYear,
+                    ReleaseNumber = x.ReleaseNumber,
+                    Pages = x.Pages,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+
+                    Origin = x.Origin,
+                    Description = x.Description,
+                    Notes = x.Notes,
+
+                    CategoryId = x.CategoryId,
+                    CategoryName = x.Category.Name,
+                    IssueId = x.IssueId,
+                    EPageId = x.EPageId,
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
+
+            return new SourceSearchViewModel(count, pageIndex.Value, pageSize)
+            {
+                Records = await sources.ToListAsync()
+            };
+        }
+
     }
 }
