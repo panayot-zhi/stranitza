@@ -35,6 +35,7 @@ namespace stranitza.Controllers
 
             var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (user == null)
             {
                 return NotFound();
@@ -127,6 +128,11 @@ namespace stranitza.Controllers
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+
+        public IActionResult Search(string q)
+        {
+            throw new NotImplementedException();
         }
     }
 }
