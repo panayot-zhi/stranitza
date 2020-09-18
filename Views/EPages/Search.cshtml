@@ -1,8 +1,95 @@
 ﻿@model EPageSearchViewModel
 
 @{
-    ViewBag.Title = "epages";
-    Layout = "_LayoutNews";
+    ViewBag.Title = "Търсене на е-страници";
+    Layout = "_LayoutLibrary";
 }
 
-<h2>epages</h2>
+@section breadcrumb {
+    <a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">Търсене</a>
+
+    <span class="separator">/</span>
+
+    <a href="@Url.Action("Index", "EPages", new { q = Model.SearchQuery })">е-страници</a>
+
+    <span class="separator">/</span>
+
+    <span>@Model.SearchQuery</span>
+}
+
+<div class="col-md-8 blog-main index-epage">
+    <article class="blog-post">
+        <h1>Резултати</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <hr>
+            </div>
+
+            @if (!Model.Records.Any())
+            {
+                <div class="col-sm-8 col-sm-offset-4">
+                    <p class="help-block text-right"><small>За съжаление, търсенето не откри произведения в нашата е-страница. Моля, опитайте отново по-късно.</small></p>
+                    <p class="help-block text-right"><small>Ако желаете, можете да ни изпратите авторска творба <br> на <a href="mailto:@StranitzaConstants.HeadEditorEmail">email адресът на главния редактор</a>.</small></p>
+                </div>
+            }
+            else
+            {
+                @foreach (var epage in Model.Records)
+                {
+                    @await Html.PartialAsync("_EPage", epage, new ViewDataDictionary(ViewData)
+                    {
+                        { "DisplayCategory", true }
+                    })
+                }
+            }
+
+        </div>
+    </article>
+</div>
+
+<aside class="col-md-4 blog-aside">
+    <div class="aside-widget">
+        <header>
+            <h3>Резултати</h3>
+        </header>
+
+        <div class="body">
+            <p>За ключовите думи '@Model.SearchQuery' бяха намерени <b>@Model.TotalRecords</b> резултата.</p>
+            <p>
+                Ако не намирате това което търсите, може да повторите търсенето и за
+                <ul class="tales-list">
+                    <li><a href="@Url.Action("Search", "Issues", new {q = Model.SearchQuery})">броеве</a></li>
+                    <li><a href="@Url.Action("Search", "Sources", new { q = Model.SearchQuery })">източници</a></li>
+                    <li><a href="@Url.Action("Search", "Posts", new { q = Model.SearchQuery })">новини</a></li>
+                    @if (User.IsAtLeast(StranitzaRoles.Editor))
+                    {
+                        <li><a href="@Url.Action("Search", "Users", new { q = Model.SearchQuery })">потребители</a></li>
+                    }
+                </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Предложения</h3>
+        </header>
+
+        <div class="body">
+            @await Html.PartialAsync("_Suggestions", StatsService.GetSourcesSuggestions())
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+</aside>

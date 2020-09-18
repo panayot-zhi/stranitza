@@ -1,8 +1,78 @@
 ﻿@model IssueSearchViewModel
 
 @{
-    ViewBag.Title = "issues";
+    ViewBag.Title = "Търсене на броеве";
     Layout = "_LayoutLibrary";
 }
 
-<h2>issues</h2>
+@section breadcrumb {
+    <a href="@Url.Action("Search", "Issues", new { q = Model.SearchQuery })">Търсене</a>
+
+    <span class="separator">/</span>
+
+    <a href="@Url.Action("Index", "Issues", new { q = Model.SearchQuery })">Броеве</a>
+
+    <span class="separator">/</span>
+
+    <span>@Model.SearchQuery</span>
+}
+
+<div class="col-md-8 blog-main">
+    <div id="issues">
+
+        @foreach (var issue in Model.Records)
+        {
+            @await Html.PartialAsync("_Issue", issue)
+        }
+
+        @await Html.PartialAsync("_Paging", Model)
+
+    </div>
+</div>
+
+<aside class="col-md-4 blog-aside">
+    <div class="aside-widget">
+        <header>
+            <h3>Резултати</h3>
+        </header>
+
+        <div class="body">
+            <p>За ключовите думи '@Model.SearchQuery' бяха намерени <b>@Model.TotalRecords</b> резултата.</p>
+            <p>
+                Ако не намирате това което търсите, може да повторите търсенето и за
+                <ul class="tales-list">
+                    <li><a href="@Url.Action("Search", "Sources", new {q = Model.SearchQuery})">източници</a></li>
+                    <li><a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">е-страници</a></li>
+                    <li><a href="@Url.Action("Search", "Posts", new { q = Model.SearchQuery })">новини</a></li>
+                    @if (User.IsAtLeast(StranitzaRoles.Editor))
+                    {
+                        <li><a href="@Url.Action("Search", "Users", new { q = Model.SearchQuery })">потребители</a></li>
+                    }
+                </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Предложения</h3>
+        </header>
+
+        <div class="body">
+            @await Html.PartialAsync("_Suggestions", StatsService.GetIssuesSuggestions())
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="aside-widget image">
+
+        <div class="body">
+            <div class="aside-image-wrapper">
+                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
+                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
+                </a>
+            </div>
+        </div>
+    </div>
+</aside>
