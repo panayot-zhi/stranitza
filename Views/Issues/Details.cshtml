@@ -25,10 +25,10 @@
 }
 
 <div class="col-lg-8 blog-main">
-    <div id="issue">
+    <div id="issue" class="pb30">
 
         <h2 class="underlined">Преглед на брой @Model.GetIssueTitleLong()</h2>
-        
+
         @await Html.PartialAsync("_Messages")
 
         <div id="pages-gallery" class="list-unstyled row">
@@ -48,7 +48,7 @@
                        data-download-url="@Url.Action("DownloadZip", "Issues", new {id = page.IssueId})">
                         <img src="@Url.Action("Load", "Pages", new {id = page.Id})" style="width: 48%" alt="Страница № @(page.PageNumber) (съдържание)" />
                     </a>
-                } 
+                }
                 else
                 {
                     <a href="@Url.Action("Load", "Pages", new {id = page.Id})" data-id="@(page.Id)"
@@ -59,6 +59,31 @@
             }
 
         </div>
+        
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label asp-for="Description" class="control-label"></label>:
+                    <textarea asp-for="Description" class="form-control" rows="4" readonly="readonly"></textarea>
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Tags))
+        {
+            <div class="row">
+                <div class="col-sm-10">
+                    <ul class="tags">
+                        @foreach (var tag in Model.TagsSplit)
+                        {
+                            <li><a href="@Url.Action("Search", "Issues", new {q = tag})" target="_blank">@tag</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
     </div>
 
     @await Html.PartialAsync("_Sharer", new SharerViewModel()

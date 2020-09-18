@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace stranitza.Models.ViewModels
 {
@@ -13,6 +14,7 @@ namespace stranitza.Models.ViewModels
 
         public int ReleaseYear { get; set; }
 
+        [Display(Name = "Допълнителна информация")]
         public string Description { get; set; }
 
         public bool IsAvailable { get; set; }
@@ -25,8 +27,10 @@ namespace stranitza.Models.ViewModels
 
         public int[] AvailablePages { get; set; }
 
+        [Display(Name = "Ключови думи")]
         public string Tags { get; set; }
 
+        [Display(Name = "Ключови думи")]
         public string[] TagsSplit => Tags?.Split(",");
 
         public int CommentsCount { get; set; }

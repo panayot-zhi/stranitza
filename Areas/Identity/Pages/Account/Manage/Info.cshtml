@@ -33,7 +33,7 @@
                 <select asp-for="Input.DisplayNameType" class="form-control" asp-items="Html.GetEnumSelectList<StranitzaDisplayNameType>()"></select>
                 <span asp-validation-for="Input.DisplayNameType" class="text-danger"></span>
 
-                <p class="help-block"><small>@Model.CurrentDisplayName</small></p>
+                <p class="help-block"><small>Текущо: @Model.CurrentDisplayName</small></p>
             </div>
 
             <div class="form-group" str-validation-for="Input.Description" str-error-class="has-error">
