@@ -6,11 +6,11 @@
 }
 
 @section breadcrumb {
-    <a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">Търсене</a>
+    <a href="@Url.Action("Index", "EPages")">е-страница</a>
 
     <span class="separator">/</span>
 
-    <a href="@Url.Action("Index", "EPages", new { q = Model.SearchQuery })">е-страници</a>
+    <a href="@Url.Action("Search", "EPages", new { q = Model.SearchQuery })">Търсене</a>
 
     <span class="separator">/</span>
 
