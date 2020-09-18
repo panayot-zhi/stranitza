@@ -9,6 +9,17 @@
     <a asp-controller="Posts" asp-action="Index">Новини</a>
 }
 
+@section search {
+    <div class="tales-searchbox">
+        <form name="search-form" method="post" accept-charset="utf-8" asp-controller="Posts" asp-action="Search">
+            <button class="searchbutton" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+            <input name="q" class="searchfield" id="searchbox" type="text" placeholder="Търсене" autocomplete="off">
+        </form>
+    </div>
+}
+
 <div class="blog-main col-md-8">
 
     <div class="blog-container row">

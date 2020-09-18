@@ -13,6 +13,17 @@
     <a asp-action="Index" asp-controller="EPages" asp-route-year="@Model.CurrentYear">@Model.CurrentYear</a>
 }
 
+@section search {
+    <div class="tales-searchbox">
+        <form name="search-form" method="post" accept-charset="utf-8" asp-controller="EPages" asp-action="Search">
+            <button class="searchbutton" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+            <input name="q" class="searchfield" id="searchbox" type="text" placeholder="Търсене" autocomplete="off">
+        </form>
+    </div>
+}
+
 <div class="col-md-8 blog-main index-epage">
     <article class="blog-post">
         <h1>Съдържание</h1>
