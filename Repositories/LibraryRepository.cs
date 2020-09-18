@@ -269,7 +269,7 @@ namespace stranitza.Repositories
                     PdfPagesCount = x.PdfFilePreviewId.HasValue ? 
                         x.PagesCount : 0,
 
-                    Tags = x.Tags.Join(),
+                    Tags = x.Tags,
 
                     PdfFileDownloadId = x.PdfFileReducedId,
                     PdfFilePreviewId = x.PdfFilePreviewId,
@@ -359,7 +359,7 @@ namespace stranitza.Repositories
             }
 
             entry.AvailablePages = vModel.AvailablePages;
-            entry.Tags = vModel.Tags?.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            entry.Tags = vModel.Tags;
 
             return entry;
         }

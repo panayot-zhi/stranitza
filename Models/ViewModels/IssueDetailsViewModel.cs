@@ -25,7 +25,9 @@ namespace stranitza.Models.ViewModels
 
         public int[] AvailablePages { get; set; }
 
-        public string[] Tags { get; set; }
+        public string Tags { get; set; }
+
+        public string[] TagsSplit => Tags?.Split(",");
 
         public int CommentsCount { get; set; }
 

@@ -143,11 +143,11 @@ namespace stranitza.Models.Database
                     dbString => dbString.Separate<int>())
                 .Metadata.SetValueComparer(IntegerArrayValueComparer);
 
-            builder.Entity<StranitzaIssue>()
+            /*builder.Entity<StranitzaIssue>()
                 .Property(p => p.Tags)
                 .HasConversion<string>(array => array.Join(),
                     dbString => dbString.Separate<string>())
-                .Metadata.SetValueComparer(StringArrayValueComparer);
+                .Metadata.SetValueComparer(StringArrayValueComparer);*/
 
             builder.Entity<StranitzaIssue>()
                 .HasIndex(index => new { index.ReleaseYear, index.ReleaseNumber }).IsUnique();

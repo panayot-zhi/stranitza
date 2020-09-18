@@ -35,7 +35,7 @@ namespace stranitza.Models.Database
         public int[] AvailablePages { get; set; }
 
         [Column(TypeName = "VARCHAR(256)")]
-        public string[] Tags { get; set; }
+        public string Tags { get; set; }
 
         #region Navigation
 
