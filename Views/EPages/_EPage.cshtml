@@ -1,7 +1,20 @@
 ﻿@model EPageIndexViewModel
 
+@{
+    var displayCategory = ViewData["DisplayCategory"] as bool? ?? false;
+}
+
 <div class="epage-container">
     <div class="row">
+        
+        @if (displayCategory)
+        {
+            <div class="row">
+                <div class="col-md-offset-8 col-md-4 text-left epage-category-container">
+                    <small class="epage-category">@Model.CategoryName</small>
+                </div>
+            </div>
+        }
 
         <div class="col-md-8 text-right epage-title-container">
             <a asp-action="Details" asp-controller="EPages" asp-route-id="@Model.Id">
@@ -18,14 +31,15 @@
                 @Model.LastName
             </span>
         </div>
-
     </div>
+
     <div class="row">
-        <div class="col-md-8 text-right epage-category-container">
+        <div class="col-md-8 text-right epage-description-container">
             <sup>@Model.Description</sup>
         </div>
         <div class="col-md-4 text-left epage-date-container">
             <sup>@Model.DateCreated.ToString("d MMMM")</sup>
         </div>
     </div>
+
 </div>
