@@ -14,7 +14,6 @@
 }
 
 <div class="col-md-8 blog-main">
-
     <div id="list-source" class="content" role="main">
 
         @if (Model.Records.Any())
@@ -73,7 +72,7 @@
                     <li><a href="@Url.Action("Search", "Posts", new { q = Model.SearchQuery })">новини</a></li>
                     @if (User.IsAtLeast(StranitzaRoles.Editor))
                     {
-                        <li><a href="#">потребители</a></li>
+                        <li><a href="@Url.Action("Search", "Users", new { q = Model.SearchQuery })">потребители</a></li>
                     }
                 </ul>
             </p>
