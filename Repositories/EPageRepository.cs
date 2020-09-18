@@ -227,10 +227,10 @@ namespace stranitza.Repositories
             }
 
             var query = dbSet.Where(x =>
-                    EF.Functions.Like(x.Title, $"%{searchQuery}%") ||
-                    EF.Functions.Like(x.Description, $"%{searchQuery}%") ||
-                    EF.Functions.Like(x.Notes, $"%{searchQuery}%")
-                    /*EF.Functions.Like(x.Content, $"%{searchQuery}%") || */
+                    /*EF.Functions.Like(x.Title, $"%{searchQuery}%") ||*/
+                    /*EF.Functions.Like(x.Description, $"%{searchQuery}%") ||*/
+                    /*EF.Functions.Like(x.Notes, $"%{searchQuery}%") ||*/
+                    EF.Functions.Like(x.Content, $"%{searchQuery}%")
                     /*EF.Functions.Like(x.FirstName, $"%{searchQuery}%") || */
                     /*EF.Functions.Like(x.LastName, $"%{searchQuery}%")*/
             );
