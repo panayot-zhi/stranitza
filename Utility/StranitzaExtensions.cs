@@ -258,6 +258,7 @@ namespace stranitza.Utility
             return GetDisplayName(applicationUser);
         }
 
+        /*
         public static string GetAvatarPath(this IUrlHelper urlHelper, ApplicationUser user, StranitzaAvatarType? avatarType = null)
         {
             if (avatarType == null)
@@ -282,6 +283,49 @@ namespace stranitza.Utility
                 default:
                     return urlHelper.Content("~/images/default-user.png");
             }
+        }
+        */
+
+        public static string GetAvatarPath(ApplicationUser user, StranitzaAvatarType? avatarType = null)
+        {
+            if (avatarType == null)
+            {
+                avatarType = user.AvatarType;
+            }
+
+            return GetAvatarPath(avatarType.Value, user.Email,
+                user.FacebookAvatarPath, user.TwitterAvatarPath, user.GoogleAvatarPath, user.InternalAvatarPath);
+        }
+
+        public static string GetAvatarPath(StranitzaAvatarType avatarType, string email, 
+            string facebookAvatarPath, string twitterAvatarPath, string googleAvatarPath, string internalAvatarPath)
+        {
+            
+            switch (avatarType)
+            {
+                case StranitzaAvatarType.Gravatar:
+                    return GetGravatarUrl(email);
+                case StranitzaAvatarType.Facebook:
+                    return facebookAvatarPath;
+                case StranitzaAvatarType.Twitter:
+                    return twitterAvatarPath;
+                case StranitzaAvatarType.Google:
+                    return googleAvatarPath;
+                case StranitzaAvatarType.Internal:
+                    if (!string.IsNullOrEmpty(internalAvatarPath))
+                    {
+                        return internalAvatarPath;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                case StranitzaAvatarType.Default:
+                    break;
+            }
+
+            // cannot resolve - return default
+            return StranitzaConstants.DefaultUserAvatarPath;
         }
 
         private static string GetDisplayReleaseNumber(int releaseNumber)

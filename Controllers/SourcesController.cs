@@ -42,7 +42,7 @@ namespace stranitza.Controllers
             {
                 var user = await _context.Users.FindAsync(sourceIndexViewModel.AuthorId);
                 sourceIndexViewModel.AuthorDisplayName = StranitzaExtensions.GetDisplayName(user);
-                sourceIndexViewModel.AuthorAvatarPath = Url.GetAvatarPath(user) ?? Url.Content("~/images/default-user.png");
+                sourceIndexViewModel.AuthorAvatarPath = StranitzaExtensions.GetAvatarPath(user);
             }*/
 
             viewModel.CategoriesFilter = await _context.StranitzaCategories.GetCategoryFilterViewModelAsync();

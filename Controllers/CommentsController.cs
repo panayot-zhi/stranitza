@@ -72,7 +72,7 @@ namespace stranitza.Controllers
                 // resolve display name for topLevel comment
                 user = await _userManager.FindByIdAsync(comment.UploaderId);
                 comment.UploaderDisplayName = StranitzaExtensions.GetDisplayName(user);
-                comment.UploaderAvatarPath = Url.GetAvatarPath(user);
+                comment.UploaderAvatarPath = StranitzaExtensions.GetAvatarPath(user);
 
                 if (comment.ModeratorId != null)
                 {
@@ -98,7 +98,7 @@ namespace stranitza.Controllers
                     // resolve display names of nested comment
                     user = await _userManager.FindByIdAsync(child.UploaderId);
                     child.UploaderDisplayName = StranitzaExtensions.GetDisplayName(user);
-                    child.UploaderAvatarPath = Url.GetAvatarPath(user);
+                    child.UploaderAvatarPath = StranitzaExtensions.GetAvatarPath(user);
 
                     if (child.ModeratorId != null)
                     {
@@ -130,7 +130,7 @@ namespace stranitza.Controllers
 
                 var applicationUser = await _userManager.GetUserAsync(User);
                 vModel.UploaderDisplayName = StranitzaExtensions.GetDisplayName(applicationUser);
-                vModel.UploaderAvatarPath = Url.GetAvatarPath(applicationUser);
+                vModel.UploaderAvatarPath = StranitzaExtensions.GetAvatarPath(applicationUser);
 
                 return PartialView("_Comment", vModel);
             }
@@ -157,7 +157,7 @@ namespace stranitza.Controllers
 
             var uploader = await _userManager.FindByIdAsync(vModel.UploaderId);
             vModel.UploaderDisplayName = StranitzaExtensions.GetDisplayName(uploader);
-            vModel.UploaderAvatarPath = Url.GetAvatarPath(uploader);
+            vModel.UploaderAvatarPath = StranitzaExtensions.GetAvatarPath(uploader);
 
             vModel.ModeratorId = comment.ModeratorId;
 

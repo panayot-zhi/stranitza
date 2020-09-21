@@ -29,6 +29,7 @@ namespace stranitza.Utility
         public const string HeadEditorFirstName = "Младен";
         public const string HeadEditorLastName = "Влашки";
 
+        public const string DefaultUserAvatarPath = "~/images/default-user.png";
         public const string ForbiddenPagePdfFileName = "forbidden-page.pdf";
         public const string IndexJsonFileName = "stranitza-index.json";
         public const string ThumbnailsFolderName = "thumb";        
