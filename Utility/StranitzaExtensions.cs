@@ -569,28 +569,33 @@ namespace stranitza.Utility
 
         public static string GetDisplayName(ApplicationUser user)
         {
+            return GetDisplayName(user.DisplayNameType, user.UserName, user.Names, user.Email, user.DisplayEmail);
+        }
+
+        public static string GetDisplayName(StranitzaDisplayNameType type, string userName, string names, string email, bool shouldDisplayEmail)
+        {
             string displayName;
-            switch (user.DisplayNameType)
+            switch (type)
             {
                 case StranitzaDisplayNameType.UserName:
-                    displayName = user.UserName;
+                    displayName = userName;
                     break;
                 case StranitzaDisplayNameType.Names:
-                    displayName = user.Names;
+                    displayName = names;
                     break;
                 case StranitzaDisplayNameType.Anonymous:
                     displayName = "Анонимен";
                     break;
                 case StranitzaDisplayNameType.NamesAndUserName:
-                    displayName = $"{user.Names} ({user.UserName})";
+                    displayName = $"{names} ({userName})";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (user.DisplayEmail)
+            if (shouldDisplayEmail)
             {
-                displayName += $" <{user.Email}>";
+                displayName += $" <{email}>";
             }
 
             return displayName;
