@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using stranitza.Models.Database;
+using stranitza.Utility;
 
 namespace stranitza.Areas.Identity.Pages.Account.Manage
 {
@@ -43,7 +44,7 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
             //user.ModeratedComments = _dbContext.StranitzaComments.Where(x => x.ModeratorId == user.Id).ToList();
             //user.Posts = _dbContext.StranitzaPosts.Where(x => x.UploaderId == user.Id).ToList();
 
-            var now = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            var now = StranitzaExtensions.Timestamp();
 
             _logger.LogInformation("User with ID '{UserId}' asked for their personal data [timestamp: {TimeStamp}].", _userManager.GetUserId(User), now);
 

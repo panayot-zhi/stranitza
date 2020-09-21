@@ -22,18 +22,17 @@
     <div class="col-sm-6">
         <form id="profile-form" method="post" enctype="multipart/form-data">
 
-
             <label class="control-label" asp-for="Input.AvatarType"></label>
 
             <div class="row">
                 <div class="col-md-4 col-md-offset-1">
                     <div class="form-group">
-                        <img id="preview-@StranitzaAvatarType.Default.ToString()" src="@Model.DefaultAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Default.ToString()" src="@Url.Content(Model.DefaultAvatarPath)" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
                         <img id="preview-@StranitzaAvatarType.Gravatar.ToString()" src="@Model.GravatarAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
                         <img id="preview-@StranitzaAvatarType.Facebook.ToString()" src="@Model.FacebookAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
                         <img id="preview-@StranitzaAvatarType.Twitter.ToString()" src="@Model.TwitterAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
                         <img id="preview-@StranitzaAvatarType.Google.ToString()" src="@Model.GoogleAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
-                        <img id="preview-@StranitzaAvatarType.Internal.ToString()" src="@Model.InternalAvatarPath" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
+                        <img id="preview-@StranitzaAvatarType.Internal.ToString()" src="@Url.Content(Model.InternalAvatarPath)?dc=@StranitzaExtensions.Timestamp()" alt="Текуща снимка" class="avatar-preview img-responsive" style="display: none">
                     </div>
                 </div>
 
@@ -41,13 +40,13 @@
                     <div class="radio">
                         <label>
                             <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Default">
-                            Анонимен @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.Default)" alt="Снимка" class="img-responsive">*@
+                            Анонимен
                         </label>
                     </div>
                     <div class="radio">
                         <label>
                             <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Gravatar">
-                            Gravatar @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.Gravatar)" alt="Снимка" class="img-responsive">*@
+                            Gravatar
                         </label>
                     </div>
                     @if (!string.IsNullOrEmpty(Model.FacebookAvatarPath))
@@ -55,7 +54,7 @@
                         <div class="radio">
                             <label>
                                 <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Facebook">
-                                Facebook @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.External)" alt="Снимка" class="img-responsive">*@
+                                Facebook
                             </label>
                         </div>
                     }
@@ -64,7 +63,7 @@
                         <div class="radio">
                             <label>
                                 <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Twitter">
-                                Twitter @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.External)" alt="Снимка" class="img-responsive">*@
+                                Twitter
                             </label>
                         </div>
                     }
@@ -73,7 +72,7 @@
                         <div class="radio">
                             <label>
                                 <input asp-for="Input.AvatarType" type="radio" value="@StranitzaAvatarType.Google">
-                                Google @*<img src="@Url.GetAvatarPath(Model.CurrentUser, StranitzaAvatarType.External)" alt="Снимка" class="img-responsive">*@
+                                Google
                             </label>
                         </div>
                     }
@@ -83,7 +82,6 @@
                             Вътрешна
                         </label>
                     </div>
-
                 </div>
             </div>
 
@@ -101,7 +99,7 @@
                 <p class="help-block"><small>Позволени са изображения до 160Kb, за най-добри резултати в съотношение 1:1 (напр. 100 х 100 пиксела).</small></p>
             </div>
 
-            <hr>
+            <hr />
 
             <div class="text-right">
                 <a asp-controller="Home" asp-action="Index" class="btn btn-default">Отказ</a>

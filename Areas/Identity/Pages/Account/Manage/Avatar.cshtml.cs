@@ -78,15 +78,15 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
 
         private void GatherPaths(ApplicationUser user)
         {
-            DefaultAvatarPath = Url.GetAvatarPath(user, StranitzaAvatarType.Default);
+            DefaultAvatarPath = StranitzaExtensions.GetAvatarPath(user, StranitzaAvatarType.Default);
 
-            GravatarAvatarPath = Url.GetAvatarPath(user, StranitzaAvatarType.Gravatar);
+            GravatarAvatarPath = StranitzaExtensions.GetAvatarPath(user, StranitzaAvatarType.Gravatar);
 
-            FacebookAvatarPath = Url.GetAvatarPath(user, StranitzaAvatarType.Facebook);
-            TwitterAvatarPath = Url.GetAvatarPath(user, StranitzaAvatarType.Twitter);
-            GoogleAvatarPath = Url.GetAvatarPath(user, StranitzaAvatarType.Google);
+            FacebookAvatarPath = StranitzaExtensions.GetAvatarPath(user, StranitzaAvatarType.Facebook);
+            TwitterAvatarPath = StranitzaExtensions.GetAvatarPath(user, StranitzaAvatarType.Twitter);
+            GoogleAvatarPath = StranitzaExtensions.GetAvatarPath(user, StranitzaAvatarType.Google);
 
-            InternalAvatarPath = Url.GetAvatarPath(user, StranitzaAvatarType.Internal);
+            InternalAvatarPath = StranitzaExtensions.GetAvatarPath(user, StranitzaAvatarType.Internal);
         }
 
         public async Task<IActionResult> OnPostAsync()

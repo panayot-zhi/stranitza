@@ -534,6 +534,16 @@ namespace stranitza.Utility
 
         public static UserLoginInfo Google(this IList<UserLoginInfo> list) { return list?.ByName("Google"); }
 
+        public static string Timestamp()
+        {
+            return DateTime.Now.ToString("yyyyMMddHHmmssfff");
+        }
+
+        public static string BreakNewLines(string target)
+        {
+            return target?.Replace(Environment.NewLine, "<br>");
+        }
+
         #endregion
 
         #region Static
