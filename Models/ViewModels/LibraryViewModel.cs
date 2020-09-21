@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using stranitza.Models.Database.Views;
+using stranitza.Models.Generic;
 using stranitza.Utility;
 
 namespace stranitza.Models.ViewModels

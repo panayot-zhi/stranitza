@@ -1,6 +1,6 @@
-﻿using stranitza.Models.Database.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using stranitza.Models.Generic;
 
 namespace stranitza.Models.ViewModels
 {

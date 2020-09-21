@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
-using stranitza.Models.Database.Views;
+using stranitza.Models.Generic;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using stranitza.Models.Database.Views;
+using stranitza.Models.Generic;
 using stranitza.Utility;
 
 namespace stranitza.Models.Database
