@@ -1,5 +1,4 @@
 ﻿@model IssueIndexViewModel
-@*TODO: Maybe link to the index somewhere?*@
 
 <div class="blog-teaser-container col-sm-12 col-lg-6">
     <article class="blog-teaser">
@@ -26,19 +25,9 @@
         </header>
 
         <div class="body">
-            @*<ul class="tales-list">
-            <li>PDF: @(Model.PdfFile != null ? "Да" : "Не")</li>
-            <li>Страници: @Model.PagesCount</li>
-            <li>Преглеждан: @Model.ViewCount</li>
-            <li>Свалян: @Model.DownloadCount</li>
-        </ul>*@
 
-            @*PDF: @(Model.PdfFile != null ? "Да" : "Не")<br>
-            Страници: @Model.PagesCount<br>
-            Преглеждан: @Model.ViewCount<br>
-            Свалян: @Model.DownloadCount<br>*@
+            @*TODO: Reconsider, consult with m.vlashki *@
 
-            @*TODO: Reconsider*@
             <p>
                 @*@Model.Description*@
                 @if (Model.HasPdf)
@@ -58,7 +47,7 @@
             Страници: @Model.PagesCount<br>
             Преглеждан: @Model.ViewCount<br>
             Свалян: @Model.DownloadCount<br>
-        </small>    *@
+            </small>    *@
         </div>
 
         <div class="clearfix">
