@@ -321,14 +321,14 @@ body {
     margin-bottom: 10px;
 }
 
-aside.comments .comment header .meta {
-    margin-left: 120px !important;
+#comments-container .comment header .meta {
+    margin-left: 140px;
 }
 
-/* #comments-container .comment .body { */
-/*     margin-left: 140px; */
-/*     margin-right: 20px; */
-/* } */
+#comments-container .comment .body {
+    margin-left: 140px;
+    margin-right: 20px;
+}
 
 div#issue-edit {
     border-left: 1px solid #ced5db;

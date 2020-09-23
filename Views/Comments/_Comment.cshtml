@@ -2,26 +2,28 @@
 
 @{
     var isReply = Model.ParentId.HasValue;
-    var avatarPath = Model.UploaderAvatarPath ?? 
-        Url.Content("~/images/default-user.png");
 }
 
-<article id="comment-@Model.Id" class="comment @(isReply ? "reply" : string.Empty )">
-    <header class="clearfix">
+<article id="comment-@Model.Id" class="clearfix comment @(isReply ? "reply" : string.Empty )">
+    <header>
 
-        <img src="@avatarPath" class="comment-avatar" alt="Аватар"/>
+        <div class="col-xs-3 col-sm-2 image">
+            <img src="@Url.Content(Model.UploaderAvatarPath)" class="comment-avatar img-responsive" alt="@Model.UploaderDisplayName">
+        </div>
+
+        @*<img src="@avatarPath" class="comment-avatar" alt="Аватар"/>*@
 
         <div class="meta">
 
             <input type="hidden" class="comment-id" value="@Model.Id" />
             <input type="hidden" class="comment-parent-id" value="@Model.ParentId" />
 
-        @*@if (User.IsAtLeast(StranitzaRoles.Editor))
-        {            
-            <button type="button" class="close comment-delete" aria-label="Затвори">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        }*@
+            @*@if (User.IsAtLeast(StranitzaRoles.Editor))
+                {
+                    <button type="button" class="close comment-delete" aria-label="Затвори">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                }*@
 
             @if (User.IsAtLeast(StranitzaRoles.Editor))
             {
@@ -56,23 +58,24 @@
 
         </div>
     </header>
-    <div class="body">
+
+    <div class="body col-sm-offset-2">
         @if (Model.ModeratorId != null)
         {
-            <small>@Model.Content</small>
+            <small>@StranitzaExtensions.BreakNewLines(Model.Content)</small>
         }
         else
         {
-            @Model.Content
+            @StranitzaExtensions.BreakNewLines(Model.Content)
         }
     </div>
-    
-    <div class="body">
-        @if (Model.ModeratorId != null)
-        {
-            @Model.Note
-        }
-    </div>
+
+    @if (Model.ModeratorId != null)
+    {
+        <div class="body col-sm-offset-2">
+            @StranitzaExtensions.BreakNewLines(Model.Note)
+        </div>
+    }
 
 </article>
 
