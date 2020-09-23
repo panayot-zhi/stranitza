@@ -4,4 +4,41 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail about the site's frequently asked questions.</p>
+@*TODO*@
+
+<div class="blog-main col-md-8">
+
+</div>
+
+<aside class="col-md-4 blog-aside">
+    <div class="aside-widget">
+        <header>
+            <h3>Съдържание</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                <li><a href="#whatarecookies">Как мога да се абонирам?</a></li>
+                <li><a href="#howdoweusecookies">От къде мога да закупя списанието?</a></li>
+                <li><a href="#thirdpartycookies">Как се управляват личните ми данни?</a></li>
+                <li><a href="@Url.Action("Cookies", "Home")#howcanyoumanagecookies">По какъв начин използвате бисквитките?</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Още</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                <li><a asp-controller="Home" asp-action="TaC">Общите правила на сайта</a></li>
+                <li><a asp-controller="Home" asp-action="Privacy">Политиката за поверителност</a></li>
+                <li><a asp-controller="Home" asp-action="Help">Секция с помощ</a></li>
+                <li><a asp-controller="Home" asp-action="Cookies">Бисквитки</a></li>
+                <li><a asp-controller="Home" asp-action="About">Относно Списание Страница</a></li>
+            </ul>
+        </div>
+    </div>
+</aside>
