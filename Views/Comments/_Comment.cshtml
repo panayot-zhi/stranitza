@@ -33,8 +33,7 @@
             }
 
             <h3>
-                @* TODO: Wire this to an author preview page *@
-                <a class="comment-author" asp-area="Identity" asp-page="/Account/Manage/Index">@Model.UploaderDisplayName</a>
+                <a class="comment-author" href="@Url.Action("Details", "Users", new { id = Model.UploaderId })">@Model.UploaderDisplayName</a>
             </h3>
 
             @if (Model.ModeratorId != null)
