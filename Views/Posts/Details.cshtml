@@ -92,16 +92,15 @@
                     <li><a asp-controller="Posts" asp-action="Edit" asp-route-id="@Model.Id">Редакция на статията</a></li>
                 }
 
-                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                @*@if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
                     <li><a asp-controller="Posts" asp-action="Delete" asp-route-id="@Model.Id">Изтриване на статията</a></li>
-                }
+                }*@
 
-                @* TODO: Implement links *@
                 <li><a href="#sharer">Сподели</a></li>
                 <li><a href="#comments">Коментари</a></li>
                 <li><a href="#create-comment">Напиши коментар</a></li>
-                <li><a href="#">Автор</a></li>
+                <li><a href="@Url.Action("Details", "Users", new { id = Model.UploaderId })">Автор</a></li>
             </ul>
         </div>
     </div>
