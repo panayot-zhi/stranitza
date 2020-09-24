@@ -23,6 +23,8 @@ namespace stranitza.Models.ViewModels
 
         public string Uploader { get; set; }
 
+        public string UploaderId { get; set; }
+
         public DateTime LastUpdated { get; set; }
 
         public DateTime DateCreated { get; set; }

@@ -28,6 +28,8 @@ namespace stranitza.Models.ViewModels
 
         [Display(Name = "Качил")]
         public string Uploader { get; set; }
+
+        public string UploaderId { get; set; }
         
         [Display(Name = "Съдържание")]
         [Required(ErrorMessage = "Моля, въведете съдържание.")]

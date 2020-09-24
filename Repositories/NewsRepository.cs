@@ -57,6 +57,7 @@ namespace stranitza.Repositories
                 Title = x.Title,
                 Origin = x.Origin,
                 Uploader = x.Uploader.UserName,
+                UploaderId = x.Uploader.Id,
                 Content = x.Content,
                 EditorsPick = x.EditorsPick,
                 ViewCount = x.ViewCount,
@@ -80,6 +81,7 @@ namespace stranitza.Repositories
                 Title = x.Title,
                 Origin = x.Origin,
                 Uploader = x.Uploader.UserName,
+                UploaderId = x.Uploader.Id,
                 Content = x.Content,
                 EditorsPick = x.EditorsPick,
 

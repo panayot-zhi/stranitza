@@ -194,6 +194,7 @@ namespace stranitza.Repositories
                 Sources = issue.Sources.OrderBy(x => x.StartingPage)
                     .Select(x => new SourceDetailsViewModel()
                     {
+                        Id = x.Id,
                         //ReleaseNumber = x.ReleaseNumber,
                         //ReleaseYear = x.ReleaseYear,
                         AuthorId = x.AuthorId,
