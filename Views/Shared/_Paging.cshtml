@@ -20,23 +20,28 @@
     var beginStep = currentStep - (int)Math.Round((decimal)maxSteps / 2) + (maxSteps % 2);
     var endStep = currentStep + (int)Math.Round((decimal)maxSteps / 2) - 1;
 
-    string GetUrl(int pageNumber)
+    string urlStringFormat;
+    var queryString = Context.Request.QueryString;
+    if (!queryString.HasValue)
     {
-        var queryString = Context.Request.QueryString;
-        if (!queryString.HasValue)
-        {
-            return $"{Context.Request.PathBase}{Context.Request.Path}?{pageParameter}={pageNumber}";
-        }
-
+        urlStringFormat = $"{Context.Request.PathBase}{Context.Request.Path}?{pageParameter}={{0}}";
+    }
+    else
+    {
         var currentPageNumberParameter = $"{pageParameter}={currentStep}";
         if (queryString.Value.Contains(currentPageNumberParameter))
         {
-            return Context.Request.GetEncodedUrl().Replace(currentPageNumberParameter, $"{pageParameter}={pageNumber}");
+            urlStringFormat = Context.Request.GetEncodedUrl().Replace(currentPageNumberParameter, $"{pageParameter}={{0}}");
         }
         else
         {
-            return $"{Context.Request.GetEncodedUrl()}&{pageParameter}={pageNumber}";
+            urlStringFormat = $"{Context.Request.GetEncodedUrl()}&{pageParameter}={{0}}";
         }
+    }
+
+    string GetUrl(int pageNumber)
+    {
+        return string.Format(urlStringFormat, pageNumber);
     }
 }
 
