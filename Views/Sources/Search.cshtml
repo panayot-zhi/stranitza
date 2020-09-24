@@ -25,7 +25,7 @@
                     {
                         @await Html.PartialAsync("_Source", source, new ViewDataDictionary(ViewData)
                         {
-                            { "HideOperations", true }
+                            { "HideOperations", false }
                         })
                     }
                     else
