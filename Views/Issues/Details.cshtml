@@ -168,7 +168,13 @@
                             }
                             else
                             {
-                                <a class="open-lightGallery" href="@Url.GetGallerySlide(Model.Id, source.StartingPage)">
+                                @*<a class="open-lightGallery" href="@Url.GetGallerySlide(Model.Id, source.StartingPage)">
+                                    @source.Title<br>
+                                    @source.Origin<br>
+                                    стр. @source.Pages
+                                </a>*@
+
+                                <a class="open-lightGallery" href="@Url.Action("FindPage", "Sources", new { id = source.Id })">
                                     @source.Title<br>
                                     @source.Origin<br>
                                     стр. @source.Pages
