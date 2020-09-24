@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
@@ -279,6 +280,34 @@ namespace stranitza.Controllers
             vModel.SearchQuery = q;
 
             return View(vModel);
+        }
+
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
+        public async Task<IActionResult> FindAuthor(int? id)
+        {
+            var entry = await _context.StranitzaSources.FindAsync(id);
+            if (entry == null)
+            {
+                return NotFound();
+            }
+
+            var author = await _context.Users.FindAuthorAsync(entry.FirstName, entry.LastName);
+            if (author != null)
+            {
+                _context.Attach(entry);
+
+                entry.AuthorId = author.Id;
+
+                await _context.SaveChangesAsync();
+
+                TempData.AddModalMessage($"В системата беше открит автор '{author.Names}' ({author.UserName}) и асоцииран с произведението.", "success");
+            }
+            else
+            {
+                TempData.AddModalMessage($"Не беше открит автор '{entry.FirstName} {entry.LastName}' в системата.", "info");
+            }
+
+            return RedirectToAction("Details", new { id = entry.Id });
         }
     }
 }
