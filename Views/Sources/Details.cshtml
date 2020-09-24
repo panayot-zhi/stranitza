@@ -33,6 +33,8 @@
 }
 
 <div class="col-lg-8 blog-main">
+    
+    @await Html.PartialAsync("_Messages")
 
     <h2>@modelTitle</h2>
 
@@ -74,28 +76,64 @@
     </div>
 
     <div class="row">
-        @if (Model.AuthorId != null)
+        
+        @if (Model.EPageId.HasValue)
         {
-            <div class="col-md-5 col-md-offset-6">
-                <label asp-for="AuthorUserName" class="control-label"></label>
+            <div class="col-md-5 col-md-offset-1">
+                <label asp-for="EPageId" class="control-label"></label>
                 <div class="input-group">
-                    <input asp-for="AuthorUserName" class="form-control" readonly="readonly"/>
+                    <input asp-for="EPageId" class="form-control" readonly="readonly" value="e-страница (@Model.ReleaseYear)" type="text"/>
                     <span class="input-group-btn">
-                        @* TODO: Wire this to an author preview page *@
-                        <a class="btn btn-default" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="fa fa-user"></i></a>
+                        <a class="btn btn-default" href="@Url.Action("Details", "EPages", new {id = Model.EPageId})"><sup><i class="fa fa-e-stranitza-plus"></i></sup></a>
+                    </span>
+                </div>
+            </div>
+        }
+        else if (Model.IssueId.HasValue)
+        {
+            <div class="col-md-5 col-md-offset-1">
+                <label asp-for="IssueId" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="IssueId" class="form-control" readonly="readonly" value="@Model.GetIssueTitleShort(), стр. @Model.Pages" type="text"/>
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" href="@Url.Action("FindPage", "Sources", new { id = Model.Id })"><i class="fa fa-external-link"></i></a>
                     </span>
                 </div>
             </div>
         }
         else
         {
-            <div class="col-md-5 col-md-offset-6">
+            <div class="col-md-5 col-md-offset-1">
+                <label asp-for="IssueId" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="IssueId" class="form-control" readonly="readonly" value="няма" type="text"/>
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" href="@Url.Action("FindIssue", "Sources", new {id = Model.Id})"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+            </div>
+        }
+
+        @if (Model.AuthorId != null)
+        {
+            <div class="col-md-5">
+                <label asp-for="AuthorUserName" class="control-label"></label>
+                <div class="input-group">
+                    <input asp-for="AuthorUserName" class="form-control" readonly="readonly"/>
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" href="@Url.Action("Details", "Users", new {id = Model.AuthorId})"><i class="fa fa-user"></i></a>
+                    </span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-5">
                 <label asp-for="AuthorUserName" class="control-label"></label>
                 <div class="input-group">
                     <input asp-for="AuthorUserName" class="form-control" readonly="readonly" value="няма"/>
                     <span class="input-group-btn">
-                        @* TODO: Wire this to a author search functionality *@
-                        <a class="btn btn-default" href="#"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-default" href="@Url.Action("FindAuthor", "Sources", new {id = Model.Id})"><i class="fa fa-search"></i></a>
                     </span>
                 </div>
             </div>
@@ -103,20 +141,22 @@
     </div>
 
     <div class="row">
-        <p class="col-md-10 col-md-offset-1 source-row text-center pt40">
-            @if (Model.EPageId.HasValue)
-            {
-                <strong>
+        @if (Model.EPageId.HasValue)
+        {
+            <p class="col-md-10 col-md-offset-1 source-row text-center pt40 has-success">
+                <strong class="control-label">
                     Източникът е свързан с:&nbsp;
 
                     <a href="@Url.Action("Details", "EPages", new {id = Model.EPageId})" target="_blank">
                         e-страница (@Model.ReleaseYear)<sup><i class="fa fa-e-stranitza-plus"></i></sup>
                     </a>
                 </strong>
-            }
-            else if (Model.IssueId.HasValue)
-            {
-                <strong>
+            </p>
+        }
+        else if (Model.IssueId.HasValue)
+        {
+            <p class="col-md-10 col-md-offset-1 source-row text-center pt40 has-success">
+                <strong class="control-label">
                     Източникът е свързан с брой:&nbsp;
 
                     @* seeks page within an issue *@
@@ -124,10 +164,12 @@
                         @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-external-link"></i></sup>
                     </a>
                 </strong>
-            }
-            else
-            {
-                <strong>
+            </p>
+        }
+        else
+        {
+            <p class="col-md-10 col-md-offset-1 source-row text-center pt40 has-warning">
+                <strong class="control-label">
                     Източникът НЕ е свързан с брой; последвайте връзката за да извършите търсене на броя в системата:&nbsp;
 
                     @* seeks issue *@
@@ -135,8 +177,8 @@
                         бр. @Model.GetIssueTitleShort(), стр. @Model.Pages<sup><i class="fa fa-search"></i></sup>
                     </a>
                 </strong>
-            }
-        </p>
+            </p>
+        }
     </div>
 
     <hr/>
