@@ -32,7 +32,7 @@
                 @*@Model.Description*@
                 @if (Model.HasPdf)
                 {
-                    @:Броят е <b>достъпен в PDF</b> вариант. Общият брой на страниците е <b>@Model.PagesCount</b>, от които @(Model.AvailablePages?.Length ?? 0) страници със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения на страници, достъпни за <i class="text-success">всеки посетител</i>.
+                    @:Броят е <b>достъпен в PDF</b> вариант. Общият брой на страниците е <b>@Model.PagesCount</b>, от които @(Model.AvailablePages?.Length ?? 0) страници със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения достъпни за <i class="text-success">всеки посетител</i>.
                 }
                 else
                 {
