@@ -140,12 +140,16 @@
             });
 
             $("#create-issue-form").on('submit', function (e) {
+                let me = this;
+
+                if (!$(me).valid()) {
+                    return false;
+                }
 
                 var currentFilesSize = pageFilesSize + pdfFileSize;
                 if (currentFilesSize > requestLimit && !confirmFormSubmission) {
                     e.preventDefault();
 
-                    let me = this;
                     function confirm() {
                         window.confirmFormSubmission = true;
                         $(me).submit();
