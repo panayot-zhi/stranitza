@@ -9,6 +9,8 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
 
         public static string Info => "Info";
 
+        public static string Admin => "Admin";
+
         public static string Avatar => "Avatar";
 
         public static string ChangePassword => "ChangePassword";
@@ -22,6 +24,8 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
         public static string InfoNavClass(ViewContext viewContext) => PageNavClass(viewContext, Info);
+
+        public static string AdminNavClass(ViewContext viewContext) => PageNavClass(viewContext, Admin);
 
         public static string AvatarNavClass(ViewContext viewContext) => PageNavClass(viewContext, Avatar);
 

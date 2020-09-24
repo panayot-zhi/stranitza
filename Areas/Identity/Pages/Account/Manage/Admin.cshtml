@@ -1,0 +1,35 @@
+﻿@page
+@using stranitza.Utility
+@model AdminModel
+
+@{
+    ViewData["Title"] = "Администрация";
+    ViewData["ActivePage"] = ManageNavPages.Admin;
+}
+
+@section breadcrumb {
+    <a asp-page="Index">Профил</a>
+
+    <span class="separator">/</span>
+
+    <a asp-page="Info">Администрация</a>
+}
+
+<partial name="_Messages" />
+
+<div class="row">
+
+    <div class="col-sm-6">
+        <ul class="tales-list">
+            <li><a asp-action="Index" asp-controller="Categories">Преглед на категории</a></li>
+            <li><a asp-action="Create" asp-controller="Categories">Създаване на нова категория</a></li>
+            <li><a asp-action="Create" asp-controller="Sources">Създаване на нов източник</a></li>
+            <li><a asp-action="Index" asp-controller="Users">Преглед на потребители</a></li>
+        </ul>
+    </div>
+
+    <div class="col-md-6">
+       
+    </div>
+
+</div>
