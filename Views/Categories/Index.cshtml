@@ -6,6 +6,10 @@
 }
 
 @section breadcrumb {
+    <a asp-page="/Account/Manage/Admin" asp-area="Identity">Администрация</a>
+
+    <span class="separator">/</span>
+
     <a asp-controller="Categories" asp-action="Index">Категории</a>
 }
 
@@ -35,7 +39,7 @@
                 {
                     <td>@category.Id</td>
                 }
-                <td><a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id">@category.Name<sup><i class="fa fa-external-link"></i></sup></a></td>
+                <td><a asp-action="Details" asp-controller="Categories" asp-route-id="@category.Id">@category.Name</a></td>
                 <td>@category.SourcesCount</td>
                 <td>@category.EPagesCount</td>
                 @*<td class="text-center">@category.LastUpdated.ToString("dd.MM.yyyy HH:mm")</td>*@

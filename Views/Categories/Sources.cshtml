@@ -6,6 +6,10 @@
 }
 
 @section breadcrumb {
+    <a asp-page="/Account/Manage/Admin" asp-area="Identity">Администрация</a>
+
+    <span class="separator">/</span>
+
     <a asp-controller="Categories" asp-action="Index">Категории</a>
 
     <span class="separator">/</span>
@@ -46,26 +50,32 @@
             @foreach (var source in Model.Records)
             {
                 var hasTitle = !string.IsNullOrEmpty(source.Title);
+                var sourceTitle = hasTitle ? source.Title : "ЛИПСВА ЗАГЛАВИЕ";
+                var sourceLink = hasTitle ? Url.Action("Details", "Sources", new { id = source.Id }) 
+                    : Url.Action("Edit", "Sources", new { id = source.Id });
 
                 <tr class="source-row @(!hasTitle ? "warning" : string.Empty)">
                     @if (User.Is(StranitzaRoles.Administrator))
                     {
                         <td>@source.Id</td>
                     }
-
-                    @if (hasTitle)
-                    {
-                        <td><a asp-action="Details" asp-controller="Sources" asp-route-id="@source.Id">@source.Title<sup><i class="fa fa-external-link"></i></sup></a></td>
-                    }
-                    else
-                    {
-                        <td><a asp-action="Edit" asp-controller="Sources" asp-route-id="@source.Id"><b>ЛИПСВА ЗАГЛАВИЕ</b><sup><i class="fa fa-edit"></i></sup></a></td>
-                    }
+                    
+                    <td>
+                        @if (source.IssueId.HasValue)
+                        {
+                            // issue found - display external link
+                            <a href=@sourceLink>@sourceTitle<sup><i class="fa fa-external-link"></i></sup></a>
+                        }
+                        else
+                        {
+                            // not associated - display search icon
+                            <a href="@sourceLink">@sourceTitle<sup><i class="fa fa-search"></i></sup></a>
+                        }
+                    </td>
 
                     @if (!string.IsNullOrEmpty(source.AuthorId))
                     {
-                        /* TODO: Link to profile */
-                        <td><a href="#">@source.Origin<sup><i class="fa fa-user"></i></sup></a></td>
+                        <td><a href="@Url.Action("Details", "Users", new { id =source.AuthorId })">@source.Origin<sup><i class="fa fa-user"></i></sup></a></td>
                     }
                     else
                     {
