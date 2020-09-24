@@ -31,7 +31,7 @@ namespace stranitza.Models.Database
 
         public int DownloadCount { get; set; }
 
-        [Column(TypeName = "VARCHAR(512)")]
+        [Column(TypeName = "TEXT")]
         public int[] AvailablePages { get; set; }
 
         [Column(TypeName = "VARCHAR(256)")]
