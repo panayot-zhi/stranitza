@@ -125,10 +125,10 @@
                     <li><a asp-controller="Issues" asp-action="Edit" asp-route-id="@Model.Id">Редакция на брой</a></li>
                 }
 
-                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                @*@if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
                     <li><a asp-controller="Issues" asp-action="Delete" asp-route-id="@Model.Id">Изтриване на броя</a></li>
-                }
+                }*@
 
                 <li><a href="#sharer">Сподели</a></li>
                 <li><a href="#comments">Коментари</a></li>

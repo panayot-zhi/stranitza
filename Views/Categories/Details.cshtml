@@ -65,10 +65,10 @@
                 <li><a asp-action="EPages" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани е-страници (@Model.EPagesCount)</a></li>
                 <li><a asp-controller="Categories" asp-action="Create">Създаване на нова категория</a></li>
                 <li><a asp-action="Index" asp-controller="Categories">Към списък</a></li>
-                @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+                @*@if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
                     <li><a asp-action="Delete" asp-controller="Categories" asp-route-id="@Model.Id">Изтриване</a></li>
-                }
+                }*@
             </ul>
         </div>
     </div>
