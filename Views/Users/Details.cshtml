@@ -5,11 +5,30 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
+@section breadcrumb {
+    <span class="separator">/</span>
+
+    <span>Потребители</span>
+
+    <span class="separator">/</span>
+
+    <span>@Model.DisplayNameOnly</span>
+}
+
 <h1>Преглед на потребителски профил</h1>
 
-<div class="row credits">
+<div class="col-md-8 blog-main">
 
-    @await Html.PartialAsync("_User", Model)
+    <div class="row credits">
+
+        @await Html.PartialAsync("_User", Model)
+
+    </div>
 
 </div>
 
+<aside class="col-md-4 blog-aside">
+
+
+
+</aside>

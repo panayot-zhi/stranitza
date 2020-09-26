@@ -1,4 +1,4 @@
-﻿@model AdminViewModel
+﻿@model UserIndexViewModel
 
 @{
     ViewData["Title"] = "Потребители";
@@ -6,7 +6,11 @@
 }
 
 @section breadcrumb {
-    <a href="@Url.Action("Index", "Users")">Потребители</a>
+    <a asp-page="/Account/Manage/Admin" asp-area="Identity">Администрация</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="Users">Потребители</a>
 }
 
 <div class="col-md-8 blog-main">
@@ -35,10 +39,10 @@
             <div class="tales-superblock" id="contact">
                     
                 <form action="#" method="get" accept-charset="utf-8" class="contact-form">
-                    <input type="text" name="name" id="contact-name" placeholder="Имена" class="form-control">
-                    <input type="text" name="username" id="contact-username" placeholder="Псевдоним" class="form-control">
-                    <input type="email" name="email" id="contact-email" placeholder="Email" class="form-control">
-                    <textarea rows="5" name="message" id="contact-body" placeholder="Описание..." class="form-control"></textarea>
+                    <input type="text" name="name" id="contact-name" placeholder="Имена" class="form-control" value="@Model.Filter.Name">
+                    <input type="text" name="userName" id="contact-username" placeholder="Псевдоним" class="form-control" value="@Model.Filter.UserName">
+                    <input type="email" name="email" id="contact-email" placeholder="Email" class="form-control" value="@Model.Filter.Email">
+                    <textarea rows="5" name="description" id="contact-body" placeholder="Описание..." class="form-control">@Model.Filter.Description</textarea>
                     
                     <div class="buttons clearfix">
                         <button type="submit" class="btn btn-xlarge btn-tales-one">Търси</button>
@@ -48,5 +52,21 @@
         </div>
     </div>
 
-
 </aside>
+
+@section scripts {
+    <script>
+
+        var thisUrl = '@Url.Action("Index", "Users")';
+        $(document).ready(function() {
+            $("form.contact-form").on("submit", function(e) {
+                e.preventDefault();
+
+                let me = this;
+                let data = $(me).serialize();
+
+                window.location.href = thisUrl + "?" + data;
+            });
+        });
+    </script>
+}

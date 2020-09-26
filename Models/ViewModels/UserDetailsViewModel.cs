@@ -68,6 +68,10 @@ namespace stranitza.Models.ViewModels
 
         public string Names => $"{FirstName} {LastName}";
 
+        public string DisplayNameOnly => this.DisplayName.Replace($" <{this.Email}>", string.Empty);
+
+        public string DisplayNameConditional => this.DisplayEmail ? this.DisplayNameOnly : this.DisplayName;
+
 
         // public ICollection<StranitzaEPage> AuthoredEPages { get; set; }
 

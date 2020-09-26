@@ -1,8 +1,25 @@
 ﻿@model UserDetailsViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редакция на потребителски профил";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section breadcrumb {
+
+    <a asp-page="/Account/Manage/Admin" asp-area="Identity">Администрация</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Index" asp-controller="Users">Потребители</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Details" asp-controller="Users" asp-route-id="@Model.Id">@Model.DisplayNameOnly</a>
+
+    <span class="separator">/</span>
+
+    <a asp-action="Edit" asp-controller="Users" asp-route-id="@Model.Id">Редакция</a>
 }
 
 <h1>Edit</h1>

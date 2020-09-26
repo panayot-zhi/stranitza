@@ -10,13 +10,11 @@ namespace stranitza.Repositories
 {
     public static class UserRepository
     {
-        public static async Task<AdminViewModel> GetUsersPagedAsync(this DbSet<ApplicationUser> dbSet,
+        public static async Task<UserIndexViewModel> GetUsersPagedAsync(this DbSet<ApplicationUser> dbSet,
             string email,
             string userName,
-            string firstName,
-            string lastName,
+            string name,
             string description,
-            bool? isAuthor,
             int? pageIndex, int pageSize = 10)
         {
             if (!pageIndex.HasValue)
@@ -30,14 +28,33 @@ namespace stranitza.Repositories
                 query = query.Where(x => EF.Functions.Like(x.UserName, $"%{userName}%"));
             }
 
-            if (!string.IsNullOrEmpty(firstName))
+            if (!string.IsNullOrEmpty(name))
             {
-                query = query.Where(x => EF.Functions.Like(x.FirstName, $"%{firstName}%"));
-            }
+                if (name.Contains(" "))
+                {
+                    var names = name.Split(" ");
 
-            if (!string.IsNullOrEmpty(lastName))
-            {
-                query = query.Where(x => EF.Functions.Like(x.LastName, $"%{lastName}%"));
+                    if (names.Length == 2)
+                    {
+                        query = query.Where(x => 
+                            (EF.Functions.Like(x.FirstName, $"%{names[0]}%") 
+                             || EF.Functions.Like(x.LastName, $"%{names[1]}%")) &&
+                            (EF.Functions.Like(x.FirstName, $"%{names[0]}%") 
+                             || EF.Functions.Like(x.LastName, $"%{names[1]}%")));
+                    }
+                    else
+                    {
+                        query = query.Where(x => 
+                            EF.Functions.Like(x.FirstName, $"%{name.Trim()}%") 
+                            || EF.Functions.Like(x.LastName, $"%{name.Trim()}%"));
+                    }
+                }
+                else
+                {
+                    query = query.Where(x =>
+                        EF.Functions.Like(x.FirstName, $"%{name}%")
+                        || EF.Functions.Like(x.LastName, $"%{name}%"));
+                }
             }
 
             if (!string.IsNullOrEmpty(email))
@@ -50,11 +67,6 @@ namespace stranitza.Repositories
                 query = query.Where(x => EF.Functions.Like(x.Description, $"%{description}%"));
             }
 
-            if (isAuthor.HasValue)
-            {
-                query = query.Where(x => x.IsAuthor == isAuthor);
-            }
-
             var count = await query.CountAsync();
             var users = query
                 .Include(x => x.Sources)
@@ -62,7 +74,7 @@ namespace stranitza.Repositories
                 .OrderByDescending(x => x.LastUpdated)
                 .Select(x => FromApplicationUser(x)).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
 
-            return new AdminViewModel(count, pageIndex.Value, pageSize)
+            return new UserIndexViewModel(count, pageIndex.Value, pageSize)
             {
                 Records = await users.ToListAsync()
             };

@@ -27,17 +27,21 @@ namespace stranitza.Controllers
         }
 
         [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, 
+            string email, string userName, string name, string description)
         {
-            bool? isAuthor = null;
-            if (!User.Identity.IsAuthenticated)
-            {
-                isAuthor = true;
-            }
-
             var vModel = await _context.Users.GetUsersPagedAsync(
-                email: null, userName: null, firstName: null, lastName: null, description: null, 
-                isAuthor: isAuthor, pageIndex: page);
+                email: email, userName: userName, name: name, description: description, 
+                pageIndex: page);
+
+            vModel.Filter = new UserFilterViewModel()
+            {
+                Name = name,
+                Email = email,
+                UserName = userName,
+                Description = description,
+                //IsAuthor = isAuthor,
+            };
 
             return View(vModel);
         }
