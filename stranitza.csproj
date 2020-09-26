@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -9,7 +9,7 @@
     <SatelliteResourceLanguages>bg;en</SatelliteResourceLanguages>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <Version>3.1.222-db3ea21</Version>
+    <Version>3.1.223-2394005</Version>
     <Authors>Panayot Ivanov</Authors>
     <Company />
   </PropertyGroup>
@@ -90,7 +90,7 @@
     </ItemGroup>
   </Target>
 
-  <Target AfterTargets="BeforePublish" Name="UpdateVersionPy">
+  <Target AfterTargets="AfterPublish" Name="UpdateVersionPy">
     <Exec Command="python &quot;$(ProjectDir)Utility\python\version.py&quot; &quot;$(ProjectDir)$(ProjectName).csproj&quot;" />
   </Target>
 
