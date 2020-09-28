@@ -24,7 +24,10 @@
             <li><a asp-action="Index" asp-controller="Categories">Преглед на категории</a></li>
             <li><a asp-action="Create" asp-controller="Categories">Създаване на нова категория</a></li>
             <li><a asp-action="Create" asp-controller="Sources">Създаване на нов източник</a></li>
-            <li><a asp-action="Index" asp-controller="Users">Преглед на потребители</a></li>
+            @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+            {
+                <li><a asp-action="Index" asp-controller="Users">Преглед на потребители</a></li>
+            }
         </ul>
     </div>
 
