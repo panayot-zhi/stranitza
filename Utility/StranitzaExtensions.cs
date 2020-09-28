@@ -7,15 +7,18 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -589,9 +592,24 @@ namespace stranitza.Utility
             return DateTime.Now.ToString("yyyyMMddHHmmssfff");
         }
 
-        public static string BreakNewLines(string target)
+        static readonly string EncodedNewLine = HtmlEncoder.Default.Encode(Environment.NewLine);
+
+        /// <summary>
+        /// Encodes HTML tags from comment and seeks for encoded NewLine characters to replace with a br tag.
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static IHtmlContent BreakNewLines(this IHtmlHelper htmlHelper, string target)
         {
-            return target?.Replace(Environment.NewLine, "<br>");
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                return htmlHelper.Raw(target);
+            }
+
+            var encodedTarget = HtmlEncoder.Default.Encode(target);
+            var targetWithLineBreaks = encodedTarget.Replace(EncodedNewLine, "<br>");
+            return htmlHelper.Raw(targetWithLineBreaks);
         }
 
         #endregion
