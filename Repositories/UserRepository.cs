@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using stranitza.Models.Database;
@@ -10,29 +13,52 @@ namespace stranitza.Repositories
 {
     public static class UserRepository
     {
-        public static async Task<UserIndexViewModel> GetUsersPagedAsync(this DbSet<ApplicationUser> dbSet,
-            string email,
-            string userName,
-            string name,
-            string description,
-            int? pageIndex, int pageSize = 10)
+        public static async Task<UserIndexViewModel> GetUsersPagedAsync(this UserManager<ApplicationUser> userManager, int? pageIndex, UserFilterViewModel filter, int pageSize = 10)
         {
             if (!pageIndex.HasValue)
             {
                 pageIndex = 1;
             }
 
-            var query = dbSet.AsQueryable();
-            if (!string.IsNullOrEmpty(userName))
+            IQueryable<ApplicationUser> query;
+
+            switch (filter.Type)
             {
-                query = query.Where(x => EF.Functions.Like(x.UserName, $"%{userName}%"));
+                case UserFilterType.Administrators:
+                    query = (await userManager.GetUsersInRoleAsync(StranitzaRolesHelper.AdministratorRoleName)).AsQueryable();
+                    break;
+                case UserFilterType.Editors:
+                    var editors = await userManager.GetUsersInRoleAsync(StranitzaRolesHelper.EditorRoleName);
+                    var headEditors = await userManager.GetUsersInRoleAsync(StranitzaRolesHelper.HeadEditorRoleName);
+                    var combination = new List<ApplicationUser>(headEditors.Count + editors.Count);
+                    
+                    combination.AddRange(editors);
+                    combination.AddRange(headEditors);
+
+                    query = combination.AsQueryable();
+                    break;
+                case UserFilterType.Authors:
+                    query = userManager.Users.Where(x => x.IsAuthor == true).AsQueryable();
+                    break;
+                case UserFilterType.LockedOut:
+                    query = userManager.Users.Where(x => x.LockoutEnd > DateTimeOffset.UtcNow).AsQueryable();
+                    break;
+                case UserFilterType.None:
+                default:
+                    query = userManager.Users.AsQueryable();
+                    break;
             }
 
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(filter.UserName))
             {
-                if (name.Contains(" "))
+                query = query.Where(x => EF.Functions.Like(x.UserName, $"%{filter.UserName}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                if (filter.Name.Contains(" "))
                 {
-                    var names = name.Split(" ");
+                    var names = filter.Name.Split(" ");
 
                     if (names.Length == 2)
                     {
@@ -45,29 +71,29 @@ namespace stranitza.Repositories
                     else
                     {
                         query = query.Where(x => 
-                            EF.Functions.Like(x.FirstName, $"%{name.Trim()}%") 
-                            || EF.Functions.Like(x.LastName, $"%{name.Trim()}%"));
+                            EF.Functions.Like(x.FirstName, $"%{filter.Name.Trim()}%") 
+                            || EF.Functions.Like(x.LastName, $"%{filter.Name.Trim()}%"));
                     }
                 }
                 else
                 {
                     query = query.Where(x =>
-                        EF.Functions.Like(x.FirstName, $"%{name}%")
-                        || EF.Functions.Like(x.LastName, $"%{name}%"));
+                        EF.Functions.Like(x.FirstName, $"%{filter.Name}%")
+                        || EF.Functions.Like(x.LastName, $"%{filter.Name}%"));
                 }
             }
 
-            if (!string.IsNullOrEmpty(email))
+            if (!string.IsNullOrEmpty(filter.Email))
             {
-                query = query.Where(x => EF.Functions.Like(x.Email, $"%{email}%"));
+                query = query.Where(x => EF.Functions.Like(x.Email, $"%{filter.Email}%"));
             }
 
-            if (!string.IsNullOrEmpty(description))
+            if (!string.IsNullOrEmpty(filter.Description))
             {
-                query = query.Where(x => EF.Functions.Like(x.Description, $"%{description}%"));
+                query = query.Where(x => EF.Functions.Like(x.Description, $"%{filter.Description}%"));
             }
 
-            var count = await query.CountAsync();
+            var count = query.Count();
             var users = query
                 .Include(x => x.Sources)
                 .Include(x => x.Comments)
@@ -76,7 +102,7 @@ namespace stranitza.Repositories
 
             return new UserIndexViewModel(count, pageIndex.Value, pageSize)
             {
-                Records = await users.ToListAsync()
+                Records = users.ToList()
             };
         }
 
