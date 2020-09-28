@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -677,6 +679,14 @@ namespace stranitza.Utility
             }
 
             return displayName;
+        }
+
+        public static string GetDisplayName(this Enum enumType)
+        {
+            return enumType.GetType().GetMember(enumType.ToString())
+                .First()
+                .GetCustomAttribute<DisplayAttribute>()?
+                .Name;
         }
 
         public static string GetAnonymousGravatar(string email)
