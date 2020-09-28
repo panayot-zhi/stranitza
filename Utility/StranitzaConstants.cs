@@ -137,6 +137,25 @@ namespace stranitza.Utility
 
         Asc,
         Desc,
+    }
+
+    public enum UserFilterType
+    {
+        [Display(Name = "Всички")]
+        None,
+
+
+        [Display(Name = "Администратори")]
+        Administrators,
+
+        [Display(Name = "Редактори")]
+        Editors,
+
+        [Display(Name = "Автори")]
+        Authors,
+
+        [Display(Name = "Заключени")]
+        LockedOut,
 
     }
 }
