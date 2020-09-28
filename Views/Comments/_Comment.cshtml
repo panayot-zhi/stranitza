@@ -61,18 +61,18 @@
     <div class="body col-sm-offset-2">
         @if (Model.ModeratorId != null)
         {
-            <small>@StranitzaExtensions.BreakNewLines(Model.Content)</small>
+            <small>@Html.BreakNewLines(Model.Content)</small>
         }
         else
         {
-            @StranitzaExtensions.BreakNewLines(Model.Content)
+            @Html.BreakNewLines(Model.Content)
         }
     </div>
 
     @if (Model.ModeratorId != null)
     {
         <div class="body col-sm-offset-2">
-            @StranitzaExtensions.BreakNewLines(Model.Note)
+            @Html.BreakNewLines(Model.Note)
         </div>
     }
 
