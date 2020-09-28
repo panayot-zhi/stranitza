@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using stranitza.Models;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
@@ -27,21 +22,21 @@ namespace stranitza.Controllers
         }
 
         [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
-        public async Task<IActionResult> Index(int? page, 
+        public async Task<IActionResult> Index(int? page, UserFilterType type,
             string email, string userName, string name, string description)
         {
-            var vModel = await _context.Users.GetUsersPagedAsync(
-                email: email, userName: userName, name: name, description: description, 
-                pageIndex: page);
-
-            vModel.Filter = new UserFilterViewModel()
+            var filter = new UserFilterViewModel()
             {
                 Name = name,
                 Email = email,
                 UserName = userName,
                 Description = description,
-                //IsAuthor = isAuthor,
+                Type = type,
             };
+
+            var vModel = await _userManager.GetUsersPagedAsync(pageIndex: page, filter);
+
+            vModel.Filter = filter;
 
             return View(vModel);
         }
