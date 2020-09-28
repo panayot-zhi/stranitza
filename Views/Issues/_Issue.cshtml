@@ -27,9 +27,12 @@
         <div class="body">
 
             <p>
-                @Html.BreakNewLines(Model.Description)
-                
-                <br>
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    @Html.BreakNewLines(Model.Description)
+
+                    <br>
+                }
 
                 @if (Model.HasPdf)
                 {

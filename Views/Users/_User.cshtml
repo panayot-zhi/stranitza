@@ -2,8 +2,10 @@
 
 @{
     var userDetailsUrl = Url.Action("Details", "Users", new { id = Model.Id });
-    var resolvedUrl = User.Identity.IsAuthenticated ? userDetailsUrl 
+    var resolvedUrl = User.Identity.IsAuthenticated ? userDetailsUrl
         : Url.Page("/Account/Login", new { ReturnUrl = userDetailsUrl, area = "Identity" });
+
+    var description = Model.Description ?? "няма въведена";
 }
 
 
@@ -53,7 +55,8 @@
     }
     
     <div class="description">
-        <pre>@Html.Raw(Model.Description)</pre>
+        <span class="bold">Допълнителна информация:</span>
+        <pre class="help-block">@description</pre>
     </div>
 
 </div>

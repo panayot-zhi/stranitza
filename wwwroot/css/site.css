@@ -101,6 +101,7 @@ pre.help-block {
     border: none;
     background: none;
     font-size: 16px;
+    white-space: pre-wrap;
 }
 
 /*
