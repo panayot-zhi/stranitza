@@ -68,7 +68,7 @@ namespace stranitza.Controllers
             {
                 _stats.UpdateIssueViewCountAsync(stranitzaIssue.Id);
                 Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
-                    $"прегледа брой ({stranitzaIssue.Id}:{stranitzaIssue.ReleaseNumber}/{stranitzaIssue.ReleaseYear}-{stranitzaIssue.IssueNumber}).");
+                    $"прегледа брой ({stranitzaIssue.Id}:{stranitzaIssue.GetIssueTitle()}.");
             });
 #pragma warning restore 4014
 
@@ -208,7 +208,7 @@ namespace stranitza.Controllers
                 _stats.UpdateIssueViewCountAsync(issueEntry.Id);
 
                 Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
-                    $"прегледа брой ({issueEntry.Id}:{issueEntry.ReleaseNumber}/{issueEntry.ReleaseYear}-{issueEntry.IssueNumber}).");
+                    $"прегледа брой ({issueEntry.Id}:{issueEntry.GetIssueTitle()}).");
             });
 #pragma warning restore 4014
 
@@ -235,7 +235,7 @@ namespace stranitza.Controllers
             _stats.UpdateIssueDownloadCountAsync(issueEntry.Id);
 
             Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
-                $"свали брой ({issueEntry.Id}:{issueEntry.ReleaseNumber}/{issueEntry.ReleaseYear}-{issueEntry.IssueNumber}).");
+                $"свали брой ({issueEntry.Id}:{issueEntry.GetIssueTitle()}).");
 
             return await _service.GetDownloadPdfForUser(User, issueEntry, reduced);
         }
@@ -252,7 +252,7 @@ namespace stranitza.Controllers
             _stats.UpdateIssueDownloadCountAsync(issue.Id);
 
             Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
-                $"свали брой ({issue.Id}:{issue.ReleaseNumber}/{issue.ReleaseYear}-{issue.IssueNumber}).");
+                $"свали брой ({issue.Id}:{issue.GetIssueTitle()}).");
 
             var content = await _service.GetZipForUser(User, issue, thumb);
             return new FileContentResult(content, issue.ZipFile.MimeType)
