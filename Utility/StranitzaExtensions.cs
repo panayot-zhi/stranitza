@@ -676,19 +676,6 @@ namespace stranitza.Utility
             return $"https://www.gravatar.com/avatar/{ Md5Hash(email).ToLowerInvariant() }?s=120&d=mp";
         }
 
-        public static string StripHtmlTags(string html)
-        {
-            var plainText = html;
-
-            plainText = Regex.Replace(plainText, "\r", string.Empty);
-            plainText = Regex.Replace(plainText, "\n", string.Empty);
-            plainText = Regex.Replace(plainText, "\t", string.Empty);
-            plainText = Regex.Replace(plainText, "&.*?;", string.Empty);
-            plainText = Regex.Replace(plainText, "<.*?>", "|");
-
-            return plainText.Split("|", StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-        }
-
         public static string GetMimeType(string fileName)
         {
             var provider = new FileExtensionContentTypeProvider();
