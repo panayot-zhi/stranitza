@@ -18,25 +18,44 @@ namespace stranitza.Models.ViewModels
 
         public virtual string Email { get; set; }
 
-        // public virtual bool EmailConfirmed { get; set; }
-
-        // public virtual string PhoneNumber { get; set; }
-
-        // public virtual bool PhoneNumberConfirmed { get; set; }
-
-        // public virtual DateTimeOffset? LockoutEnd { get; set; }
-
-        // public virtual int AccessFailedCount { get; set; }
-
         public string Description { get; set; }
 
-        // public string LastName { get; set; }
+        public UserFilterType Type { get; set; }
 
-        //public bool? IsAuthor { get; set; }
+        public override string ToString()
+        {
+            var result = "";
+            if (!string.IsNullOrEmpty(Name))
+            {
+                result += $"име като '{Name}', ";
+            }
 
-        // public DateTime LastUpdated { get; set; }
+            if (!string.IsNullOrEmpty(UserName))
+            {
+                result += $"псевдоним '{UserName}', ";
+            }
 
-        // public DateTime DateCreated { get; set; }
+            if (!string.IsNullOrEmpty(Email))
+            {
+                result += $"email, или част от него е '{Email}', ";
+            }
 
+            if (!string.IsNullOrEmpty(Description))
+            {
+                result += $"съдържа описание '{Description}', ";
+            }
+
+            var lastCommaIndex = result.LastIndexOf(", ", StringComparison.CurrentCulture);
+            if (lastCommaIndex > -1)
+            {
+                result = result.Remove(lastCommaIndex);
+            }
+            else
+            {
+                result = "няма";
+            }
+
+            return result;
+        }
     }
 }
