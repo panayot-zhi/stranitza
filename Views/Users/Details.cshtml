@@ -5,9 +5,23 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-@section breadcrumb {
+@{
+    var userDetailsUrl = Url.Action("Details", "Users", new { id = Model.Id });
+    var resolvedUrl = User.Identity.IsAuthenticated ? userDetailsUrl
+        : Url.Page("/Account/Login", new { ReturnUrl = userDetailsUrl, area = "Identity" });
 
-    <span>Потребители</span>
+    var description = Model.Description ?? "няма въведена";
+}
+
+@section breadcrumb {
+    @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+    {
+        <a asp-action="Index" asp-controller="Users">Потребители</a>
+    }
+    else
+    {
+        <span>Потребители</span>
+    }
 
     <span class="separator">/</span>
 
@@ -20,7 +34,57 @@
 
     <div class="row credits">
 
-        @await Html.PartialAsync("_User", Model)
+        <div class="col-md-2 col-sm-4 image">
+            <a href="@resolvedUrl" target="_blank">
+                <img src="@Url.Content(Model.AvatarPath)" class="img-responsive" alt="@Model.DisplayName">
+            </a>
+        </div>
+
+        <div class="col-md-8 col-sm-8 details">
+            <h3>
+                <a href="@resolvedUrl" target="_blank">
+                    @Model.DisplayNameConditional
+                </a>
+            </h3>
+    
+            @if (Model.IsAuthor)
+            {
+                <div class="author">
+                    <span class="bold">Автор: </span>
+                    <a href="@Url.Action("Details", "Users", new { id = Model.Id })" target="_blank">
+                        @Model.Names
+                    </a>
+                </div>
+            }
+
+            <div class="date">
+                <span class="bold">Създаден: </span>
+                <span>
+                    @Model.DateCreated.ToString("dd MMM yyyy")
+                </span>
+            </div>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (Model.DisplayEmail)
+                {
+                    <div class="email">
+                        <span class="bold">Email:</span>
+                        <span>
+                            <a href="mailto:@Model.Email" target="_blank">
+                                @Model.Email
+                            </a>
+                        </span>
+                    </div>
+                }
+            }
+    
+            <div class="description">
+                <span class="bold">Допълнителна информация:</span>
+                <pre class="help-block">@description</pre>
+            </div>
+
+        </div>
 
     </div>
 

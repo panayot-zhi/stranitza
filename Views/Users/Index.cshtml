@@ -14,18 +14,28 @@
 }
 
 <div class="col-md-8 blog-main">
-
-    @foreach (var user in Model.Records)
+    
+    @if (Model.Records.Any())
     {
-        <div class="row credits">
-            @await Html.PartialAsync("_User", user)
+        @foreach (var user in Model.Records)
+        {
+            <div class="row credits">
+                @await Html.PartialAsync("_User", user)
+            </div>
+        }
+
+        @await Html.PartialAsync("_Paging", Model, new ViewDataDictionary(ViewData)
+        {
+            {"Next", "Напред"}, {"Previous", "Назад"}
+        })
+    }
+    else
+    {
+        <div class="col-sm-8 col-sm-offset-4">
+            <p class="help-block text-right">Няма намерени резултати.</p>
+            <p class="help-block text-right">филтър по: @Model.Filter.Type.GetDisplayName() <br> критерии: @Model.Filter.ToString()</p>
         </div>
     }
-
-    @await Html.PartialAsync("_Paging", Model, new ViewDataDictionary(ViewData)
-    {
-        { "Next", "Напред" }, { "Previous", "Назад" }
-    })
 
 </div>
 
@@ -35,29 +45,48 @@
         <header>
             <h3>Филтър</h3>
         </header>
+        
+        <div class="body">
+            <ul class="tales-list">
+                <li><a href="@Url.Action("Index", "Users", new { type = (int) UserFilterType.None })" class="@(Model.Filter.Type == UserFilterType.None ? "active" : string.Empty )">@UserFilterType.None.GetDisplayName()</a></li>
+                <li><a href="@Url.Action("Index", "Users", new { type = (int) UserFilterType.Administrators })" class="@(Model.Filter.Type == UserFilterType.Administrators ? "active" : string.Empty )">@UserFilterType.Administrators.GetDisplayName()</a></li>
+                <li><a href="@Url.Action("Index", "Users", new { type = (int) UserFilterType.Editors })" class="@(Model.Filter.Type == UserFilterType.Editors ? "active" : string.Empty )">@UserFilterType.Editors.GetDisplayName()</a></li>
+                <li><a href="@Url.Action("Index", "Users", new { type = (int) UserFilterType.Authors })" class="@(Model.Filter.Type == UserFilterType.Authors ? "active" : string.Empty )">@UserFilterType.Authors.GetDisplayName()</a></li>
+                <li><a href="@Url.Action("Index", "Users", new { type = (int) UserFilterType.LockedOut })" class="@(Model.Filter.Type == UserFilterType.LockedOut ? "active" : string.Empty )">@UserFilterType.LockedOut.GetDisplayName()</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Търсене</h3>
+        </header>
         <div class="body clearfix">
             <div class="tales-superblock" id="contact">
                     
                 <form action="#" method="get" accept-charset="utf-8" class="contact-form">
+
+                    <input type="hidden" name="type" value="@((int) Model.Filter.Type)"/>
+
                     <input type="text" name="name" id="contact-name" placeholder="Имена" class="form-control" value="@Model.Filter.Name">
                     <input type="text" name="userName" id="contact-username" placeholder="Псевдоним" class="form-control" value="@Model.Filter.UserName">
                     <input type="email" name="email" id="contact-email" placeholder="Email" class="form-control" value="@Model.Filter.Email">
                     <textarea rows="5" name="description" id="contact-body" placeholder="Описание..." class="form-control">@Model.Filter.Description</textarea>
-                    
+
                     <div class="buttons clearfix">
-                        <button type="submit" class="btn btn-xlarge btn-tales-one">Търси</button>
-                    </div>                    
+                        <button type="submit" class="btn btn-tales-one">Търси</button>
+                        <button type="reset" class="btn btn-tales-two">Изчисти</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-
 </aside>
 
 @section scripts {
     <script>
 
-        var thisUrl = '@Url.Action("Index", "Users")';
+        var indexUsers = '@Url.Action("Index", "Users")';
         $(document).ready(function() {
             $("form.contact-form").on("submit", function(e) {
                 e.preventDefault();
@@ -65,7 +94,17 @@
                 let me = this;
                 let data = $(me).serialize();
 
-                window.location.href = thisUrl + "?" + data;
+                window.location.href = indexUsers + "?" + data;
+            });
+
+            $("form.contact-form").on("reset", function (e) {
+                e.preventDefault();
+
+                let me = this;
+                $(me).find("input[type=text], textarea").val("");
+                let data = $(me).serialize();
+
+                window.location.href = indexUsers + "?" + data;
             });
         });
     </script>

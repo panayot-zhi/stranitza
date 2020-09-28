@@ -2,61 +2,97 @@
 
 @{
     var userDetailsUrl = Url.Action("Details", "Users", new { id = Model.Id });
-    var resolvedUrl = User.Identity.IsAuthenticated ? userDetailsUrl
-        : Url.Page("/Account/Login", new { ReturnUrl = userDetailsUrl, area = "Identity" });
-
-    var description = Model.Description ?? "няма въведена";
 }
 
-
 <div class="col-md-2 col-sm-4 image">
-    <a href="@resolvedUrl" target="_blank">
+    <a href="@userDetailsUrl" target="_blank">
         <img src="@Url.Content(Model.AvatarPath)" class="img-responsive" alt="@Model.DisplayName">
     </a>
 </div>
 
 <div class="col-md-8 col-sm-8 details">
     <h3>
-        <a href="@resolvedUrl" target="_blank">
-            @Model.DisplayNameConditional
+        <a href="@userDetailsUrl" target="_blank">
+            @Model.DisplayNameOnly
         </a>
     </h3>
-    
+
+
+    <div class="author">
+        <span class="bold">Псевдоним: </span>
+        <span>
+            @Model.UserName
+        </span>
+    </div>
+
+    <div class="email">
+        <span class="bold">Email:</span>
+        <span>
+            <a href="mailto:@Model.Email" target="_blank">
+                @if (Model.EmailConfirmed)
+                {
+                    @Model.Email
+                }
+                else
+                {
+                    <i>@Model.Email</i>
+                }
+            </a>
+        </span>
+    </div>
+
+
     @if (Model.IsAuthor)
     {
-        <div class="author">
+        <div class="author bg-success">
             <span class="bold">Автор: </span>
-            <a href="@Url.Action("Details", "Users", new { id = Model.Id })" target="_blank">
+            <span>
                 @Model.Names
-            </a>
+            </span>
+        </div>
+    }
+    else
+    {
+        <div class="author">
+            <span class="bold">Имена: </span>
+            <span>
+                @Model.Names
+            </span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.PhoneNumber) && Model.PhoneNumberConfirmed)
+    {
+        <div class="phone">
+            <span class="bold">Телефон: </span>
+            <span>
+                @Model.PhoneNumber
+            </span>
+        </div>
+    }
+
+    @if (Model.LockoutEnd.HasValue && Model.LockoutEnd.Value > DateTimeOffset.UtcNow)
+    {
+        <div class="date text-danger">
+            <span class="bold">Забранен до: </span>
+            <span>
+                @Model.LockoutEnd.Value.LocalDateTime.ToString("dd.MM.yyyy HH:mm")
+            </span>
         </div>
     }
 
     <div class="date">
-        <span class="bold">Създаден: </span>
+        <span class="bold">Последна промяна: </span>
         <span>
-            @Model.DateCreated.ToString("dd MMM yyyy")
+            @Model.LastUpdated.ToString("dd.MM.yyyy HH:mm")
         </span>
     </div>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        if (Model.DisplayEmail)
-        {
-            <div class="email">
-                <span class="bold">Email:</span>
-                <span>
-                    <a href="mailto:@Model.Email" target="_blank">
-                        @Model.Email
-                    </a>
-                </span>
-            </div>
-        }
-    }
-    
-    <div class="description">
-        <span class="bold">Допълнителна информация:</span>
-        <pre class="help-block">@description</pre>
+    <div class="date">
+        <span class="bold">Създаден: </span>
+        <span>
+            @Model.DateCreated.ToString("dd.MM.yyyy HH:mm")
+        </span>
     </div>
 
 </div>
