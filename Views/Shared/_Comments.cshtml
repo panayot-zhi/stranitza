@@ -260,9 +260,38 @@ else
 }
 
 <script type="text/javascript">
-    $(document).ready(function () {
+
+    const hash = window.location.hash;
+
+    function scrollToHash() {
+        if (!hash) {
+            return;
+        }
+
+        if (!hash.startsWith("#comment-")) {
+            return;
+        }
+
+        var target = $(hash);
+        if (!target) {
+            return;
+        }
+
+        // scroll to top
+        $('html, body').animate({
+                scrollTop: target.offset().top
+            },
+            1800,
+            'swing');
+    }
+
+    $(document).ready(function() {
 
         var getCommentsUrl = "@getCommentsUrl";
+
+        /*if (hash) {
+            modal.wait.show();
+        }*/
 
         // LOAD comments
         $.ajax({
@@ -270,6 +299,10 @@ else
             method: "GET",
             success: function(r) {
                 $("#comments-container").html(r);
+
+                if (hash) {
+                    scrollToHash();
+                }
             },
             done: function() {
                 modal.wait.hide();
@@ -316,7 +349,5 @@ else
                 }
             });
         });
-
-
-    })
+    });
 </script>
