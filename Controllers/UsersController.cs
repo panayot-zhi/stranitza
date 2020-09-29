@@ -21,7 +21,7 @@ namespace stranitza.Controllers
             _userManager = userManager;
         }
 
-        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Index(int? page, UserFilterType type,
             string email, string userName, string name, string description)
         {
@@ -145,9 +145,9 @@ namespace stranitza.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Search(UserFilterViewModel vModel, int? page)
+        public IActionResult Search(string q)
         {
-            throw new NotImplementedException();
+            return RedirectToAction("Index", new { userName = q });
         }
     }
 }
