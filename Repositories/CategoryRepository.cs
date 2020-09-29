@@ -46,6 +46,17 @@ namespace stranitza.Repositories
             }).ToListAsync();
         }
 
+        public static async Task<IEnumerable<FilterCategoryViewModel>> GetCategoryFilterForAuthorViewModelAsync(this DbSet<StranitzaCategory> dbSet, string authorId)
+        {
+            return await dbSet.Select(x => new FilterCategoryViewModel()
+            {
+                Category = x.Name,
+                CategoryId = x.Id,
+                Count = x.Sources.Count(y => y.AuthorId == authorId)
+
+            }).ToListAsync();
+        }
+
         public static async Task<CategoryViewModel> GetCategoryViewModelAsync(this DbSet<StranitzaCategory> dbSet, int id)
         {
             return await dbSet.Select(x => new CategoryViewModel()
