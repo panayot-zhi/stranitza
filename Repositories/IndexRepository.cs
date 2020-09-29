@@ -92,6 +92,65 @@ namespace stranitza.Repositories
             };
         }
 
+        public static async Task<IndexViewModel> GetSourcesByAuthorPagedAsync(this DbSet<StranitzaSource> sourcesDbSet,
+            string authorId, int? year, int? categoryId, int? pageIndex, int pageSize = 10)
+        {
+            if (!pageIndex.HasValue)
+            {
+                pageIndex = 1;
+            }
+
+            var query = sourcesDbSet.Where(x => x.AuthorId == authorId).AsQueryable();
+
+            if (year.HasValue)
+            {
+                query = query.Where(x => x.ReleaseYear == year.Value);
+            }
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(x => x.CategoryId == categoryId);
+            }
+
+            var count = await query.CountAsync();
+            var sources = query
+                .OrderByDescending(x => x.ReleaseYear)
+                    .ThenByDescending(x => x.ReleaseNumber)
+                .Select(x => new SourceIndexViewModel()
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    StartingPage = x.StartingPage,
+                    ReleaseYear = x.ReleaseYear,
+                    ReleaseNumber = x.ReleaseNumber,
+                    Pages = x.Pages,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+
+                    Origin = x.Origin,
+                    Description = x.Description,
+                    Notes = x.Notes,
+
+                    IssueId = x.IssueId,
+                    EPageId = x.EPageId,
+                    AuthorId = x.AuthorId,
+
+                    Uploader = x.Uploader,
+
+                    CategoryId = x.CategoryId,
+                    CategoryName = x.Category.Name,
+
+                    DateCreated = x.DateCreated,
+                    LastUpdated = x.LastUpdated
+
+                }).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
+
+            return new IndexViewModel(count, pageIndex.Value, pageSize)
+            {
+                Records = await sources.ToListAsync()
+            };
+        }
+
         public static async Task<CategorySourcesViewModel> GetCategorySourcesPagedAsync(this DbSet<StranitzaSource> dbSet,
             int categoryId, int? pageIndex, string sortPropertyName, SortOrder sortOrder, int pageSize = 10)
         {
