@@ -204,6 +204,75 @@ namespace stranitza.Services
             });
         }
 
+        public IEnumerable<SuggestionsViewModel> GetRandomCommentsByAuthor(string authorId, int count = 5)
+        {
+            var parameters = new object[]
+            {
+                new MySqlParameter("count", count),
+                new MySqlParameter("authorId", authorId),
+            };
+
+            var comments = _dbContext.StranitzaComments.FromSqlRaw(Sql.GetRandomCommentsByAuthor, parameters)
+                .Include(x => x.EPage)
+                .Include(x => x.Issue)
+                .Include(x => x.Post)
+                .Select(x => new StranitzaComment()
+                {
+                    Id = x.Id,
+                    EPageId = x.EPageId,
+                    IssueId = x.IssueId,
+                    PostId = x.PostId,
+                    AuthorId = x.AuthorId,
+                    DateCreated = x.DateCreated,
+
+                    EPage = !x.EPageId.HasValue ? null : new StranitzaEPage()
+                    {
+                        Title = x.EPage.Title
+                    },
+
+                    Issue = !x.IssueId.HasValue ? null : new StranitzaIssue()
+                    {
+                        IssueNumber = x.Issue.IssueNumber,
+                        ReleaseNumber = x.Issue.ReleaseNumber,
+                        ReleaseYear = x.Issue.ReleaseYear,
+                    },
+
+                    Post = !x.PostId.HasValue ? null : new StranitzaPost()
+                    {
+                        Title = x.Post.Title
+                    },
+
+                }).ToList();
+
+            return comments.OrderByDescending(x => x.DateCreated).Select(x =>
+                x.EPage != null
+                    ? new SuggestionsViewModel() // epage comment
+                    {
+                        Content = $"<span class=\"post-title\">{x.EPage.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
+                        Href = _linkGenerator.GetPathByAction("Details", "EPages", new { id = x.EPageId },
+                            PathString.Empty, new FragmentString($"#comment-{x.Id}"), new LinkOptions()
+                            { LowercaseUrls = true })
+
+                    } : x.Post != null
+                        ? new SuggestionsViewModel() // post comment
+                        {
+                            Content = $"<span class=\"post-title\">{x.Post.Title}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
+                            Href = _linkGenerator.GetPathByAction("Details", "Posts", new { id = x.PostId },
+                                PathString.Empty, new FragmentString($"#comment-{x.Id}"), new LinkOptions()
+                                { LowercaseUrls = true })
+
+                        }
+                        : new SuggestionsViewModel() // issue comment
+                        {
+                            Content = $"<span class=\"post-title\">{StranitzaExtensions.GetIssueTitle(x.Issue)}</span><span class=\"post-date\">{x.DateCreated:d MMMM yyyy}</span>",
+                            Href = _linkGenerator.GetPathByAction("Details", "Issues", new { id = x.IssueId },
+                                PathString.Empty, new FragmentString($"#comment-{x.Id}"), new LinkOptions()
+                                { LowercaseUrls = true })
+
+                        }
+            ).ToList();
+        }
+
         public IEnumerable<SuggestionsViewModel> GetEditorsPickSuggestions(int count = 5)
         {
             var parameters = new object[]
@@ -429,6 +498,43 @@ FROM
     StranitzaPosts x
 WHERE
     x.Id <> @postId
+ORDER BY
+    rand()
+LIMIT
+    @count
+";
+                }
+            }
+
+            public static string GetRandomCommentsByAuthor
+            {
+                get
+                {
+                    return
+@"SELECT 
+    comment.Id,
+       
+    comment.EPageId,
+    comment.IssueId,
+    comment.PostId,
+    comment.AuthorId,
+    comment.DateCreated,
+
+    issue.IssueNumber, 
+    issue.ReleaseNumber, 
+    issue.ReleaseYear,
+
+    CASE
+        WHEN comment.EPageId IS NOT NULL THEN epage.Title
+        WHEN comment.PostId IS NOT NULL THEN post.Title        
+    END
+
+FROM StranitzaComments AS comment
+    LEFT JOIN StranitzaEPages AS epage ON comment.EPageId = epage.Id
+    LEFT JOIN StranitzaIssues AS issue ON comment.IssueId = issue.Id
+    LEFT JOIN StranitzaPosts AS post ON comment.PostId = post.Id
+WHERE
+    comment.AuthorId =  @authorId
 ORDER BY
     rand()
 LIMIT
