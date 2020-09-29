@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using stranitza.Models.Database;
 using stranitza.Models.Generic;
 using stranitza.Models.ViewModels;
@@ -148,6 +149,16 @@ namespace stranitza.Repositories
         public static IEnumerable<CountByYears> GetSourcesCountByYears(this DbSet<CountByYears> dbSet)
         {
             return dbSet.FromSqlRaw($"CALL CountByReleaseYear('{CountQueryType.Sources}')").ToList();
+        }
+
+        public static IEnumerable<CountByYears> GetSourcesCountByYearsAndAuthor(this DbSet<CountByYears> dbSet, string authorId)
+        {
+            var parameters = new object[]
+            {
+                new MySqlParameter("authorId", authorId)
+            };
+
+            return dbSet.FromSqlRaw(Sql.GetCountByReleaseYearAndAuthor, parameters).ToList();
         }
 
         public static async Task<SourceDetailsViewModel> GetSourceDetailsViewModelAsync(this DbSet<StranitzaSource> dbSet, int id)
@@ -317,5 +328,29 @@ namespace stranitza.Repositories
             };
         }
 
+        // ReSharper disable ArrangeAccessorOwnerBody
+        private static class Sql
+        {
+            public static string GetCountByReleaseYearAndAuthor
+            {
+                get
+                {
+                    return
+@"SELECT 
+    x.ReleaseYear as Year, 
+    COUNT(*) as Count 
+FROM 
+    StranitzaSources x
+WHERE 
+    x.AuthorId = @authorId
+GROUP BY 
+    x.ReleaseYear
+ORDER BY 
+    x.ReleaseYear DESC;
+";
+                }
+            }
+
+        } // ReSharper restore ArrangeAccessorOwnerBody
     }
 }
