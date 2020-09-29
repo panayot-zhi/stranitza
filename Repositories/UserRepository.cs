@@ -95,10 +95,8 @@ namespace stranitza.Repositories
 
             var count = query.Count();
             var users = query
-                .Include(x => x.Sources)
-                .Include(x => x.Comments)
-                .OrderByDescending(x => x.LastUpdated)
-                .Select(x => FromApplicationUser(x)).Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
+                .Select(x => FromApplicationUser(x))
+                .Skip((pageIndex.Value - 1) * pageSize).Take(pageSize);
 
             return new UserIndexViewModel(count, pageIndex.Value, pageSize)
             {
@@ -141,17 +139,8 @@ namespace stranitza.Repositories
 
                 DisplayName = StranitzaExtensions.GetDisplayName(x.DisplayNameType, x.UserName, x.Names, x.Email, x.DisplayEmail),
 
-                // AvatarType = x.AvatarType,
-                // FacebookAvatarPath = x.FacebookAvatarPath,
-                // TwitterAvatarPath = x.TwitterAvatarPath,
-                // GoogleAvatarPath = x.GoogleAvatarPath,
-                // InternalAvatarPath = x.InternalAvatarPath,
-
                 AvatarPath = StranitzaExtensions.GetAvatarPath(x.AvatarType, x.Email, 
                     x.FacebookAvatarPath, x.TwitterAvatarPath, x.GoogleAvatarPath, x.InternalAvatarPath),
-
-                Sources = x.Sources,
-                Comments = x.Comments,
 
                 LastUpdated = x.LastUpdated,
                 DateCreated = x.DateCreated,
