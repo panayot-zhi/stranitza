@@ -15,7 +15,16 @@
 
 <div id="source-@Model.Id" class="source-info">
     <div class="col-md-12">
-        @Model.Origin
+        @if (Model.AuthorId != null)
+        {
+            <a href="@Url.Action("Details", "Users", new { id = Model.AuthorId })" target="_blank">
+                @Model.Origin
+            </a>
+        }
+        else
+        {
+            @Model.Origin
+        }
     </div>
 
     <div class="col-md-12">
