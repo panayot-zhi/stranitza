@@ -16,27 +16,15 @@ namespace stranitza.Models.ViewModels
 
         public virtual string UserName { get; set; }
 
-        //public virtual string NormalizedUserName { get; set; }
-
         public virtual string Email { get; set; }
 
-        //public virtual string NormalizedEmail { get; set; }
-
         public virtual bool EmailConfirmed { get; set; }
-
-        //public virtual string PasswordHash { get; set; }
-
-        //public virtual string SecurityStamp { get; set; }
 
         public virtual string PhoneNumber { get; set; }
 
         public virtual bool PhoneNumberConfirmed { get; set; }
 
-        //public virtual bool TwoFactorEnabled { get; set; }
-
         public virtual DateTimeOffset? LockoutEnd { get; set; }
-
-        //public virtual bool LockoutEnabled { get; set; }
 
         public virtual int AccessFailedCount { get; set; }
 
@@ -73,17 +61,13 @@ namespace stranitza.Models.ViewModels
         public string DisplayNameConditional => this.DisplayEmail ? this.DisplayNameOnly : this.DisplayName;
 
 
-        // public ICollection<StranitzaEPage> AuthoredEPages { get; set; }
+        public IList<string> Roles { get; set; }
 
-        // public ICollection<StranitzaEPage> UploadedEPages { get; set; }
+        public IndexViewModel Sources { get; set; }
 
-        public ICollection<StranitzaSource> Sources { get; set; }
+        public bool HasAnySources => Sources?.TotalRecords > 0;
 
         public ICollection<StranitzaComment> Comments { get; set; }
-
-        // public ICollection<StranitzaComment> ModeratedComments { get; set; }
-
-        // public ICollection<StranitzaPost> Posts { get; set; }
 
 
         public DateTime LastUpdated { get; set; }

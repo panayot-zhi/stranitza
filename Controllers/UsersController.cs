@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -42,7 +43,7 @@ namespace stranitza.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string id, int? page, int? year, int? category)
         {
             if (id == null)
             {
@@ -61,7 +62,16 @@ namespace stranitza.Controllers
             }
 
             var vModel = UserRepository.FromApplicationUser(user);
-            
+
+            vModel.Roles = await _userManager.GetRolesAsync(user);
+
+            vModel.Comments = _context.StranitzaComments.Where(x => x.AuthorId == user.Id && x.ModeratorId == null).ToList();
+            vModel.Sources = await _context.StranitzaSources.GetSourcesByAuthorPagedAsync(user.Id,year, category, page);
+            vModel.Sources.CategoriesFilter = await _context.StranitzaCategories.GetCategoryFilterForAuthorViewModelAsync(user.Id);
+            vModel.Sources.YearFilter = _context.CountByYears.GetSourcesCountByYearsAndAuthor(user.Id);
+            vModel.Sources.CurrentCategoryId = category;
+            vModel.Sources.CurrentYear = year;
+
             return View(vModel);
         }
 

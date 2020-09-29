@@ -2,18 +2,15 @@
 
 @{
     ViewData["Title"] = "Преглед на потребителски профил";
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
 }
 
 @{
-    var userDetailsUrl = Url.Action("Details", "Users", new { id = Model.Id });
-    var resolvedUrl = User.Identity.IsAuthenticated ? userDetailsUrl
-        : Url.Page("/Account/Login", new { ReturnUrl = userDetailsUrl, area = "Identity" });
-
     var description = Model.Description ?? "няма въведена";
 }
 
 @section breadcrumb {
+
     @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
     {
         <a asp-action="Index" asp-controller="Users">Потребители</a>
@@ -30,30 +27,22 @@
 
 <div class="col-md-8 blog-main">
 
-    <h2>Преглед на потребителски профил</h2>
+    <h2 class="underlined">Преглед на потребителски профил</h2>
 
     <div class="row credits">
 
-        <div class="col-md-2 col-sm-4 image">
-            <a href="@resolvedUrl" target="_blank">
-                <img src="@Url.Content(Model.AvatarPath)" class="img-responsive" alt="@Model.DisplayName">
-            </a>
+        <div class="col-sm-3 image">
+            <img src="@Url.Content(Model.AvatarPath)" class="img-responsive" alt="@Model.DisplayName">
         </div>
 
-        <div class="col-md-8 col-sm-8 details">
-            <h3>
-                <a href="@resolvedUrl" target="_blank">
-                    @Model.DisplayNameConditional
-                </a>
-            </h3>
-    
+        <div class="col-sm-9 details">
+            <h3>@Model.DisplayNameConditional</h3>
+
             @if (Model.IsAuthor)
             {
                 <div class="author">
                     <span class="bold">Автор: </span>
-                    <a href="@Url.Action("Details", "Users", new { id = Model.Id })" target="_blank">
-                        @Model.Names
-                    </a>
+                    <span>@Model.Names</span>
                 </div>
             }
 
@@ -78,20 +67,168 @@
                     </div>
                 }
             }
-    
+
             <div class="description">
                 <span class="bold">Допълнителна информация:</span>
                 <pre class="help-block">@description</pre>
             </div>
 
+            <div class="roles">
+
+                @if (Model.Roles.Contains(StranitzaRolesHelper.AdministratorRoleName))
+                {
+                    <a href="#" class="social-icon color-neutral" data-popover="true" data-content="Администратор">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-font admin-icon"></i>
+                    </a>
+
+                }
+                else if (Model.Roles.Contains(StranitzaRolesHelper.HeadEditorRoleName))
+                {
+                    <a href="#" class="social-icon color-three" data-popover="true" data-content="Главен редактор">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-pencil head-editor-icon"></i>
+                    </a>
+                }
+                else if (Model.Roles.Contains(StranitzaRolesHelper.EditorRoleName))
+                {
+                    <a href="#" class="social-icon color-two" data-popover="true" data-content="Редактор">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-pencil-square-o editor-icon"></i>
+                    </a>
+                }
+                else if (Model.Roles.Contains(StranitzaRolesHelper.UserPlusRoleName))
+                {
+
+                    <a href="#" class="social-icon color-one" data-popover="true" data-content="Потребител +">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-user-plus user-plus-icon"></i>
+                    </a>
+                }
+                else
+                {
+                    <a href="#" class="social-icon color-five" data-popover="true" data-content="Потребител">
+                        <div class="inner-circle"></div>
+                        <i class="fa fa-user user-icon"></i>
+                    </a>
+                }
+            </div>
+
         </div>
+        
 
     </div>
 
+    @if (Model.HasAnySources)
+    {
+        <div id="list-source" class="content" role="main">
+            
+            <h2 class="underlined mb20 pb20">Произведения от автора</h2>
+
+            @foreach (var source in Model.Sources.Records)
+            {
+                <div class="row source-row">
+                    @await Html.PartialAsync("/Views/Sources/_Source.cshtml", source)
+                </div>
+            }
+
+            @await Html.PartialAsync("_Paging", Model.Sources)
+        </div>
+    }
 </div>
 
 <aside class="col-md-4 blog-aside">
 
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
+    {
+        <div class="aside-widget">
 
+            <header>
+                <h3>Администрация</h3>
+            </header>
+            <div class="body">
+                <ul class="tales-list">
 
+                    <li><a asp-action="Edit" asp-controller="Users" asp-route-id="@Model.Id">Редакция</a></li>
+
+                </ul>
+            </div>
+        </div>
+    }
+
+    @if (Model.HasAnySources)
+    {
+        <div id="category-filter" class="aside-widget">
+            <header>
+                <h3>По категории</h3>
+            </header>
+            <div class="body">
+                <ul class="tales-list category-list">
+
+                    <li>
+                        <a class="category @(Model.Sources.CurrentCategoryId == null ? "active" : "")" href="@Url.Action("Details", "Users", new { id = Model.Id })">
+                            Всички
+                        </a>
+                    </li>
+
+                    @foreach (var filter in Model.Sources.CategoriesFilter)
+                    {
+                        if (filter.Count == 0)
+                        {
+                            continue;
+                        }
+
+                        <li>
+                            <a class="category @(Model.Sources.CurrentCategoryId == filter.CategoryId ? "active" : "")" href="@Url.Action("Details", "Users", new { id = Model.Id, category = filter.CategoryId })">
+                                @filter.Category (@filter.Count)
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+
+        <div id="release-year-filter" class="aside-widget">
+            <header>
+                <h3>По години</h3>
+            </header>
+            <div class="body">
+                <ul class="tales-list">
+                    <li>
+                        <a class="category @(Model.Sources.CurrentYear == null ? "active" : "")" href="@Url.Action("Details", "Users", new { id = Model.Id })">
+                            Всички
+                        </a>
+                    </li>
+
+                    @foreach (var filter in Model.Sources.YearFilter)
+                    {
+                        <li>
+                            <a class="category @(Model.Sources.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Details", "Users", new { id = Model.Id, year = filter.Year })">
+                                @filter.Year (@filter.Count)
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    }
+
+    @{
+        var randomCommentsByAuthor = StatsService.GetRandomCommentsByAuthor(Model.Id);
+    }
+
+    @if (randomCommentsByAuthor.Any())
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Коментари</h3>
+            </header>
+
+            <div class="body">
+                @await Html.PartialAsync("_Suggestions", randomCommentsByAuthor)
+            </div>
+        </div>
+    }
 </aside>
