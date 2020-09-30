@@ -161,6 +161,12 @@
                                 }
 
                             </div>
+
+                            <div class="text-right pt20">
+                                <a href="#" id="clear-all-pages">Изчисти избора</a>
+                                <span class="separator">/</span>
+                                <a href="#" id="select-all-pages">Избери всички</a>
+                            </div>
                         </div>                        
                     }    
                         
@@ -393,8 +399,8 @@
                 });
 
                 $("#pages-edit .btn-circle").on('click', function (e) {
-
                     e.preventDefault();
+
                     $(this).toggleClass("active");
 
                     var markedPages = [];
@@ -405,9 +411,21 @@
                     $("#AvailablePages").val(markedPages);
                 });
 
+
             </text>
         }
 
+        $("#clear-all-pages").on('click', function (e) {
+            e.preventDefault();
+
+            $("#pages-edit .btn-circle.active").click();
+        });
+
+        $("#select-all-pages").on('click', function (e) {
+            e.preventDefault();
+
+            $("#pages-edit .btn-circle:not(.active)").click();
+        });
     });
 </script>
 }

@@ -341,7 +341,7 @@ namespace stranitza.Utility
         private static string GetDisplayIssueNumber(int issueNumber)
         {
             // NOTE: This should be a fixed magic number :(
-            return issueNumber > 900 ? "специален извънреден" : issueNumber.ToString();
+            return issueNumber > 900 ? "извънреден" : issueNumber.ToString();
         }
 
         /// <summary>
