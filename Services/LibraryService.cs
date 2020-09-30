@@ -273,6 +273,7 @@ index: {issue.IndexPage?.Id}";
                     {
                         // if there wasn't a pdf file record, create it
                         var pdfFileRecord = await CreatePdfFileRecord(pdfFile);
+                        entry.AvailablePages = new[] { 1, 3 }; // immediately make the cover and index page available
                         entry.PdfFilePreview = pdfFileRecord;
 
                         StampPdf(entry.PdfFilePreview, entry.GetIssueTitle());
