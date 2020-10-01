@@ -175,6 +175,7 @@ namespace stranitza.Services
             Log.Logger.Information("Processed {issueDirectoryCount} directories in root.", issueDirectoryCount);
         }
 
+        [Obsolete("The input json and this method do not regard e-page sources.")]
         public static async Task LoadIndexFromRootFolder(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             var jsonFilePath = Path.Combine(configuration["RepositoryPath"], StranitzaConstants.IndexJsonFileName);

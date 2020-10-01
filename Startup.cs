@@ -317,7 +317,7 @@ namespace stranitza
             PopulateDatabaseService.EnsureCriticalRoles(services).Wait();
             PopulateDatabaseService.EnsureCriticalUsers(services, Configuration).Wait();
             PopulateDatabaseService.LoadIssuesFromRootFolder(services, Configuration).Wait();
-            PopulateDatabaseService.LoadIndexFromRootFolder(services, Configuration).Wait();
+            //PopulateDatabaseService.LoadIndexFromRootFolder(services, Configuration).Wait();
 
             app.UseEndpoints(endpoints =>
             {
