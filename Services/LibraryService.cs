@@ -939,6 +939,7 @@ thumb: {page.PageFile.ThumbPath}";
         {
             // NOTE: Raise level if necessary
             // TODO: Implement a mechanic for the current user to be able to see certain issues
+            // TODO: Figure out a way to delete thumb pdf if all the pages are available
 
             if (user.IsAtLeast(StranitzaRoles.Editor))
             {
