@@ -1,8 +1,6 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-/* TODO: Revise this heavily! */
-
 .blog-teaser header .squared {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
@@ -809,7 +807,7 @@ textarea {
 /* inputs for pensioners */
 select.form-control,
 /*input[type="number"],*/
-input[type="text"].form-control:not(.input-lg) {    /* TODO: Check all references */
+input[type="text"].form-control:not(.input-lg) {
     height: 38px;
 }
 
