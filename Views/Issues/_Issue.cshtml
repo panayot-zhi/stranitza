@@ -36,7 +36,11 @@
 
                 @if (Model.HasPdf)
                 {
-                    @:Броят е <b>достъпен в PDF</b> вариант. Общият брой на страниците е <b>@Model.PagesCount</b>, от които @(Model.AvailablePages?.Length ?? 0) страници със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения достъпни за <i class="text-success">всеки посетител</i>.
+                    var availablePages = Model.AvailablePages == null ? "0" 
+                        : Model.PagesCount == Model.AvailablePages.Length ? 
+                            "всички" : Model.AvailablePages.Length.ToString();
+
+                    @:Броят е <b>достъпен в PDF</b> вариант. Общият брой на страниците е <b>@Model.PagesCount</b>, от които <i class="text-success">@(availablePages)</i> със свободен достъп за регистрирани потребители и @Model.ImagesCount изображения достъпни за <i class="text-success">всеки посетител</i>.
                 }
                 else
                 {
