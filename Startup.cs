@@ -292,9 +292,8 @@ namespace stranitza
                 // scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            // TODO: Uncomment this
-            //app.UseResponseCaching();
+            
+            app.UseResponseCaching();
             app.UseExceptionHandler("/Home/Error");
             app.UseStatusCodePagesWithReExecute("/Home/Error", "?code={0}");
 

@@ -132,8 +132,7 @@ namespace stranitza.Controllers
             return Json(r);
         }
 
-        // TODO: Fix response caching after tests
-        //[ResponseCache(CacheProfileName = StranitzaCacheProfile.Weekly, VaryByQueryKeys = new [] { "thumb" })]
+        [ResponseCache(CacheProfileName = StranitzaCacheProfile.Weekly, VaryByQueryKeys = new [] { "thumb" })]
         public IActionResult Load(int id, bool thumb = false)
         {
             var page = _context.StranitzaPages
