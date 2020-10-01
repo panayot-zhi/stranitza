@@ -890,7 +890,16 @@ thumb: {page.PageFile.ThumbPath}";
         {
             if (source.IssueId.HasValue)
             {
-                throw new StranitzaException($"Източникът ({source.Id}) вече е свързан с конкретен брой ({source.IssueId})!");
+                Log.Logger.Warning($"Източникът ({source.Id}) вече е свързан с конкретен брой ({source.IssueId})!");
+                
+                return false;
+            }
+
+            if (source.EPageId.HasValue)
+            {
+                Log.Logger.Warning($"Източникът ({source.Id}) вече е свързан с е-страница ({source.EPageId})!");
+
+                return false;
             }
 
             var issue = await _applicationDbContext.StranitzaIssues.SingleOrDefaultAsync(x =>
@@ -910,7 +919,7 @@ thumb: {page.PageFile.ThumbPath}";
         public async Task<int> AttachSourcesToIssue(StranitzaIssue issue)
         {
             var sources = _applicationDbContext.StranitzaSources
-                .Where(x => x.ReleaseNumber == issue.ReleaseNumber && x.ReleaseYear == issue.ReleaseYear).ToList();
+                .Where(x => !x.EPageId.HasValue && x.ReleaseNumber == issue.ReleaseNumber && x.ReleaseYear == issue.ReleaseYear).ToList();
 
             if (!sources.Any())
             {
