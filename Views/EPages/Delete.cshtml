@@ -92,7 +92,7 @@
 
             <form asp-action="Delete">
                 <input type="hidden" asp-for="Id" />
-                <a asp-action="Index">Отказ</a> |
+                <a asp-action="Details" asp-route-id="@Model.Id">Отказ</a> |
                 <input type="submit" value="Потвърди" class="btn btn-danger" />
             </form>
         </div>
