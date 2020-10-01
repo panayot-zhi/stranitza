@@ -57,8 +57,7 @@
                     <td><a asp-action="Details" asp-controller="EPages" asp-route-id="@epage.Id">@epage.Title<sup><i class="fa fa-external-link"></i></sup></a></td>
                     @if (!string.IsNullOrEmpty(epage.AuthorNames))
                     {
-                        /* TODO: Link to profile */
-                        <td><a href="#">@epage.FirstName @epage.LastName<sup><i class="fa fa-user"></i></sup> (@epage.AuthorNames)</a></td>
+                        <td><a href="@Url.Action("Details", "Users", new { id = epage.AuthorId })" target="_blank">@epage.FirstName @epage.LastName<sup><i class="fa fa-user"></i></sup> (@epage.AuthorNames)</a></td>
                     }
                     else
                     {
