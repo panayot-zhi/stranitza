@@ -23,6 +23,9 @@ using Image = SixLabors.ImageSharp.Image;
 
 namespace stranitza.Services
 {
+    // TODO: Implement a mechanic for the current user to be able to download certain issues
+    // TODO: Figure out a way to delete thumb pdf if all the pages are available
+
     public class LibraryService
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -938,8 +941,6 @@ thumb: {page.PageFile.ThumbPath}";
         public async Task<byte[]> GetPreviewPdfForUser(ClaimsPrincipal user, StranitzaFile pdfEntry, bool thumb = false)
         {
             // NOTE: Raise level if necessary
-            // TODO: Implement a mechanic for the current user to be able to see certain issues
-            // TODO: Figure out a way to delete thumb pdf if all the pages are available
 
             if (user.IsAtLeast(StranitzaRoles.Editor))
             {
@@ -958,7 +959,6 @@ thumb: {page.PageFile.ThumbPath}";
             string fileDownloadName;
 
             // NOTE: Raise level if necessary
-            // TODO: Implement a mechanic for the current user to be able to download certain issues
 
             if (issue.PdfFullyAvailable)
             {
