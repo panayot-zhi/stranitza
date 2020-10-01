@@ -142,9 +142,9 @@ namespace stranitza.Controllers
             {
                 try
                 {
-                    await _context.StranitzaCategories.UpdateCategoryAsync(vModel);
+                    var entry = await _context.StranitzaCategories.UpdateCategoryAsync(vModel);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Details), new { entry.Id });
                 }
                 catch (Exception ex)
                 {
