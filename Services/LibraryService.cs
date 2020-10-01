@@ -959,7 +959,14 @@ thumb: {page.PageFile.ThumbPath}";
             // NOTE: Raise level if necessary
             // TODO: Implement a mechanic for the current user to be able to download certain issues
 
-            if (user.IsAtLeast(StranitzaRoles.Editor) && !reduced)
+            if (issue.PdfFullyAvailable)
+            {
+                // The pdf file is fully available, which means the reduced and original are identical
+                var fullPdfFileEntry = await _applicationDbContext.StranitzaFiles.FindAsync(issue.PdfFilePreviewId);
+                content = await GetPreviewPdfForUser(user, fullPdfFileEntry, false);
+                fileDownloadName = fullPdfFileEntry.FileName;
+            }
+            else if (user.IsAtLeast(StranitzaRoles.Editor) && !reduced)
             {
                 // User has requested the full, original pdf and has the rights to do so
                 var fullPdfFileEntry = await _applicationDbContext.StranitzaFiles.FindAsync(issue.PdfFilePreviewId);

@@ -68,6 +68,9 @@ namespace stranitza.Models.Database
         public bool HasPdf => PdfFilePreviewId.HasValue;
 
         [NotMapped]
+        public bool PdfFullyAvailable => AvailablePages?.Length == PagesCount;
+
+        [NotMapped]
         public StranitzaPage CoverPage => Pages.SingleOrDefault(x => x.Type == StranitzaPageType.Cover);
 
         [NotMapped]
