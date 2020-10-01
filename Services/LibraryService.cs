@@ -1012,12 +1012,14 @@ thumb: {page.PageFile.ThumbPath}";
                 var zipFileInfo = await CreateZipFiles(issue);
                 if (!issue.ZipFileId.HasValue)
                 {
+                    _applicationDbContext.StranitzaIssues.Attach(issue);
+
                     // create the db file record only if it did not exist previously
                     // the FilePath will point to the replaced zip if a record was present
                     issue.ZipFile = await CreateZipFileRecord(zipFileInfo);
-                }
 
-                await _applicationDbContext.SaveChangesAsync();
+                    await _applicationDbContext.SaveChangesAsync();
+                }
             }
             else
             {
