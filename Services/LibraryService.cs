@@ -550,8 +550,9 @@ thumb: {page.PageFile.ThumbPath}";
         {
             using (var image = Image.Load(filePath))
             {
-                var width = 100; // image.Width / 2;    // TODO: Shrink by a coefficient
-                var height = 150; // image.Height / 2;  // TODO: Shrink by a coefficient
+                var width = 100;
+                var height = 150;
+
                 image.Mutate(x => x.Resize(width, height));
                 image.Save(thumbPath);
             }
