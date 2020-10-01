@@ -59,7 +59,7 @@
             </div>
             <hr />
             <div class="form-group text-right">
-                <a asp-controller="Categories" asp-action="Index" class="btn btn-default">Отказ</a>
+                <a asp-controller="Categories" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-default">Отказ</a>
                 <input type="submit" value="Запис" class="btn btn-tales-one" />
             </div>
         </form>
@@ -77,7 +77,7 @@
 
         <div class="body">
             <ul class="tales-list">
-                <li><a asp-controller="Categories" asp-action="Create">Създаване на нова категория</a></li>
+                <li><a asp-controller="Categories" asp-action="Details" asp-route-id="@Model.Id">Преглед на категория</a></li>
                 <li><a asp-action="Sources" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани източници</a></li>
                 <li><a asp-action="EPages" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на е-страници</a></li>
                 <li><a asp-controller="Categories" asp-action="Index">Към списък</a></li>
@@ -88,20 +88,6 @@
             </ul>
         </div>
     </div>
-
-    <hr />
-
-    <div class="aside-widget image">
-
-        <div class="body">
-            <div class="aside-image-wrapper">
-                <a href="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" target="_blank">
-                    <img src="@Url.Content("~/images/plovdiv_capital_of_culture_white.jpg")" alt="Европейска столица на културата - 2019" />
-                </a>
-            </div>
-        </div>
-    </div>
-
 </aside>
 
 @section scripts {

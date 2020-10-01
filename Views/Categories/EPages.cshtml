@@ -21,11 +21,11 @@
     <a asp-action="EPages" asp-controller="Categories" asp-route-id="@Model.CurrentCategory.Id">Свързани е-страници</a>
 }
 
-<div class="blog-main col-md-10">
+<div class="col-md-10 blog-main">
 
     <h2>@Model.CurrentCategory.Name</h2>
 
-    <pre class="help-block">@Model.CurrentCategory.Description</pre>
+    @*<pre class="help-block">@Model.CurrentCategory.Description</pre>*@
 
     <hr />
 
