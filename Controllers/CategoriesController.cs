@@ -61,8 +61,8 @@ namespace stranitza.Controllers
             }
 
             Enum.TryParse(order, ignoreCase: true, result: out SortOrder sortOrder);
-            var vModel = await _context.StranitzaSources.GetCategorySourcesPagedAsync(
-                categoryId: entry.Id, pageIndex: page, sortPropertyName: sort, sortOrder: sortOrder);
+            var vModel = await _context.StranitzaSources.GetCategorySourcesPagedAsync(categoryId: entry.Id, 
+                pageIndex: page, sortPropertyName: sort, sortOrder: sortOrder, pageSize: 25);
 
             vModel.CurrentCategory = new CategoryViewModel()
             {
