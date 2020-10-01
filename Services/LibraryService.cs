@@ -983,6 +983,24 @@ thumb: {page.PageFile.ThumbPath}";
             };
         }
 
+        public async Task DeleteZipAsync(StranitzaIssue issue)
+        {
+            var zipFileEntry = await _applicationDbContext.StranitzaIssues.Where(x => x.Id == issue.Id)
+                .Select(x => x.ZipFile).SingleOrDefaultAsync();
+
+            if (zipFileEntry == null)
+            {
+                throw new StranitzaException("Няма запис за такъв файл в базата данни за този брой.");
+            }
+
+            _applicationDbContext.StranitzaFiles.Remove(zipFileEntry);
+
+            await _applicationDbContext.SaveChangesAsync();
+
+            File.Delete(zipFileEntry.FilePath);
+            File.Delete(zipFileEntry.ThumbPath);
+        }
+
         public async Task<byte[]> GetZipForUser(ClaimsPrincipal user, StranitzaIssue issue, bool thumb = false)
         {
             var zipFileEntry = await _applicationDbContext.StranitzaIssues.Where(x => x.Id == issue.Id)

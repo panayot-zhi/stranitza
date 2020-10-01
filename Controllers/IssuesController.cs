@@ -240,7 +240,29 @@ namespace stranitza.Controllers
             return await _service.GetDownloadPdfForUser(User, issueEntry, reduced);
         }
 
-        [AllowAnonymous]
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
+        public async Task<IActionResult> DeleteZip(int? id)
+        {
+            var issue = await _context.StranitzaIssues.FindAsync(id);
+            if (issue == null)
+            {
+                return View("IssueNotFound");
+            }
+
+            try
+            {
+                await _service.DeleteZipAsync(issue);
+            }
+            catch (Exception ex)
+            {
+                TempData.AddModalMessage("Възникна грешка при опит за изтриване на ZIP файл: " + ex.Message, "danger");
+            }
+
+            TempData.AddModalMessage("Файлът беше изтрит успешно.", "success");
+
+            return RedirectToAction(nameof(Details), new { id = issue.Id });
+        }
+
         public async Task<IActionResult> DownloadZip(int? id, bool thumb = false)
         {
             var issue = await _context.StranitzaIssues.FindAsync(id);
