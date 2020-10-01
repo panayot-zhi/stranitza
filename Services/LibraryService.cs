@@ -1075,16 +1075,10 @@ thumb: {page.PageFile.ThumbPath}";
                     stamper = new PdfStamper(reader, memory);
 
                     /*
-                        Add pdf meta data for this issue
-                        TODO: Resolve with mvlashki
+                        Add pdf meta data for this issue                        
                      */
 
                     var moreInfo = reader.Info;
-
-                    // moreInfo.Add("Title", title);
-                    // moreInfo.Add("Author", "Младен Влашки");
-                    // moreInfo.Add("Subject", "Списание Страница");
-                    // moreInfo.Add("Keywords", "ISSN 1310—9081");
 
                     moreInfo["Title"] = title;
                     moreInfo["Author"] = StranitzaConstants.PdfAuthor;

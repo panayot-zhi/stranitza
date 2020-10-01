@@ -38,6 +38,8 @@ namespace stranitza.Utility
 
         public const int AvatarMaxSize = 163840;
 
+        // TODO: Resolve following lines with m.vlashki
+
         public const string PdfAuthor = "издава „Сдружение „Литературна къща“ — Пловдив";
         public const string PdfSubject = "Списание Страница";
         public const string PdfKeywords = "ISSN 1310—9081";
