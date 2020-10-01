@@ -17,7 +17,7 @@ namespace stranitza.Models.ViewModels
         [Display(Name = "Описание")]
         public string Description { get; set; }
 
-        [Display(Name = "Всички източници")]
+        [Display(Name = "Всички")]
         public int AllSourcesCount { get; set; }
 
         [Display(Name = "Брой източници")]        
