@@ -17,7 +17,7 @@
     <a asp-action="Details" asp-controller="Categories" asp-route-id="@Model.Id">@Model.Name</a>
 }
 
-<div class="col-lg-8">
+<div class="col-lg-8 blog-main">
     <h2>@Model.Name</h2>
 
     <pre class="help-block">@Model.Description</pre>
@@ -52,7 +52,7 @@
 
 </div>
 
-<aside class="col-lg-4 blog-aside pt10">
+<aside class="col-lg-4 blog-aside">
 
     <div class="aside-widget">
         <header>
@@ -63,7 +63,6 @@
                 <li><a asp-action="Edit" asp-controller="Categories" asp-route-id="@Model.Id">Редакция на категория</a></li>
                 <li><a asp-action="Sources" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани източници (@Model.SourcesCount)</a></li>
                 <li><a asp-action="EPages" asp-controller="Categories" asp-route-id="@Model.Id">Преглед на свързани е-страници (@Model.EPagesCount)</a></li>
-                <li><a asp-controller="Categories" asp-action="Create">Създаване на нова категория</a></li>
                 <li><a asp-action="Index" asp-controller="Categories">Към списък</a></li>
                 @*@if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
