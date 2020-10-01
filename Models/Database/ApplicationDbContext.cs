@@ -154,15 +154,15 @@ namespace stranitza.Models.Database
 
             builder.Entity<StranitzaIssue>()
                 .HasOne(p => p.ZipFile)
-                .WithOne().OnDelete(DeleteBehavior.Cascade);
+                .WithOne().OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<StranitzaIssue>()
                 .HasOne(p => p.PdfFileReduced)
-                .WithOne().OnDelete(DeleteBehavior.Cascade);
+                .WithOne().OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<StranitzaIssue>()
                 .HasOne(p => p.PdfFilePreview)
-                .WithOne().OnDelete(DeleteBehavior.Cascade);
+                .WithOne().OnDelete(DeleteBehavior.SetNull);
 
             // page
             builder.Entity<StranitzaPage>()
