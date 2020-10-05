@@ -23,11 +23,11 @@ namespace stranitza.Services
                 throw new StranitzaException($"No directory found at {rootFolderPath}.");
             }
 
-            var jsonFilePath = Path.Combine(configuration["RepositoryPath"], StranitzaConstants.IndexJsonFileName);
+            /*var jsonFilePath = Path.Combine(configuration["RepositoryPath"], StranitzaConstants.IndexJsonFileName);
             if (!File.Exists(jsonFilePath))
             {
                 Log.Logger.Warning("No json index file found at {JsonFilePath}.", jsonFilePath);
-            }
+            }*/
 
             var forbiddenPagePdfFilePath = Path.Combine(rootFolderPath, StranitzaConstants.ForbiddenPagePdfFileName);
             if (!File.Exists(forbiddenPagePdfFilePath))
