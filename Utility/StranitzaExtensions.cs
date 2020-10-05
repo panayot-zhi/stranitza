@@ -89,7 +89,12 @@ namespace stranitza.Utility
                 return source;
             }
 
-            return source[0].ToString().ToUpper() + source.Substring(1);
+            if (source.Length == 1)
+            {
+                return source[0].ToString().ToUpper();
+            }
+
+            return source[0].ToString().ToUpper() + source.Substring(1).ToLower();
         }
 
         public static string GetGallerySlide(this IUrlHelper url, int issueId, int slideNumber)
