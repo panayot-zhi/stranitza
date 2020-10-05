@@ -91,6 +91,10 @@ namespace stranitza.Models.Database
         {
             base.OnModelCreating(builder);
 
+            // categories
+            builder.Entity<StranitzaCategory>()
+                .HasIndex(x => x.Name);
+
             // comments
             builder.Entity<StranitzaComment>()
                 .HasOne(a => a.Parent)
