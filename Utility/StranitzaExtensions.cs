@@ -82,6 +82,19 @@ namespace stranitza.Utility
             return GetFileExtension(formFile.FileName);
         }
 
+        public static bool Contains(this string source, IEnumerable<string> candidates)
+        {
+            foreach (var candidate in candidates)
+            {
+                if (source.Contains(candidate))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static string Capitalize(this string source)
         {
             if (string.IsNullOrEmpty(source))

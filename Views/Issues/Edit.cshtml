@@ -258,6 +258,7 @@
                 <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id, thumb = true })" target="_blank">Преглед на ZIP архив (за посетители)</a></li>
                 @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
+                    <li><a href="@Url.Action("IndexIssue", "Issues", new { id = Model.Id })">Индексиране на съдържанието</a></li>
                     <li><a href="@Url.Action("DeleteZip", "Issues", new { id = Model.Id })">Изтриване на ZIP архив</a></li>
                     <li><a asp-action="Delete" asp-controller="Issues" asp-route-id="@Model.Id">Изтриване на броя</a></li>
                 }

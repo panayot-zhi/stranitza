@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
@@ -290,6 +291,26 @@ namespace stranitza.Controllers
             vModel.SearchQuery = q;
 
             return View(vModel);
+        }
+
+        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
+        public async Task<IActionResult> IndexIssue(int? id)
+        {
+            var issueEntry = await _context.StranitzaIssues.FindAsync(id);
+            if (!id.HasValue)
+            {
+                return View("IssueNotFound");
+            }
+
+            if (!issueEntry.HasPdf)
+            {
+                return NotFound();
+            }
+
+            var pdfFilEntry = await _context.StranitzaFiles.SingleOrDefaultAsync(x => x.Id == issueEntry.PdfFilePreviewId);
+            var indexingResult = StranitzaIndexer.IndexIssue(pdfFilEntry.FilePath);
+
+            return Ok(indexingResult);
         }
     }
 }
