@@ -204,7 +204,7 @@ namespace stranitza.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("FindPage", source.Id);
+            return RedirectToAction("FindPage", new { id = source.Id });
         }
 
         public async Task<IActionResult> FindPage(int id)
