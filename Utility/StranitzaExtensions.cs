@@ -408,6 +408,15 @@ namespace stranitza.Utility
         }
 
         /// <summary>
+        /// {releaseNumber} ({issueNumber})
+        /// </summary>
+        public static string GetIssueTitleShort(this IndexerViewModel indexer)
+        {
+            var releaseNumber = GetDisplayReleaseNumber(indexer.ReleaseNumber);
+            return $"{releaseNumber} ({GetDisplayIssueNumber(indexer.IssueNumber)})";
+        }
+
+        /// <summary>
         /// {releaseNumber} / {releaseYear} г. ({issueNumber})
         /// </summary>
         public static string GetIssueTitleLong(this IssueDetailsViewModel issue)
