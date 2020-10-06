@@ -9,7 +9,7 @@ using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
 namespace stranitza.Utility
 {
-    public static class StranitzaIndexer
+    public class StranitzaIndexer
     {
         public class IndexingResult
         {
@@ -60,34 +60,19 @@ namespace stranitza.Utility
         private static readonly Regex PageNumberRegex = new Regex("\\s\\.\\s?(?<PageNumber>\\d+)\\s?$",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
-        public static int IndexPageNumber { get; set; } = 3;
+        public int IndexPageNumber { get; set; } = 3;
 
-        public static string IndexAllocator { get; set; } = "Съдържание";
+        public string IndexAllocator { get; set; } = "Съдържание";
         
-        public static string CompilerAllocator { get; set; } = "Съставител";
+        public string CompilerAllocator { get; set; } = "Съставител";
 
         // TODO: Extract allocator strings to category description (or best - to another field)
 
-        // NOTE: Magic fixed number
+        public int? CriticsCategoryId { get; set; }  // Оперативна литературна критика
 
-        public static int? CriticsCategoryId { get; set; } = 8;  // Оперативна литературна критика
-        
-        public static List<string> CriticsCategoryAllocators { get; set; } = new List<string>()
-        {
-            "Страници на",
-            "Прочетено от",
-        };
+        public int? PoetryCategoryId { get; set; }   // Поезия
 
-        // NOTE: Magic fixed number
-
-        public static int? PoetryCategoryId { get; set; } = 2;  // Поезия
-        
-        public static List<string> PoetryCategoryAllocators { get; set; } = new List<string>()
-        {
-            "Стихотворения"
-        };
-
-        public static List<string> CategoriesAllocator { get; set; } = new List<string>()
+        public List<string> CategoriesAllocator { get; set; } = new List<string>()
         {
             "Литературен университет",
             "Критически страници",
@@ -97,7 +82,13 @@ namespace stranitza.Utility
             "Памет",
         };
 
-        public static IndexingResult IndexIssue(string pdfFilePath)
+        public StranitzaIndexer(int? criticsCategoryId, int? poetryCategoryId)
+        {
+            CriticsCategoryId = criticsCategoryId;
+            PoetryCategoryId = poetryCategoryId;
+        }
+
+        public IndexingResult IndexIssue(string pdfFilePath)
         {
             var r = new IndexingResult(pdfFilePath);
             
@@ -111,7 +102,7 @@ namespace stranitza.Utility
             return r;
         }
 
-        private static void ParseIndex(IndexingResult r, IReadOnlyList<string> textLines)
+        private void ParseIndex(IndexingResult r, IReadOnlyList<string> textLines)
         {
             WriteLog("Разбор на съдържанието...");
 
@@ -156,6 +147,9 @@ namespace stranitza.Utility
                     // extract pageNumber from regex capture group
                     var pageNumber = match.Groups["PageNumber"].Value;
 
+                    // save reference for enhancement
+                    var originalLine = line;
+
                     // remove it from the line to form title
                     var title = line.Replace(pageNumber, string.Empty);
 
@@ -175,9 +169,13 @@ namespace stranitza.Utility
                         }
                         else
                         {
+                            var accumulatedLine = accumulator.Replace(Environment.NewLine, " ");
                             // some entries title information can be spanned on to several lines
                             // concatenate the information with the current title and flush the accumulator
-                            title = accumulator.Replace(Environment.NewLine, " ") + title;
+                            title = accumulatedLine + title;
+
+                            // append those lines to the original line also
+                            originalLine = accumulatedLine + originalLine;
                         }
 
                         accumulator = string.Empty;
@@ -208,21 +206,33 @@ namespace stranitza.Utility
                     // and maybe origin
 
                     var origin = "";
-                    if (title.StartsWith("Страници на"))
+                    if (CriticsCategoryId.HasValue)
                     {
-                        categoryId = CriticsCategoryId;
-                        origin = title.Replace("Страници на", string.Empty).Trim();
+                        if (title.StartsWith("Страници на"))
+                        {
+                            categoryId = CriticsCategoryId;
+                            origin = title.Replace("Страници на", string.Empty).Trim();
+                        }
+
+                        if (title.StartsWith("Страница на"))
+                        {
+                            categoryId = CriticsCategoryId;
+                            origin = title.Replace("Страница на", string.Empty).Trim();
+                        }
+
+                        if (title.StartsWith("Прочетено от"))
+                        {
+                            categoryId = CriticsCategoryId;
+                            origin = title.Replace("Прочетено от", string.Empty).Trim();
+                        }
                     }
 
-                    if (title.StartsWith("Прочетено от"))
+                    if (PoetryCategoryId.HasValue)
                     {
-                        categoryId = CriticsCategoryId;
-                        origin = title.Replace("Прочетено от", string.Empty).Trim();
-                    }
-
-                    if (title.Contains("Стихотворения", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        categoryId = PoetryCategoryId;
+                        if (title.Contains("Стихотворения", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            categoryId = PoetryCategoryId;
+                        }
                     }
 
                     // construct entry
@@ -232,7 +242,7 @@ namespace stranitza.Utility
                         StartingPage = startingPage,
                         EndPage = startingPage,
                         SuggestedCategoryId = categoryId,
-                        OriginalLine = line,
+                        OriginalLine = originalLine,
                         Pages = pages,
                         Title = title
                     };
@@ -323,7 +333,7 @@ namespace stranitza.Utility
             }
         }
 
-        private static void MapIndexEntriesToOrigin(IndexingResult r)
+        private void MapIndexEntriesToOrigin(IndexingResult r)
         {
             WriteLog($"Свързване на произведение с произход...");
 
@@ -404,7 +414,7 @@ namespace stranitza.Utility
             }
         }
 
-        private static void SplitOriginNames(IndexingResult r)
+        private void SplitOriginNames(IndexingResult r)
         {
             Console.WriteLine($"Установявавне на две имена на автор от произход...");
 
@@ -434,7 +444,7 @@ namespace stranitza.Utility
             }
         }
 
-        private static string[] GetIndexAsText(IndexingResult r)
+        private string[] GetIndexAsText(IndexingResult r)
         {
             WriteLog($"Извличане на съдържанието (стр. №{IndexPageNumber}) от файл '{r.PdfFilePath}'.");
 
@@ -450,12 +460,12 @@ namespace stranitza.Utility
             }
         }
 
-        private static void WriteLog(string logMessage)
+        private void WriteLog(string logMessage)
         {
             Log.Logger.Information(logMessage);
         }
 
-        private static string TrimTitle(string title)
+        private string TrimTitle(string title)
         {
             return title.TrimEnd(' ', '.');
         }
