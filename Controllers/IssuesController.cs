@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using stranitza.Models.Database;
@@ -294,7 +295,7 @@ namespace stranitza.Controllers
         }
 
         [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
-        public async Task<IActionResult> IndexIssue(int? id)
+        public async Task<IActionResult> Indexer(int? id)
         {
             var issueEntry = await _context.StranitzaIssues.FindAsync(id);
             if (!id.HasValue)
@@ -307,10 +308,54 @@ namespace stranitza.Controllers
                 return NotFound();
             }
 
-            var pdfFilEntry = await _context.StranitzaFiles.SingleOrDefaultAsync(x => x.Id == issueEntry.PdfFilePreviewId);
-            var indexingResult = StranitzaIndexer.IndexIssue(pdfFilEntry.FilePath);
+            var vModel = new IndexerViewModel()
+            {
+                ReleaseYear = issueEntry.ReleaseYear,
+                IssueNumber = issueEntry.IssueNumber,
+                ReleaseNumber = issueEntry.ReleaseNumber,
+                IssueId = issueEntry.Id
+            };
 
-            return Ok(indexingResult);
+            var pdfFilEntry = await _context.StranitzaFiles
+                .SingleOrDefaultAsync(x => x.Id == issueEntry.PdfFilePreviewId);
+
+            var criticsCategoryId = _context.StranitzaCategories
+                .SingleOrDefaultAsync(x => x.Name == "Оперативна литературна критика").Id;
+
+            var poetryCategoryId = _context.StranitzaCategories
+                .SingleOrDefaultAsync(x => x.Name == "Поезия").Id;
+
+            var indexer = new StranitzaIndexer(criticsCategoryId, poetryCategoryId);
+
+            vModel.Result = indexer.IndexIssue(pdfFilEntry.FilePath);
+            vModel.Categories = new SelectList(_context.StranitzaCategories, "Id", "Name");
+
+            vModel.ExistingSources = _context.StranitzaSources
+                .Where(x => x.IssueId == issueEntry.Id)
+                .OrderBy(x => x.StartingPage)
+                .Select(x => new SourceDetailsViewModel()
+                {
+                    Id = x.Id,
+                    //ReleaseNumber = x.ReleaseNumber,
+                    //ReleaseYear = x.ReleaseYear,
+                    AuthorId = x.AuthorId,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    //Description = x.Description,
+                    Title = x.Title,
+                    Origin = x.Origin,
+                    Pages = x.Pages,
+                    StartingPage = x.StartingPage,
+
+                    CategoryName = x.Category.Name,
+                    IsTranslation = x.IsTranslation,
+
+                    DateCreated = x.DateCreated,
+                    LastUpdated = x.LastUpdated,
+
+                }).ToList();
+
+            return View(vModel);
         }
     }
 }
