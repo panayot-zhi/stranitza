@@ -1,0 +1,105 @@
+﻿@model SourceCreateViewModel
+
+@{
+    var issueId = ViewData["IssueId"] as int?;
+}
+
+<form asp-action="Create" asp-controller="Sources" target="_blank">
+
+    <div class="form-group" str-validation-for="Title" str-error-class="has-error">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="checkbox text-right">
+        <label asp-for="IsTranslation" class="control-label">
+            <input asp-for="IsTranslation" /> <b> @Html.DisplayNameFor(x => x.IsTranslation) </b>
+        </label>
+    </div>
+
+    <div class="form-group" str-validation-for="Description" str-error-class="has-error">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-6 col-md-offset-6 text-right" str-validation-for="CategoryId" str-error-class="has-error">
+            <label asp-for="CategoryId" class="control-label"></label>
+            <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                <option value="">Моля, изберете категория</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="form-group col-md-5 col-md-offset-1" str-validation-for="FirstName" str-error-class="has-error">
+            <label asp-for="FirstName" class="control-label"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-5" str-validation-for="LastName" str-error-class="has-error">
+            <label asp-for="LastName" class="control-label"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-10 col-md-offset-1" str-validation-for="Origin" str-error-class="has-error">
+            <label asp-for="Origin" class="control-label"></label>
+            <input asp-for="Origin" class="form-control" />
+            <span asp-validation-for="Origin" class="text-danger"></span>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm-2 col-sm-offset-1" str-validation-for="ReleaseNumber" str-error-class="has-error">
+            <label asp-for="ReleaseNumber" class="control-label"></label>
+            <input asp-for="ReleaseNumber" class="form-control" />
+            <span asp-validation-for="ReleaseNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-sm-3" str-validation-for="ReleaseYear" str-error-class="has-error">
+            <label asp-for="ReleaseYear" class="control-label">Година</label>
+            <input asp-for="ReleaseYear" class="form-control" />
+            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-sm-3" str-validation-for="Pages" str-error-class="has-error">
+            <label asp-for="Pages" class="control-label"></label>
+            <input asp-for="Pages" class="form-control" />
+            <span asp-validation-for="Pages" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-sm-2" str-validation-for="StartingPage" str-error-class="has-error">
+            <label asp-for="StartingPage" class="control-label"></label>
+            <input asp-for="StartingPage" class="form-control" />
+            <span asp-validation-for="StartingPage" class="text-danger"></span>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            <label asp-for="Notes" class="control-label"></label>
+            <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group text-right">
+        <a href="@Url.GetPdfPage(issueId.Value, Model.StartingPage.Value)" target="_blank" class="btn btn-tales-two pull-left">Преглед</a>
+        <a href="#" class="btn btn-default btn-cancel">Отказ</a>
+        <input type="submit" value="Запис" class="btn btn-tales-one btn-submit" />
+    </div>
+
+</form>

@@ -1,0 +1,183 @@
+﻿@model IndexerViewModel
+
+@{
+    ViewData["Title"] = $"Индексиране на съдържанието на брой";
+    Layout = "~/Views/Shared/_LayoutLibrary.cshtml";
+}
+
+@section breadcrumb {
+    <a href="@Url.Action("Index", "Issues")">Библиотека</a>
+
+    <span class="separator">/</span>
+    <a href="@Url.Action("Index", "Issues", new {year = Model.ReleaseYear})">@Model.ReleaseYear</a>
+
+    <span class="separator">/</span>
+    <a href="@Url.Action("Edit", "Issues", new { id = Model.IssueId })">Брой №@Model.GetIssueTitleShort()</a>
+
+    <span class="separator">/</span>
+    <a href="@Url.Action("Indexer", "Issues", new { id = Model.IssueId })">Индексиране</a>
+}
+
+<div class="col-lg-8 blog-main">
+    @await Html.PartialAsync("_Messages")
+
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        @for (var index = 0; index < Model.Result.Entries.Count; index++)
+        {
+            var entry = Model.Result.Entries[index];
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="index-entry-@index-heading">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-index-entry-@index" aria-expanded="@(index == 0 ? "true" : "false" )" aria-controls="collapse-index-entry-@index">
+                            @Html.BreakNewLines(entry.OriginalLine)
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="collapse-index-entry-@index" class="panel-collapse collapse @(index == 0 ? "in" : string.Empty )" role="tabpanel" aria-labelledby="index-entry-@index-heading">
+                    <div class="panel-body">
+    @*<pre>
+
+        @entry.FirstName @entry.LastName
+        @entry.Origin
+        @entry.Title
+        на стр. @entry.StartingPage (@entry.Pages)
+        @entry.OriginalLine
+    </pre>*@
+
+                        @{
+                            var source = new SourceCreateViewModel()
+                            {
+                                Title = entry.Title,
+                                FirstName = entry.FirstName,
+                                LastName = entry.LastName,
+                                ReleaseYear = Model.ReleaseYear,
+                                ReleaseNumber = Model.ReleaseNumber,
+                                Categories = Model.Categories,
+                                CategoryId = entry.SuggestedCategoryId,
+                                Origin = entry.Origin,
+                                StartingPage = entry.StartingPage,
+                                Pages = entry.Pages
+                            };
+                        }
+
+                        @await Html.PartialAsync("_Source", source, new ViewDataDictionary(ViewData)
+                        {
+                            {"IssueId", Model.IssueId}
+                        })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<aside class="col-lg-4 blog-aside">
+    
+    <div class="aside-widget">
+        <header>
+            <h3>Навигация</h3>
+        </header>
+        <div class="body">
+
+            <ul class="tales-list">
+                <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.IssueId})" target="_blank">Преглед на PDF</a></li>
+            </ul>
+        </div>
+    </div>
+
+    @if (Model.ExistingSources != null && Model.ExistingSources.Any())
+    {
+
+        <div class="aside-widget">
+            <header>
+                <h3>Съществуващи източници</h3>
+            </header>
+            <div class="body">
+
+                <ul class="tales-list">
+
+                    @foreach (var source in Model.ExistingSources)
+                    {
+                        <li>
+                            <a href="@Url.Action("Details", "Sources", new {id = source.Id})" target="_blank">
+                                @source.Title<br>
+                                @source.Origin<br>
+                                стр. @source.Pages
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    }
+
+    @if (Model.Result.Unclassified != null && Model.Result.Unclassified.Any())
+    {
+        <div class="aside-widget">
+            <header>
+                <h3>Неразпознати</h3>
+            </header>
+
+            <div class="body">
+                <pre class="help-block">@string.Join(Environment.NewLine, Model.Result.Unclassified)</pre>
+            </div>
+        </div>
+    }
+
+    <div class="aside-widget">
+        <header>
+            <h3>Обща информация</h3>
+        </header>
+
+        <div class="body">
+            <div class="body">
+
+                @foreach (var category in Model.Result.Categories)
+                {
+                    <p>@category</p>
+                }
+                <p>Брой на страниците: @Model.Result.NumberOfPages</p>
+                <p>@Model.Result.Compiler</p>
+            </div>
+        </div>
+    </div>
+
+</aside>
+
+@section scripts {
+
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        $(document).ready(function() {
+            $(".panel-body form .btn-cancel").on("click",
+                function(e) {
+                    e.preventDefault();
+
+                    var me = this;
+                    var indexEntryPanel = $(me).closest(".panel");
+                    indexEntryPanel.fadeOut();
+
+                });
+
+            $(".panel-body form .btn-submit").on("click",
+                function(e) {
+
+                    var me = this;
+                    var form = $(me).closest("form");
+                    if (!form.valid()) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    var indexEntryPanel = form.closest(".panel");
+                    indexEntryPanel.fadeOut();
+                    return true;
+                });
+        })
+    </script>
+}
