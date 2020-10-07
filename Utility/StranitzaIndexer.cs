@@ -62,9 +62,9 @@ namespace stranitza.Utility
 
         public int IndexPageNumber { get; set; } = 3;
 
-        public string IndexAllocator { get; set; } = "Съдържание";
+        protected string IndexAllocator { get; set; } = "Съдържание";
         
-        public string CompilerAllocator { get; set; } = "Съставител";
+        protected string CompilerAllocator { get; set; } = "Съставител";
 
         // TODO: Extract allocator strings to category description (or best - to another field)
 
@@ -72,7 +72,7 @@ namespace stranitza.Utility
 
         public int? PoetryCategoryId { get; set; }   // Поезия
 
-        public List<string> CategoriesAllocator { get; set; } = new List<string>()
+        protected List<string> CategoriesAllocator { get; set; } = new List<string>()
         {
             "Литературен университет",
             "Критически страници",
@@ -81,6 +81,10 @@ namespace stranitza.Utility
             "Прочетено от",
             "Памет",
         };
+
+        public StranitzaIndexer()
+        {
+        }
 
         public StranitzaIndexer(int? criticsCategoryId, int? poetryCategoryId)
         {
