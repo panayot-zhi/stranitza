@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
@@ -11,13 +12,15 @@ namespace stranitza.Controllers
 {
     public class PostsController : Controller
     {
-        private readonly ApplicationDbContext _context;        
+        private readonly ApplicationDbContext _context;
+        private readonly StatisticService _stats;
         private readonly NewsService _service;
 
-        public PostsController(ApplicationDbContext context, NewsService service)
+        public PostsController(ApplicationDbContext context, NewsService service, StatisticService stats)
         {            
             _context = context;
             _service = service;
+            _stats = stats;
         }
 
         public async Task<IActionResult> Index(int? page)
@@ -38,6 +41,13 @@ namespace stranitza.Controllers
             {
                 return NotFound();
             }
+
+#pragma warning disable 4014
+            Task.Run(() =>
+            {
+                _stats.UpdatePostViewCountAsync(id.Value);
+            });
+#pragma warning restore 4014
 
             return View(vModel);
         }

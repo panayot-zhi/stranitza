@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -356,12 +357,19 @@ namespace stranitza.Services
 
         public async void UpdateIssueDownloadCountAsync(int issueId)
         {
-            using (var dbContext = CreateDbContext())
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userAgent = StranitzaExtensions.GetUserAgent(httpContext);
+            var clientIp = StranitzaExtensions.GetIp(httpContext);
+            var user = httpContext.User;
+
+            IssueDownloadCountLogOrigin(issueId, user, clientIp, userAgent);
+
+            await using (var dbContext = CreateDbContext())
             {
                 var issue = await dbContext.StranitzaIssues.FindAsync(issueId);
                 if (issue == null)
                 {
-                    Log.Logger.Error($"Update issue DownloadCount was called, but can't find the issue by id ({issueId}).");
+                    Log.Logger.Error($"Update issue DownloadCount was called, but can't find issue by ID #{issueId}.");
                     return;
                 }
 
@@ -369,20 +377,79 @@ namespace stranitza.Services
                 await dbContext.SaveChangesAsync();
             }
 
-            Log.Logger.Debug($"Issue DownloadCount was updated for issue ({issueId}).");
+            Log.Logger.Debug($"Issue DownloadCount was updated for issue #{issueId}.");
+        }
+
+        private static void IssueDownloadCountLogOrigin(int issueId, ClaimsPrincipal user, string clientIp, string userAgent)
+        {
+            Log.Logger.Information($"Потребител ID={user.GetUserId()}, UserName='{user.GetUserName()}' " +
+                                   $"с произход IP={clientIp}, UserAgent='{userAgent}' " +
+                                   $"свали брой #{issueId}.");
         }
 
         /// <summary>
         /// Flush to DB every 5 minutes or if you hit 100 (individual) view hits.
         /// </summary>
-        /// <param name="issueId">The id of the issue, cache key is view_count_{issueId}</param>
+        /// <param name="issueId">The id of the issue, cache key is view_count_issue_{issueId}</param>
         public void UpdateIssueViewCountAsync(int issueId)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var userAgent = StranitzaExtensions.GetUserAgent(httpContext);
             var clientIp = StranitzaExtensions.GetIp(httpContext);
+            var user = httpContext.User;
 
-            var key = $"view_count_{issueId}";
+            var key = $"view_count_issue_{issueId}";
+            var origin = StranitzaExtensions.Md5Hash($"{clientIp} {userAgent}");
+
+            // Look for cache key
+            if (!_cache.TryGetValue(key, out string[] viewCountOrigins))
+            {
+                // Add new cache entry and be gone from here
+                IssueViewCountLogOrigin(issueId, user, clientIp, userAgent);
+                AddOrigin(key, origin, null);
+                return;
+            }
+
+            // we have a cache entry...
+
+            if (viewCountOrigins.Contains(origin))
+            {
+                // origin exists,
+                // no double-counting
+                return;
+            }
+
+            IssueViewCountLogOrigin(issueId, user, clientIp, userAgent);
+
+            var viewCounts = viewCountOrigins.Length;
+            if (viewCounts >= 99)
+            {
+                IssueViewCountFlush(issueId, ++viewCounts);
+                _cache.Remove(key);
+                return;
+            }
+
+            AddOrigin(key, origin, viewCountOrigins);
+        }
+
+        private static void IssueViewCountLogOrigin(int issueId, ClaimsPrincipal user, string clientIp, string userAgent)
+        {
+            Log.Logger.Information($"Потребител ID={user.GetUserId()}, UserName='{user.GetUserName()}' " +
+                                   $"с произход IP={clientIp}, UserAgent='{userAgent}' " +
+                                   $"прегледа брой #{issueId}.");
+        }
+
+        /// <summary>
+        /// Flush to DB every 5 minutes or if you hit 100 (individual) view hits.
+        /// </summary>
+        /// <param name="postId">The id of the post, cache key is view_count_post_{postId}</param>
+        public void UpdatePostViewCountAsync(int postId)
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userAgent = StranitzaExtensions.GetUserAgent(httpContext);
+            var clientIp = StranitzaExtensions.GetIp(httpContext);
+
+            var key = $"view_count_post_{postId}";
             var origin = StranitzaExtensions.Md5Hash($"{clientIp} {userAgent}");
 
             // Look for cache key
@@ -405,7 +472,7 @@ namespace stranitza.Services
             var viewCounts = viewCountOrigins.Length;
             if (viewCounts >= 99)
             {
-                ViewCountFlush(issueId, ++viewCounts);
+                PostViewCountFlush(postId, ++viewCounts);
                 _cache.Remove(key);
                 return;
             }
@@ -428,13 +495,13 @@ namespace stranitza.Services
             }
 
             var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .RegisterPostEvictionCallback(OnIssueViewCountCacheExpired)
+                .RegisterPostEvictionCallback(OnViewCountCacheItemExpired)
                 .SetAbsoluteExpiration(TimeSpan.FromMinutes(5)); // NOTE: Ponder upon the value
 
             _cache.Set(key, viewCountOrigins, cacheEntryOptions);
         }
 
-        private void OnIssueViewCountCacheExpired(object key, object value, EvictionReason reason, object state)
+        private void OnViewCountCacheItemExpired(object key, object value, EvictionReason reason, object state)
         {
             if (reason != EvictionReason.Expired)
             {
@@ -442,26 +509,53 @@ namespace stranitza.Services
             }
 
             var stringKey = (string) key;
-            var issueIdString = stringKey.Replace("view_count_", string.Empty);
-            var issueId = int.Parse(issueIdString);
-
             var valueAsStrings = (string[]) value;
             var viewCount = valueAsStrings.Length;
+            if (stringKey.StartsWith("view_count_issue_"))
+            {
+                var issueIdString = stringKey.Replace("view_count_issue_", string.Empty);
+                var issueId = int.Parse(issueIdString);
 
-            ViewCountFlush(issueId, viewCount);
+                IssueViewCountFlush(issueId, viewCount);
+            } 
+            else if (stringKey.StartsWith("view_count_post_"))
+            {
+                var postIdString = stringKey.Replace("view_count_post_", string.Empty);
+                var postId = int.Parse(postIdString);
+
+                PostViewCountFlush(postId, viewCount);
+            }
 
             Log.Logger.Debug($"CacheItem with the key '{stringKey}' and values " +
                              $"[{string.Join(",", valueAsStrings)}] has expired and has been evicted from the cache registry.");
         }
 
-        private async void ViewCountFlush(int issueId, int viewCount)
+        private async void PostViewCountFlush(int postId, int viewCount)
         {
-            using (var dbContext = CreateDbContext())
+            await using (var dbContext = CreateDbContext())
+            {
+                var post = await dbContext.StranitzaPosts.FindAsync(postId);
+                if (post == null)
+                {
+                    Log.Logger.Error($"Update post ViewCount was called, but can't find post by ID #{postId}.");
+                    return;
+                }
+
+                post.ViewCount += viewCount;
+                await dbContext.SaveChangesAsync();
+            }
+
+            Log.Logger.Debug($"Post ViewCount was updated for post #{postId}.");
+        }
+
+        private async void IssueViewCountFlush(int issueId, int viewCount)
+        {
+            await using (var dbContext = CreateDbContext())
             {
                 var issue = await dbContext.StranitzaIssues.FindAsync(issueId);
                 if (issue == null)
                 {
-                    Log.Logger.Error($"Update issue ViewCount was called, but can't find the issue by id ({issueId}).");
+                    Log.Logger.Error($"Update issue ViewCount was called, but can't find issue by ID #{issueId}.");
                     return;
                 }
 
@@ -469,7 +563,7 @@ namespace stranitza.Services
                 await dbContext.SaveChangesAsync();
             }
 
-            Log.Logger.Debug($"Issue ViewCount was updated for issue ({issueId}).");
+            Log.Logger.Debug($"Issue ViewCount was updated for issue #{issueId}.");
         }
 
         private ApplicationDbContext CreateDbContext()

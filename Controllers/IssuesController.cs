@@ -70,8 +70,6 @@ namespace stranitza.Controllers
             Task.Run(() =>
             {
                 _stats.UpdateIssueViewCountAsync(stranitzaIssue.Id);
-                Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
-                    $"прегледа брой ({stranitzaIssue.Id}:{stranitzaIssue.GetIssueTitle()}.");
             });
 #pragma warning restore 4014
 
@@ -209,9 +207,6 @@ namespace stranitza.Controllers
             Task.Run(() =>
             {
                 _stats.UpdateIssueViewCountAsync(issueEntry.Id);
-
-                Log.Logger.Information($"Потребител ({User.GetUserId()}:{User.GetUserName()}) " +
-                    $"прегледа брой ({issueEntry.Id}:{issueEntry.GetIssueTitle()}).");
             });
 #pragma warning restore 4014
 
