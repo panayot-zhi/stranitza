@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -330,32 +331,10 @@ namespace stranitza.Controllers
             vModel.Result = indexer.IndexIssue(pdfFilEntry.FilePath);
             vModel.Categories = new SelectList(_context.StranitzaCategories, "Id", "Name");
 
-            vModel.ExistingSources = _context.StranitzaSources
-                .Where(x => x.IssueId == issueEntry.Id)
-                .OrderBy(x => x.StartingPage)
-                .Select(x => new SourceDetailsViewModel()
-                {
-                    Id = x.Id,
-                    //ReleaseNumber = x.ReleaseNumber,
-                    //ReleaseYear = x.ReleaseYear,
-                    AuthorId = x.AuthorId,
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
-                    //Description = x.Description,
-                    Title = x.Title,
-                    Origin = x.Origin,
-                    Pages = x.Pages,
-                    StartingPage = x.StartingPage,
-
-                    CategoryName = x.Category.Name,
-                    IsTranslation = x.IsTranslation,
-
-                    DateCreated = x.DateCreated,
-                    LastUpdated = x.LastUpdated,
-
-                }).ToList();
+            vModel.ExistingSources = await _context.StranitzaSources.GetSourcesByIssueAsync(issueEntry.Id);
 
             return View(vModel);
         }
+
     }
 }

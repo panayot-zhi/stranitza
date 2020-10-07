@@ -220,6 +220,35 @@ namespace stranitza.Repositories
             return dbSet.FromSqlRaw(Sql.GetCountByReleaseYearAndAuthor, parameters).ToList();
         }
 
+        public static async Task<List<SourceDetailsViewModel>> GetSourcesByIssueAsync(this DbSet<StranitzaSource> sourcesDbSet, int issueId)
+        {
+            return await sourcesDbSet
+                .Where(x => x.IssueId == issueId)
+                .OrderBy(x => x.StartingPage)
+                .Select(x => new SourceDetailsViewModel()
+                {
+                    Id = x.Id,
+                    //ReleaseNumber = x.ReleaseNumber,
+                    //ReleaseYear = x.ReleaseYear,
+                    AuthorId = x.AuthorId,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    //Description = x.Description,
+                    Title = x.Title,
+                    Origin = x.Origin,
+                    Pages = x.Pages,
+                    StartingPage = x.StartingPage,
+
+                    CategoryName = x.Category.Name,
+                    IsTranslation = x.IsTranslation,
+
+                    DateCreated = x.DateCreated,
+                    LastUpdated = x.LastUpdated,
+
+                }).ToListAsync();
+        }
+
+
         public static async Task<SourceDetailsViewModel> GetSourceDetailsViewModelAsync(this DbSet<StranitzaSource> dbSet, int id)
         {
             return await dbSet.Select(x => new SourceDetailsViewModel()
