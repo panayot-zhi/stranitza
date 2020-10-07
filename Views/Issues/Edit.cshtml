@@ -250,11 +250,7 @@
                 <li><a href="#" target="_blank">Преглед на свързани източници</a></li>
                 @if (Model.HasPdf)
                 {
-                    @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
-                    {
-                        <li><a href="@Url.Action("Indexer", "Issues", new {id = Model.Id})">Индексиране на съдържанието</a></li>
-                    }
-
+                    <li><a href="@Url.Action("Indexer", "Issues", new {id = Model.Id})">Индексиране на съдържанието</a></li>
                     <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.Id})" target="_blank">Преглед на PDF (цял)</a></li>
                     <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.Id, thumb = true})" target="_blank">Преглед на PDF (редактиран)</a></li>
                     <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Сваляне на PDF (цял)</a></li>

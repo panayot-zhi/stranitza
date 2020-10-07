@@ -92,9 +92,13 @@ namespace stranitza.Controllers
             if (ModelState.IsValid)
             {
                 var entry = await _context.StranitzaSources.CreateSourceAsync(vModel, uploader: User.GetUserName());
-                
-                // NOTE: Seek an issue to be linked with the source here immediately
-                await _library.AttachIssueToSource(entry);
+
+                if (!entry.IssueId.HasValue)
+                {
+                    // NOTE: Seek an issue to be linked with the source here immediately
+                    await _library.AttachIssueToSource(entry);
+                }
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Details), new { id = entry.Id });

@@ -290,7 +290,7 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
-        [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Indexer(int? id)
         {
             if (!id.HasValue)

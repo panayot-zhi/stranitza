@@ -5,6 +5,8 @@
 }
 
 <form asp-action="Create" asp-controller="Sources" target="_blank">
+    
+    <input asp-for="IssueId" type="hidden" />
 
     <div class="form-group" str-validation-for="Title" str-error-class="has-error">
         <label asp-for="Title" class="control-label"></label>

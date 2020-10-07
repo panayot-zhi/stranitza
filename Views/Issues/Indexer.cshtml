@@ -50,16 +50,19 @@
                         @{
                             var source = new SourceCreateViewModel()
                             {
+                                IssueId = Model.IssueId,
+                                ReleaseYear = Model.ReleaseYear,
+                                ReleaseNumber = Model.ReleaseNumber,
+
                                 Title = entry.Title,
                                 FirstName = entry.FirstName,
                                 LastName = entry.LastName,
-                                ReleaseYear = Model.ReleaseYear,
-                                ReleaseNumber = Model.ReleaseNumber,
-                                Categories = Model.Categories,
-                                CategoryId = entry.SuggestedCategoryId,
                                 Origin = entry.Origin,
                                 StartingPage = entry.StartingPage,
-                                Pages = entry.Pages
+                                Pages = entry.Pages,
+
+                                CategoryId = entry.SuggestedCategoryId,
+                                Categories = Model.Categories
                             };
                         }
 
