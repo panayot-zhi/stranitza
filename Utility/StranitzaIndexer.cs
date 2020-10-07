@@ -54,6 +54,8 @@ namespace stranitza.Utility
 
             public int? SuggestedCategoryId { get; set; }
 
+            public int? ConflictingSourceId { get; set; }
+
             public string OriginalLine { get; set; }
         }
 
