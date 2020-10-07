@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -309,30 +310,25 @@ namespace stranitza.Controllers
                 return NotFound();
             }
 
+            var indexPageNumber = issue.IndexPage.PageNumber ?? StranitzaConstants.DefaultIndexPageNumber;
+
             var vModel = new IndexerViewModel()
             {
                 ReleaseYear = issue.ReleaseYear,
                 IssueNumber = issue.IssueNumber,
                 ReleaseNumber = issue.ReleaseNumber,
+                IndexPageNumber = indexPageNumber,
                 IssueId = issue.Id
             };
 
             var pdfFilEntry = await _context.StranitzaFiles
                 .SingleOrDefaultAsync(x => x.Id == issue.PdfFilePreviewId);
 
-            var criticsCategoryId = _context.StranitzaCategories
-                .SingleOrDefaultAsync(x => x.Name == "Оперативна литературна критика").Id;
-
-            var poetryCategoryId = _context.StranitzaCategories
-                .SingleOrDefaultAsync(x => x.Name == "Поезия").Id;
-
-            var indexPageNumber = issue.IndexPage.PageNumber ?? StranitzaConstants.DefaultIndexPageNumber;
-
-            var indexer = new StranitzaIndexer()
+            var indexer = new StranitzaIndexer
             {
-                CriticsCategoryId = criticsCategoryId,
-                PoetryCategoryId = poetryCategoryId,
-                IndexPageNumber = indexPageNumber
+                IndexPageNumber = indexPageNumber,
+                CategoriesLocator = _service.GatherIndexCategoryLocators(),
+                CategoriesClassifier = _service.GatherIndexCategoryClassifiers()
             };
 
             vModel.Result = indexer.IndexIssue(pdfFilEntry.FilePath);

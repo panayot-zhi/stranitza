@@ -62,42 +62,29 @@ namespace stranitza.Utility
 
         public int IndexPageNumber { get; set; } = 3;
 
-        protected string IndexAllocator { get; set; } = "Съдържание";
+        protected string IndexLocator { get; set; } = "Съдържание";
         
-        protected string CompilerAllocator { get; set; } = "Съставител";
+        protected string CompilerLocator { get; set; } = "Съставител";
 
-        // TODO: Extract allocator strings to category description (or best - to another field)
+        public List<string> CategoriesLocator { get; set; }
 
-        public int? CriticsCategoryId { get; set; }  // Оперативна литературна критика
-
-        public int? PoetryCategoryId { get; set; }   // Поезия
-
-        protected List<string> CategoriesAllocator { get; set; } = new List<string>()
-        {
-            "Литературен университет",
-            "Критически страници",
-            "Критически отзиви",
-            "Годишни прегледи",
-            "Прочетено от",
-            "Памет",
-        };
-
-        public StranitzaIndexer()
-        {
-        }
-
-        public StranitzaIndexer(int? criticsCategoryId, int? poetryCategoryId)
-        {
-            CriticsCategoryId = criticsCategoryId;
-            PoetryCategoryId = poetryCategoryId;
-        }
+        public Dictionary<int, Regex> CategoriesClassifier { get; set; }
 
         public IndexingResult IndexIssue(string pdfFilePath)
         {
+            WriteLog(""); // empty line
+            WriteLog("Започва.");
+
             var r = new IndexingResult(pdfFilePath);
             
             var indexAsText = GetIndexAsText(r);
+
+            WriteLog("Разбор на съдържанието...");
             ParseIndex(r, indexAsText);
+
+            WriteLog("Разбор на произведенията...");
+            DeduceFromEntryTitles(r);
+
             MapIndexEntriesToOrigin(r);
             SplitOriginNames(r);
             WriteLog("Завърши.");
@@ -108,7 +95,7 @@ namespace stranitza.Utility
 
         private void ParseIndex(IndexingResult r, IReadOnlyList<string> textLines)
         {
-            WriteLog("Разбор на съдържанието...");
+            WriteLog("Събиране на информация за произведенията...");
 
             var accumulator = string.Empty;
             var originCandidatesList = new List<string>();
@@ -209,40 +196,9 @@ namespace stranitza.Utility
                     // NOTE: deduce categories here
                     // and maybe origin
 
-                    var origin = "";
-                    if (CriticsCategoryId.HasValue)
-                    {
-                        if (title.StartsWith("Страници на"))
-                        {
-                            categoryId = CriticsCategoryId;
-                            origin = title.Replace("Страници на", string.Empty).Trim();
-                        }
-
-                        if (title.StartsWith("Страница на"))
-                        {
-                            categoryId = CriticsCategoryId;
-                            origin = title.Replace("Страница на", string.Empty).Trim();
-                        }
-
-                        if (title.StartsWith("Прочетено от"))
-                        {
-                            categoryId = CriticsCategoryId;
-                            origin = title.Replace("Прочетено от", string.Empty).Trim();
-                        }
-                    }
-
-                    if (PoetryCategoryId.HasValue)
-                    {
-                        if (title.Contains("Стихотворения", StringComparison.CurrentCultureIgnoreCase))
-                        {
-                            categoryId = PoetryCategoryId;
-                        }
-                    }
-
                     // construct entry
                     var entry = new IndexEntry()
                     {
-                        Origin = origin,
                         StartingPage = startingPage,
                         EndPage = startingPage,
                         SuggestedCategoryId = categoryId,
@@ -270,6 +226,8 @@ namespace stranitza.Utility
                 StringSplitOptions.RemoveEmptyEntries).ToList());
             accumulator = string.Empty;
 
+            WriteLog("Намерени: " + r.Entries.Count + " произведения");
+
             WriteLog("Събиране на информация за произход...");
 
             r.Categories = new List<string>();
@@ -279,12 +237,12 @@ namespace stranitza.Utility
             {
                 var origin = originCandidatesList[i];
 
-                if (origin.Equals(IndexAllocator))
+                if (origin.Equals(IndexLocator))
                 {
                     continue;
                 }
 
-                if (origin.Contains(CategoriesAllocator))
+                if (origin.Contains(CategoriesLocator))
                 {
                     // flush accumulator
                     // originsList.Add(accumulator);
@@ -293,7 +251,7 @@ namespace stranitza.Utility
                     continue;
                 }
 
-                if (origin.Contains(CompilerAllocator))
+                if (origin.Contains(CompilerLocator))
                 {
                     r.Compiler = origin;
                     continue;
@@ -335,6 +293,34 @@ namespace stranitza.Utility
                 // further inspection required
                 r.Unclassified.Add(origin);
             }
+
+            WriteLog("Намерени: " + r.Origins.Count + " автора");
+        }
+
+        private void DeduceFromEntryTitles(IndexingResult r)
+        {
+            foreach (var classifier in CategoriesClassifier)
+            {
+                var id = classifier.Key;
+                var regex = classifier.Value;
+
+                foreach (var entry in r.Entries)
+                {
+                    var match = regex.Match(entry.Title);
+
+                    if (match.Success)
+                    {
+                        entry.SuggestedCategoryId = id;
+                        WriteLog($"За произведение '{entry.Title}' беше установена категория #{entry.SuggestedCategoryId}");
+                        var origin = match.Groups.GetValueOrDefault("Origin", null);
+                        if (origin != null)
+                        {
+                            entry.Origin = origin.Value;
+                            WriteLog($"За произведение '{entry.Title}' беше установен произход: {entry.Origin}");
+                        }
+                    }
+                }
+            }
         }
 
         private void MapIndexEntriesToOrigin(IndexingResult r)
@@ -372,6 +358,9 @@ namespace stranitza.Utility
                 unresolvedEntriesList = r.Entries.Where(x => string.IsNullOrEmpty(x.Origin)).ToList();
                 if (unresolvedEntriesList.Any())
                 {
+                    WriteLog($"Произходът не бе установен за {unresolvedEntriesList.Count} произведения.");
+                    WriteLog($"Започва детайлен разбор...");
+
                     foreach (var indexEntry in unresolvedEntriesList)
                     {
                         WriteLog($"Търсене на произход в страници '{indexEntry.Pages}'...");
@@ -411,8 +400,13 @@ namespace stranitza.Utility
                     }
                     else
                     {
-                        WriteLog($"Произходът не успя да бъде установен за '{unresolvedEntriesList.Count}' записа, " +
-                             $"{originCandidatesList.Count} останала информация за произход.");
+                        WriteLog($"Произходът не успя да бъде установен за {unresolvedEntriesList.Count} записа, с " +
+                                 $"{originCandidatesList.Count} записа останала информация за произход.");
+                    }
+
+                    if (originCandidatesList.Any())
+                    {
+                        r.Unclassified.AddRange(originCandidatesList);
                     }
                 }
             }
@@ -459,17 +453,17 @@ namespace stranitza.Utility
                 var page = pdf.GetPage(IndexPageNumber);
 
                 var pdfText = ContentOrderTextExtractor.GetText(page);
-
+                WriteLog($"Съдържанието е извлечено успешно: {pdfText.Length} символа");
                 return pdfText.Split(Environment.NewLine);
             }
         }
 
-        private void WriteLog(string logMessage)
+        private static void WriteLog(string logMessage)
         {
             Log.Logger.Information(logMessage);
         }
 
-        private string TrimTitle(string title)
+        private static string TrimTitle(string title)
         {
             return title.TrimEnd(' ', '.');
         }
