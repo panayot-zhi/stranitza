@@ -328,6 +328,8 @@ namespace stranitza.Repositories
                 Pages = vModel.Pages,
                 StartingPage = vModel.StartingPage.Value,
                 IsTranslation = vModel.IsTranslation,
+                
+                IssueId = vModel.IssueId,
                 CategoryId = vModel.CategoryId.Value,
 
                 Uploader = uploader

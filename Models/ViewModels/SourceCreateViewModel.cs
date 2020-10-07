@@ -54,6 +54,9 @@ namespace stranitza.Models.ViewModels
         public bool IsTranslation { get; set; }
 
 
+        [Display(Name = "Брой")]
+        public int? IssueId { get; set; }
+
         [Required(ErrorMessage = "Моля, попълнете полето.")]
         [Display(Name = "Категория")]
         public int? CategoryId { get; set; }
