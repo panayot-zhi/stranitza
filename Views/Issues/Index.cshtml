@@ -111,8 +111,14 @@
 </aside>
 
 @section scripts {
-<script>
-        $(document).ready(function() {
+    <script>
+        $(document).ready(function () {
+            // humanize large numbers
+            $(".n-format").each(function(index, item) {
+                var value = $(item).data("value");
+                $(item).text(nFormatter(value, 2));
+            });
+
             $(".thumbnail a.display-page").on('click', function(e) {
                 e.preventDefault();
 
@@ -127,5 +133,5 @@
                 modal.preview(heading, html);
             });
         })
-</script>
+    </script>
 }
