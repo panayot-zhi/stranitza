@@ -17,6 +17,8 @@ namespace stranitza.Models.ViewModels
         
         public int IssueNumber { get; set; }
 
+        public int IndexPageNumber { get; set; }
+
         public StranitzaIndexer.IndexingResult Result { get; set; }
 
         public ICollection<SourceDetailsViewModel> ExistingSources { get; set; }

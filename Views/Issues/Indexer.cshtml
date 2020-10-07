@@ -21,13 +21,32 @@
 <div class="col-lg-8 blog-main">
     @await Html.PartialAsync("_Messages")
 
+    <div id="display-index" class="row" style="display: none">
+        <h2>Извлечено съдържание</h2>
+        <pre>@string.Join(Environment.NewLine, Model.Result.Entries.Select(x => x.OriginalLine))</pre>
+    </div>
 
+    <h2 class="underlined">Извлечени източници</h2>
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         @for (var index = 0; index < Model.Result.Entries.Count; index++)
         {
+            var cssClass = "panel-default";
             var entry = Model.Result.Entries[index];
+            if (entry.SuggestedCategoryId.HasValue && !string.IsNullOrEmpty(entry.Origin))
+            {
+                cssClass = "panel-success";
+            }
+            /*else if (!entry.SuggestedCategoryId.HasValue && !string.IsNullOrEmpty(entry.Origin))
+            {
+                // NOTE: This is quite the default
+                cssClass = "panel-warning";
+            }*/
+            else if (!entry.SuggestedCategoryId.HasValue && string.IsNullOrEmpty(entry.Origin))
+            {
+                cssClass = "panel-danger";
+            }
 
-            <div class="panel panel-default">
+            <div class="panel @cssClass">
                 <div class="panel-heading" role="tab" id="index-entry-@index-heading">
                     <h4 class="panel-title">
                         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-index-entry-@index" aria-expanded="@(index == 0 ? "true" : "false" )" aria-controls="collapse-index-entry-@index">
@@ -38,14 +57,6 @@
 
                 <div id="collapse-index-entry-@index" class="panel-collapse collapse @(index == 0 ? "in" : string.Empty )" role="tabpanel" aria-labelledby="index-entry-@index-heading">
                     <div class="panel-body">
-    @*<pre>
-
-        @entry.FirstName @entry.LastName
-        @entry.Origin
-        @entry.Title
-        на стр. @entry.StartingPage (@entry.Pages)
-        @entry.OriginalLine
-    </pre>*@
 
                         @{
                             var source = new SourceCreateViewModel()
@@ -86,8 +97,23 @@
         <div class="body">
 
             <ul class="tales-list">
-                <li><a href="@Url.Action("PreviewPdf", "Issues", new {id = Model.IssueId})" target="_blank">Преглед на PDF</a></li>
+                <li><a href="@Url.GetPdfPage(Model.IssueId, Model.IndexPageNumber)" target="_blank">Преглед на PDF (съдържание)</a></li>
+                <li><a class="toggle-index" href="#">Покажи / Скрий извлечено съдържание</a></li>
+                <li><a class="toggle-origins" href="#">Покажи / Скрий извлечени източници</a></li>
             </ul>
+        </div>
+    </div>
+    
+    <div id="display-origins" class="aside-widget" style="display: none;">
+        <header>
+            <h3>Извлечени източници</h3>
+        </header>
+        <div class="body">
+
+            @foreach (var origin in Model.Result.Origins)
+            {
+                <p>@origin</p>
+            }
         </div>
     </div>
 
@@ -181,6 +207,14 @@
                     indexEntryPanel.fadeOut();
                     return true;
                 });
+
+            $(".toggle-index").on("click", function() {
+                $("#display-index").toggle();
+            });
+
+            $(".toggle-origins").on("click", function() {
+                $("#display-origins").toggle();
+            });
         })
     </script>
 }
