@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -1105,6 +1106,44 @@ thumb: {page.PageFile.ThumbPath}";
                 stamper?.Close();
                 reader?.Close();
             }
+        }
+
+        public List<string> GatherIndexCategoryLocators()
+        {
+            return new List<string>()
+            {
+                "Литературен университет",
+                "Критически страници",
+                "Критически отзиви",
+                "Годишни прегледи",
+                "Прочетено от",
+                "Памет",
+            };
+        }
+
+        public Dictionary<int, Regex> GatherIndexCategoryClassifiers()
+        {
+            var result = new Dictionary<int, Regex>();
+
+            // Оперативна литературна критика
+            var criticsCategoryId = _applicationDbContext.StranitzaCategories
+                .SingleOrDefault(x => x.Name == "Оперативна литературна критика")?.Id;
+
+            if (criticsCategoryId.HasValue)
+            {
+                result.Add(criticsCategoryId.Value, new Regex("^((Страница на)|(Страници на)|(Прочетено от)) (?<Origin>\\w+ \\w+)"));
+            }
+
+            // Поезия
+            var poetryCategoryId = _applicationDbContext.StranitzaCategories
+                .SingleOrDefault(x => x.Name == "Поезия")?.Id;
+
+            if (poetryCategoryId.HasValue)
+            {
+                result.Add(poetryCategoryId.Value, new Regex("^Стихотворения"));
+            }
+
+            return result;
         }
     }
 }
