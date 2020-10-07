@@ -245,6 +245,7 @@
         </header>
         <div class="body">
             <ul class="tales-list">
+                <li><a asp-controller="Issues" asp-action="Create">Създаване на нов брой</a></li>
                 <li><a asp-action="Index" asp-controller="Pages" asp-route-id="@Model.Id">Редакция на страници</a></li>
                 <li><a href="#" target="_blank">Преглед на свързани източници</a></li>
                 @if (Model.HasPdf)
@@ -259,12 +260,11 @@
                     <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id})" target="_blank">Сваляне на PDF (цял)</a></li>
                     <li><a href="@Url.Action("DownloadPdf", "Issues", new {id = Model.Id, reduced = true})" target="_blank">Сваляне на PDF (редактиран)</a></li>
                 }
-                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Преглед на ZIP архив (цял)</a></li>
-                <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id, thumb = true })" target="_blank">Преглед на ZIP архив (за посетители)</a></li>
+                <li><a href="@Url.Action("DownloadZip", "Issues", new {id = Model.Id})" target="_blank">Преглед на ZIP архив (цял)</a></li>
+                <li><a href="@Url.Action("DownloadZip", "Issues", new {id = Model.Id, thumb = true})" target="_blank">Преглед на ZIP архив (за посетители)</a></li>
                 @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
                 {
-                    <li><a href="@Url.Action("IndexIssue", "Issues", new { id = Model.Id })">Индексиране на съдържанието</a></li>
-                    <li><a href="@Url.Action("DeleteZip", "Issues", new { id = Model.Id })">Изтриване на ZIP архив</a></li>
+                    <li><a href="@Url.Action("DeleteZip", "Issues", new {id = Model.Id})">Изтриване на ZIP архив</a></li>
                     <li><a asp-action="Delete" asp-controller="Issues" asp-route-id="@Model.Id">Изтриване на броя</a></li>
                 }
             </ul>

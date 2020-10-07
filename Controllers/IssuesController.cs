@@ -293,27 +293,32 @@ namespace stranitza.Controllers
         [StranitzaAuthorize(StranitzaRoles.HeadEditor)]
         public async Task<IActionResult> Indexer(int? id)
         {
-            var issueEntry = await _context.StranitzaIssues.FindAsync(id);
             if (!id.HasValue)
+            {
+                return NotFound();
+            }
+
+            var issue = await _context.StranitzaIssues.GetIssueEditAsync(id.Value);
+            if (issue == null)
             {
                 return View("IssueNotFound");
             }
 
-            if (!issueEntry.HasPdf)
+            if (!issue.HasPdf)
             {
                 return NotFound();
             }
 
             var vModel = new IndexerViewModel()
             {
-                ReleaseYear = issueEntry.ReleaseYear,
-                IssueNumber = issueEntry.IssueNumber,
-                ReleaseNumber = issueEntry.ReleaseNumber,
-                IssueId = issueEntry.Id
+                ReleaseYear = issue.ReleaseYear,
+                IssueNumber = issue.IssueNumber,
+                ReleaseNumber = issue.ReleaseNumber,
+                IssueId = issue.Id
             };
 
             var pdfFilEntry = await _context.StranitzaFiles
-                .SingleOrDefaultAsync(x => x.Id == issueEntry.PdfFilePreviewId);
+                .SingleOrDefaultAsync(x => x.Id == issue.PdfFilePreviewId);
 
             var criticsCategoryId = _context.StranitzaCategories
                 .SingleOrDefaultAsync(x => x.Name == "Оперативна литературна критика").Id;
@@ -321,12 +326,19 @@ namespace stranitza.Controllers
             var poetryCategoryId = _context.StranitzaCategories
                 .SingleOrDefaultAsync(x => x.Name == "Поезия").Id;
 
-            var indexer = new StranitzaIndexer(criticsCategoryId, poetryCategoryId);
+            var indexPageNumber = issue.IndexPage.PageNumber ?? StranitzaConstants.DefaultIndexPageNumber;
+
+            var indexer = new StranitzaIndexer()
+            {
+                CriticsCategoryId = criticsCategoryId,
+                PoetryCategoryId = poetryCategoryId,
+                IndexPageNumber = indexPageNumber
+            };
 
             vModel.Result = indexer.IndexIssue(pdfFilEntry.FilePath);
             vModel.Categories = new SelectList(_context.StranitzaCategories, "Id", "Name");
 
-            vModel.ExistingSources = await _context.StranitzaSources.GetSourcesByIssueAsync(issueEntry.Id);
+            vModel.ExistingSources = await _context.StranitzaSources.GetSourcesByIssueAsync(issue.Id);
 
             return View(vModel);
         }
