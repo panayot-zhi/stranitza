@@ -21,8 +21,6 @@ namespace stranitza.Models.ViewModels
 
         public StranitzaIndexer.IndexingResult Result { get; set; }
 
-        public ICollection<SourceDetailsViewModel> ExistingSources { get; set; }
-
         public SelectList Categories { get; set; }
     }
 }

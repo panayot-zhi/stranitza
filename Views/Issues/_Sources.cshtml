@@ -1,0 +1,29 @@
+﻿@model ICollection<SourceDetailsViewModel>
+
+@if (Model != null && Model.Any())
+{
+    <div class="aside-widget">
+        <header>
+            <h3>Съществуващи източници</h3>
+        </header>
+        <div class="body">
+
+            <ul class="tales-list">
+
+                @foreach (var source in Model)
+                {
+                    <li>
+                        <a href="@Url.Action("Details", "Sources", new {id = source.Id})" target="_blank">
+                            @source.Title<br>
+                            @source.Origin<br>
+                            стр. @source.Pages
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+            <a id="refresh-existing-sources" class="pull-right" href="#">Опресни</a>
+        </div>
+    </div>
+}

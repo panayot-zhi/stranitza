@@ -291,6 +291,15 @@ namespace stranitza.Controllers
             return View(vModel);
         }
 
+        [Ajax]
+        [StranitzaAuthorize(StranitzaRoles.Editor)]
+        public async Task<IActionResult> GetSources(int id)
+        {
+            var sources = await _context.StranitzaSources.GetSourcesByIssueAsync(id);
+
+            return PartialView("_Sources", sources);
+        }
+
         [StranitzaAuthorize(StranitzaRoles.Editor)]
         public async Task<IActionResult> Indexer(int? id)
         {
@@ -334,7 +343,7 @@ namespace stranitza.Controllers
             vModel.Result = indexer.IndexIssue(pdfFilEntry.FilePath);
             vModel.Categories = new SelectList(_context.StranitzaCategories, "Id", "Name");
 
-            vModel.ExistingSources = await _context.StranitzaSources.GetSourcesByIssueAsync(issue.Id);
+            _service.MarkConflictingEntries(vModel.Result.Entries, issue.Id);
 
             return View(vModel);
         }

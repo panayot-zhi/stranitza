@@ -21,7 +21,7 @@
 <div class="col-lg-8 blog-main">
     @await Html.PartialAsync("_Messages")
 
-    <div id="display-index" class="row" style="display: none">
+    <div id="index-raw" class="row" style="display: none">
         <h2>Извлечено съдържание</h2>
         <pre>@string.Join(Environment.NewLine, Model.Result.Entries.Select(x => x.OriginalLine))</pre>
     </div>
@@ -32,18 +32,17 @@
         {
             var cssClass = "panel-default";
             var entry = Model.Result.Entries[index];
-            if (entry.SuggestedCategoryId.HasValue && !string.IsNullOrEmpty(entry.Origin))
-            {
-                cssClass = "panel-success";
-            }
-            /*else if (!entry.SuggestedCategoryId.HasValue && !string.IsNullOrEmpty(entry.Origin))
-            {
-                // NOTE: This is quite the default
-                cssClass = "panel-warning";
-            }*/
-            else if (!entry.SuggestedCategoryId.HasValue && string.IsNullOrEmpty(entry.Origin))
+            if (entry.ConflictingSourceId.HasValue)
             {
                 cssClass = "panel-danger";
+            }
+            else if (!entry.SuggestedCategoryId.HasValue && string.IsNullOrEmpty(entry.Origin))
+            {
+                cssClass = "panel-warning";
+            }
+            else if (entry.SuggestedCategoryId.HasValue && !string.IsNullOrEmpty(entry.Origin))
+            {
+                cssClass = "panel-success";
             }
 
             <div class="panel @cssClass">
@@ -98,13 +97,17 @@
 
             <ul class="tales-list">
                 <li><a href="@Url.GetPdfPage(Model.IssueId, Model.IndexPageNumber)" target="_blank">Преглед на PDF (съдържание)</a></li>
-                <li><a class="toggle-index" href="#">Покажи / Скрий извлечено съдържание</a></li>
-                <li><a class="toggle-origins" href="#">Покажи / Скрий извлечени източници</a></li>
+                <li><a href="#toggle-index-raw">Покажи / Скрий извлечено съдържание</a></li>
+                <li><a href="#toggle-index-origins">Покажи / Скрий извлечени източници</a></li>
+                <li><a href="#toggle-panel-danger">Покажи / Скрий конфликтни (червени)</a></li>
+                <li><a href="#toggle-panel-default">Покажи / Скрий без категория (сиви)</a></li>
+                <li><a href="#toggle-panel-warning">Покажи / Скрий без категория и произход (жълти)</a></li>
+                <li><a href="#toggle-panel-success">Покажи / Скрий окомплектовани (зелени)</a></li>
             </ul>
         </div>
     </div>
     
-    <div id="display-origins" class="aside-widget" style="display: none;">
+    <div id="index-origins" class="aside-widget" style="display: none;">
         <header>
             <h3>Извлечени източници</h3>
         </header>
@@ -116,33 +119,17 @@
             }
         </div>
     </div>
+    
+    <div id="existing-sources" class="aside-widget">
 
-    @if (Model.ExistingSources != null && Model.ExistingSources.Any())
-    {
-
-        <div class="aside-widget">
-            <header>
-                <h3>Съществуващи източници</h3>
-            </header>
-            <div class="body">
-
-                <ul class="tales-list">
-
-                    @foreach (var source in Model.ExistingSources)
-                    {
-                        <li>
-                            <a href="@Url.Action("Details", "Sources", new {id = source.Id})" target="_blank">
-                                @source.Title<br>
-                                @source.Origin<br>
-                                стр. @source.Pages
-                            </a>
-                        </li>
-                    }
-
-                </ul>
-            </div>
+        <header>
+            <h3>Съществуващи източници</h3>
+        </header>
+        <div class="body">
+            <div class="loader">Зареждане...</div>
         </div>
-    }
+
+    </div>
 
     @if (Model.Result.Unclassified != null && Model.Result.Unclassified.Any())
     {
@@ -182,7 +169,26 @@
     @await Html.PartialAsync("_ValidationScripts")
 
     <script>
+
+        function loadSources() {
+            var existingSources = $("#existing-sources");
+            existingSources.find(".body").html('<div class="loader">Зареждане...</div>');
+
+            $.get('@Url.Action("GetSources", "Issues", new {id = Model.IssueId})',
+                function(r) {
+                    existingSources.html(r);
+                });
+        }
+
         $(document).ready(function() {
+
+            loadSources();
+            $('body').on('click',
+                '#refresh-existing-sources',
+                function() {
+                    loadSources();
+                });
+
             $(".panel-body form .btn-cancel").on("click",
                 function(e) {
                     e.preventDefault();
@@ -208,13 +214,35 @@
                     return true;
                 });
 
-            $(".toggle-index").on("click", function() {
-                $("#display-index").toggle();
-            });
+            $(".toggle-index").on("click",
+                function() {
+                    $("#display-index").toggle();
+                });
 
-            $(".toggle-origins").on("click", function() {
-                $("#display-origins").toggle();
-            });
-        })
+            $('a[href^="#toggle-"]').on("click",
+                function(e) {
+                    e.preventDefault();
+
+                    var me = $(this);
+                    var href = me.attr('href');
+                    var targetsLocator = href.replace("#toggle-", "");
+
+                    var target = $("#" + targetsLocator);
+                    if (target) {
+                        target.toggle();
+                    }
+
+                    var targets = $("." + targetsLocator);
+                    if (targets.length) {
+                        if (targets.is(":visible")) {
+                            targets.hide();
+                        } else {
+                            targets.show();
+                        }
+                    }
+                });
+        });
+
+
     </script>
 }
