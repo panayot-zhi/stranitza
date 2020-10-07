@@ -1145,5 +1145,20 @@ thumb: {page.PageFile.ThumbPath}";
 
             return result;
         }
+
+        public void MarkConflictingEntries(List<StranitzaIndexer.IndexEntry> entries, int issueId)
+        {
+            foreach (var entry in entries)
+            {
+                var conflictingEntries = _applicationDbContext.StranitzaSources.Where(x =>
+                    x.IssueId == issueId && x.StartingPage == entry.StartingPage &&
+                    (x.Title == entry.Title || x.Origin == entry.Origin));
+
+                if (conflictingEntries.Any())
+                {
+                    entry.ConflictingSourceId = conflictingEntries.First().Id;
+                }
+            }
+        }
     }
 }
