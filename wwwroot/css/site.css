@@ -1055,3 +1055,7 @@ article.comment .body small {
 #list-source .source-info-wrapper {
     padding-left: 0;
 }
+
+.checkbox-row .checkbox {
+    margin-top: -5px;
+}
