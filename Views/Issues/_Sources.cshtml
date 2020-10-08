@@ -1,15 +1,14 @@
 ﻿@model ICollection<SourceDetailsViewModel>
 
-@if (Model != null && Model.Any())
-{
-    <div class="aside-widget">
-        <header>
-            <h3>Съществуващи източници</h3>
-        </header>
-        <div class="body">
+<div class="aside-widget">
+    <header>
+        <h3>Съществуващи източници</h3>
+    </header>
+    <div class="body">
 
-            <ul class="tales-list">
-
+        <ul class="tales-list">
+            @if (Model != null && Model.Any())
+            {
                 @foreach (var source in Model)
                 {
                     <li>
@@ -20,10 +19,15 @@
                         </a>
                     </li>
                 }
+            }
+            else
+            {
+                <li>
+                    <span>Няма намерени източници</span>
+                </li>
+            }
+        </ul>
 
-            </ul>
-
-            <a id="refresh-existing-sources" class="pull-right" href="#">Опресни</a>
-        </div>
+        <a id="refresh-existing-sources" class="pt20 pull-right" href="#">Опресни</a>
     </div>
-}
+</div>
