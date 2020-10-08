@@ -36,7 +36,7 @@
             {
                 cssClass = "panel-danger";
             }
-            else if (!entry.SuggestedCategoryId.HasValue && string.IsNullOrEmpty(entry.Origin))
+            else if (string.IsNullOrEmpty(entry.Origin))
             {
                 cssClass = "panel-warning";
             }
@@ -96,12 +96,13 @@
         <div class="body">
 
             <ul class="tales-list">
+                <li><a href="@Url.Action("Create", "Sources", new { id = Model.IssueId })" target="_blank">Създаване на източник</a></li>
                 <li><a href="@Url.GetPdfPage(Model.IssueId, Model.IndexPageNumber)" target="_blank">Преглед на PDF (съдържание)</a></li>
                 <li><a href="#toggle-index-raw">Покажи / Скрий извлечено съдържание</a></li>
                 <li><a href="#toggle-index-origins">Покажи / Скрий извлечени източници</a></li>
                 <li><a href="#toggle-panel-danger">Покажи / Скрий конфликтни (червени)</a></li>
                 <li><a href="#toggle-panel-default">Покажи / Скрий без категория (сиви)</a></li>
-                <li><a href="#toggle-panel-warning">Покажи / Скрий без категория и произход (жълти)</a></li>
+                <li><a href="#toggle-panel-warning">Покажи / Скрий без произход (жълти)</a></li>
                 <li><a href="#toggle-panel-success">Покажи / Скрий окомплектовани (зелени)</a></li>
                 <li><a href="@Url.Action("Indexer", "Issues", new { id = Model.IssueId, noCache = true })">Повторно индексиране</a></li>
             </ul>
