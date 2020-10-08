@@ -76,10 +76,11 @@ namespace stranitza.Controllers
         }
 
         [StranitzaAuthorize(StranitzaRoles.Editor)]
-        public IActionResult Create()
+        public IActionResult Create(int? issueId)
         {
             return View(new SourceCreateViewModel
             {
+                IssueId = issueId,
                 Categories = new SelectList(_context.StranitzaCategories, "Id", "Name")
             });
         }
@@ -139,7 +140,7 @@ namespace stranitza.Controllers
                 try
                 {
                     await _index.UpdateIndexRecord(vModel);
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Details), new { id = vModel.Id });
                 }
                 catch (Exception ex)
                 {
