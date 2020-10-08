@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
+using Microsoft.Extensions.Caching.Memory;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
 using stranitza.Services;
 using stranitza.Utility;
+using Serilog;
 
 namespace stranitza.Controllers
 {
@@ -21,12 +22,14 @@ namespace stranitza.Controllers
         private readonly ApplicationDbContext _context;
         private readonly StatisticService _stats;
         private readonly LibraryService _service;
+        private readonly IMemoryCache _cache;
 
-        public IssuesController(ApplicationDbContext context, LibraryService service, StatisticService stats)
+        public IssuesController(ApplicationDbContext context, LibraryService service, StatisticService stats, IMemoryCache cache)
         {
             _context = context;
             _service = service;
             _stats = stats;
+            _cache = cache;
         }
 
         public async Task<IActionResult> Index(int? page, int? year)
@@ -301,7 +304,7 @@ namespace stranitza.Controllers
         }
 
         [StranitzaAuthorize(StranitzaRoles.Editor)]
-        public async Task<IActionResult> Indexer(int? id)
+        public async Task<IActionResult> Indexer(int? id, bool noCache)
         {
             if (!id.HasValue)
             {
@@ -333,14 +336,27 @@ namespace stranitza.Controllers
             var pdfFilEntry = await _context.StranitzaFiles
                 .SingleOrDefaultAsync(x => x.Id == issue.PdfFilePreviewId);
 
-            var indexer = new StranitzaIndexer
+            var cacheKey = $"IndexingResult_{id}";
+            StranitzaIndexer.IndexingResult result;
+            if (noCache || !_cache.TryGetValue(cacheKey, out result))
             {
-                IndexPageNumber = indexPageNumber,
-                CategoriesLocator = _service.GatherIndexCategoryLocators(),
-                CategoriesClassifier = _service.GatherIndexCategoryClassifiers()
-            };
+                // no entry stored, create
+                var indexer = new StranitzaIndexer
+                {
+                    IndexPageNumber = indexPageNumber,
+                    CategoriesLocator = _service.GatherIndexCategoryLocators(),
+                    CategoriesClassifier = _service.GatherIndexCategoryClassifiers()
+                };
 
-            vModel.Result = indexer.IndexIssue(pdfFilEntry.FilePath);
+                result = indexer.IndexIssue(pdfFilEntry.FilePath);
+                using (var entry = _cache.CreateEntry(cacheKey))
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24);
+                    entry.Value = result;
+                }
+            }
+
+            vModel.Result = result;
             vModel.Categories = new SelectList(_context.StranitzaCategories, "Id", "Name");
 
             _service.MarkConflictingEntries(vModel.Result.Entries, issue.Id);
