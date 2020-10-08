@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Dynamic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using stranitza.Models.ViewModels;
@@ -19,11 +24,14 @@ namespace stranitza.Controllers
         private readonly IMailSender _mailSender;
         private readonly EmailSettings _emailSettings;
         private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings, IWebHostEnvironment environment)
+        public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings, 
+            IWebHostEnvironment environment, IConfiguration configuration)
         {
             _mailSender = mailSender;
             _environment = environment;
+            _configuration = configuration;
             _emailSettings = emailSettings.Value;
         }
 
@@ -186,6 +194,63 @@ namespace stranitza.Controllers
 
             var mimeType = StranitzaExtensions.GetMimeType(file.Name);
             return new PhysicalFileResult(file.PhysicalPath, mimeType);
+        }
+
+        [ResponseCache(CacheProfileName = "NoCache")]
+        [StranitzaAuthorize(StranitzaRoles.Administrator, andAbove: false)]
+        public async Task<IActionResult> Logs(bool zipFiles = false)
+        {
+            var serilogPath = _configuration["Serilog:WriteTo:0:Args:path"];
+            var logDirectory = Path.GetDirectoryName(serilogPath);
+            if (!Directory.Exists(logDirectory))
+            {
+                return NotFound();
+            }
+
+            var filePaths = Directory.GetFiles(logDirectory);
+
+            if (zipFiles)
+            {
+                using (var memory = new MemoryStream())
+                {
+                    using (var zip = new ZipArchive(memory, ZipArchiveMode.Create, false, Encoding.UTF8))
+                    {
+                        foreach (var filePath in filePaths)
+                        {
+                            var fileInfo = new FileInfo(filePath);
+                            var file = await ReadLogFileAsync(filePath);
+                            zip.Add(file, fileInfo.Name);
+                        }
+                    }
+
+                    var zipFile = memory.ToArray();
+                    return new FileContentResult(zipFile, "application/octet-stream")
+                    {
+                        FileDownloadName = $"output-{DateTime.Now:yyyyMMdd-HHmmss}.zip"
+                    };
+                }
+            }
+
+            var lastOutputPath = filePaths.OrderByDescending(x => x).First();
+            var lastOutputFile = await ReadLogFileAsync(lastOutputPath);
+            return new FileContentResult(lastOutputFile, "application/octet-stream")
+            {
+                FileDownloadName = $"output-{DateTime.Now:yyyyMMdd-HHmmss}.log"
+            };
+        }
+
+        private async Task<byte[]> ReadLogFileAsync(string filePath)
+        {
+            await using (var fileStream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                await using (var memory = new MemoryStream())
+                {
+                    await fileStream.CopyToAsync(memory);
+
+                    return memory.ToArray();
+                }
+            }
+
         }
 
         [ResponseCache(CacheProfileName = "NoCache")]

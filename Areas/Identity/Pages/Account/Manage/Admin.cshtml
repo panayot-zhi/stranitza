@@ -28,6 +28,12 @@
             {
                 <li><a asp-action="Index" asp-controller="Users">Преглед на потребители</a></li>
             }
+            
+            @if (User.IsAtLeast(StranitzaRoles.Administrator))
+            {
+                <li><a asp-action="Logs" asp-controller="Home">Преглед на дневен лог</a></li>
+                <li><a asp-action="Logs" asp-controller="Home" asp-route-zipFiles="true">Преглед на лог (архив)</a></li>
+            }
         </ul>
     </div>
 
