@@ -14,9 +14,9 @@ namespace stranitza.Models.ViewModels
     {
         public string Name { get; set; }
 
-        public virtual string UserName { get; set; }
+        public string UserName { get; set; }
 
-        public virtual string Email { get; set; }
+        public string Email { get; set; }
 
         public string Description { get; set; }
 
