@@ -79,11 +79,20 @@ namespace stranitza.Utility
 
     public enum StranitzaRoles
     {
+        [Display(Name = "Администратор")]
         Administrator = StranitzaRolesHelper.AdministratorWeight,
+        
+        [Display(Name = "Главен редактор")]
         HeadEditor = StranitzaRolesHelper.HeadEditorWeight,
+
+        [Display(Name = "Редактор")]
         Editor = StranitzaRolesHelper.EditorWeight,
+
+        [Display(Name = "Потребител +")]
         UserPlus = StranitzaRolesHelper.UserPlusWeight,
-        //User = StranitzaRolesHelper.UserWeight
+
+        [Display(Name = "Потребител")]
+        User = StranitzaRolesHelper.UserWeight
     }
 
     public enum StranitzaPageType

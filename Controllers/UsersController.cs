@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
@@ -90,6 +92,10 @@ namespace stranitza.Controllers
             }
 
             var vModel = UserRepository.FromApplicationUser(user);
+            vModel.Roles = await _userManager.GetRolesAsync(user);
+
+            var firstRole = vModel.Roles.FirstOrDefault();
+            vModel.Role = StranitzaRolesHelper.GetRole(firstRole);
 
             return View(vModel);
         }
@@ -106,10 +112,23 @@ namespace stranitza.Controllers
 
             try
             {
+                var user = await _userManager.FindByIdAsync(vModel.Id);
 
-                var entry = await _context.Users.UpdateUserAsync(vModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Details), new { id = entry.Id });
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.IsAuthor = vModel.IsAuthor;
+                user.EmailConfirmed = vModel.EmailConfirmed;
+                user.PhoneNumber = vModel.PhoneNumber;
+                user.PhoneNumberConfirmed = vModel.PhoneNumberConfirmed;
+                user.LockoutEnd = vModel.LockoutEnd;
+
+                await _userManager.UpdateAsync(user);
+                await _userManager.UpdateRoleAsync(user, vModel.Role);
+
+                return RedirectToAction(nameof(Details), new { id = user.Id });
 
             }
             catch (Exception ex)
@@ -145,8 +164,9 @@ namespace stranitza.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await _context.Users.FindAsync(id);
-            var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
+            var result = await _userManager.DeleteAsync(user);
+
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");

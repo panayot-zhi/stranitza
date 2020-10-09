@@ -281,6 +281,30 @@ namespace stranitza.Utility
             return GetDisplayName(applicationUser);
         }
 
+        public static async Task UpdateRoleAsync(this UserManager<ApplicationUser> userManager, ApplicationUser user, StranitzaRoles role)
+        {
+            var roles = await userManager.GetRolesAsync(user);
+            var roleName = StranitzaRolesHelper.GetRoleName(role);
+            if (roles.Contains(roleName))
+            {
+                return;
+            }
+
+            await userManager.RemoveFromRolesAsync(user, roles);
+            await userManager.AddToRoleAsync(user, roleName);
+        }
+
+        public static async Task UpdateRoleAsync(this UserManager<ApplicationUser> userManager, string userId, StranitzaRoles role)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return;
+            }
+
+            await userManager.UpdateRoleAsync(user, role);
+        }
+
         /*
         public static string GetAvatarPath(this IUrlHelper urlHelper, ApplicationUser user, StranitzaAvatarType? avatarType = null)
         {

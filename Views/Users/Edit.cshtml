@@ -5,6 +5,13 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
+@section head {
+    <link rel="stylesheet" href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"/>
+
+    <script defer src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script defer src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.bg.min.js"></script>
+}
+
 @section breadcrumb {
 
     <a asp-page="/Account/Manage/Admin" asp-area="Identity">Администрация</a>
@@ -22,127 +29,137 @@
     <a asp-action="Edit" asp-controller="Users" asp-route-id="@Model.Id">Редакция</a>
 }
 
-<h1>Edit</h1>
+<div class="col-md-8 blog-main">
+    <h2 class="underlined">Редакция на потребителски профил</h2>
 
-<h4>User</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+    <form asp-action="Edit">
+
+        <input type="hidden" asp-for="Id"/>
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-4 form-group">
                 <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
+                <input asp-for="FirstName" class="form-control" readonly="readonly"/>
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="col-md-4 form-group">
                 <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
+                <input asp-for="LastName" class="form-control" readonly="readonly"/>
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAuthor" /> @Html.DisplayNameFor(model => model.IsAuthor)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="DisplayNameType" class="control-label"></label>
-                <select asp-for="DisplayNameType" class="form-control"></select>
-                <span asp-validation-for="DisplayNameType" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="DisplayEmail" /> @Html.DisplayNameFor(model => model.DisplayEmail)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="AvatarType" class="control-label"></label>
-                <select asp-for="AvatarType" class="form-control"></select>
-                <span asp-validation-for="AvatarType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FacebookAvatarPath" class="control-label"></label>
-                <input asp-for="FacebookAvatarPath" class="form-control" />
-                <span asp-validation-for="FacebookAvatarPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TwitterAvatarPath" class="control-label"></label>
-                <input asp-for="TwitterAvatarPath" class="form-control" />
-                <span asp-validation-for="TwitterAvatarPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GoogleAvatarPath" class="control-label"></label>
-                <input asp-for="GoogleAvatarPath" class="form-control" />
-                <span asp-validation-for="GoogleAvatarPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="InternalAvatarPath" class="control-label"></label>
-                <input asp-for="InternalAvatarPath" class="form-control" />
-                <span asp-validation-for="InternalAvatarPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastUpdated" class="control-label"></label>
-                <input asp-for="LastUpdated" class="form-control" />
-                <span asp-validation-for="LastUpdated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateCreated" class="control-label"></label>
-                <input asp-for="DateCreated" class="form-control" />
-                <span asp-validation-for="DateCreated" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+
+            <div class="col-md-4 form-group">
                 <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
+                <input asp-for="UserName" class="form-control" readonly="readonly"/>
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
+        </div>
 
-            <div class="form-group">
+        <div class="checkbox text-right">
+            <label asp-for="IsAuthor" class="control-label">
+                <input asp-for="IsAuthor" /> <b> @Html.DisplayNameFor(x => x.IsAuthor) </b>
+            </label>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control" readonly="readonly"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EmailConfirmed" /> @Html.DisplayNameFor(model => model.EmailConfirmed)
-                </label>
-            </div>
-
-            <div class="form-group">
+            <div class="col-md-4 form-group">
                 <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
+                <input asp-for="PhoneNumber" class="form-control"/>
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="PhoneNumberConfirmed" /> @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+
+            <div class="col-md-4 form-group">
+                <label asp-for="DisplayNameType" class="control-label"></label>
+                <select asp-for="DisplayNameType" class="form-control" asp-items="Html.GetEnumSelectList<StranitzaDisplayNameType>()" disabled="disabled"></select>
+                <span asp-validation-for="DisplayNameType" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row checkbox-row">
+            <div class="col-md-4 checkbox text-right">
+                <label asp-for="EmailConfirmed" class="control-label">
+                    <input asp-for="EmailConfirmed"/> <b> @Html.DisplayNameFor(x => x.EmailConfirmed) </b>
                 </label>
             </div>
 
-            <div class="form-group">
+            <div class="col-md-4 checkbox text-right">
+                <label asp-for="PhoneNumberConfirmed" class="control-label">
+                    <input asp-for="PhoneNumberConfirmed"/> <b> @Html.DisplayNameFor(x => x.PhoneNumberConfirmed) </b>
+                </label>
+            </div>
+
+            <div class="col-md-4 checkbox text-right">
+                <label asp-for="DisplayEmail" class="control-label">
+                    <input asp-for="DisplayEmail" disabled="disabled"/> <b> @Html.DisplayNameFor(x => x.DisplayEmail) </b>
+                </label>
+            </div>
+        </div>
+        
+        <hr />
+
+        <div class="row">
+
+            <div class="col-md-8 form-group">
                 <label asp-for="LockoutEnd" class="control-label"></label>
-                <input asp-for="LockoutEnd" class="form-control" />
+                <input asp-for="LockoutEnd" class="form-control" placeholder="@DateTime.Now.ToString("dd.MM.yyyy HH:mm")"/>
                 <span asp-validation-for="LockoutEnd" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="AccessFailedCount" class="control-label"></label>
-                <input asp-for="AccessFailedCount" class="form-control" />
-                <span asp-validation-for="AccessFailedCount" class="text-danger"></span>
+            <div class="col-md-4 form-group">
+                <label asp-for="Role" class="control-label"></label>
+                <select asp-for="Role" class="form-control" asp-items="Html.GetEnumSelectList<StranitzaRoles>()"></select>
+                <span asp-validation-for="Roles" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+        
+        <hr />
+
+        <div class="row">
+            <div class="col-md-4 form-group">
+                <label asp-for="LastUpdated" class="control-label"></label>
+                <input asp-for="LastUpdated" class="form-control" type="text" readonly="readonly"/>
             </div>
-        </form>
-    </div>
+
+            <div class="col-md-4 col-md-offset-4 form-group">
+                <label asp-for="DateCreated" class="control-label"></label>
+                <input asp-for="DateCreated" class="form-control" type="text" readonly="readonly"/>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="form-group text-right">
+            @if (User.Is(StranitzaRoles.Administrator))
+            {
+                <a asp-controller="Users" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-tales-two pull-left">Изтриване</a>
+            }
+            <a asp-controller="Users" asp-action="Index" class="btn btn-default">Отказ</a>
+            <input type="submit" value="Запис" class="btn btn-tales-one"/>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScripts");}
+    @await Html.PartialAsync("_ValidationScripts")
+
+    <script>
+        $(document).ready(function() {
+            $('#LockoutEnd').datepicker({
+                language: "bg-BG",
+                todayBtn: "linked",
+                format: "dd.mm.yyyy",
+                autoclose: true,
+                weekStart: 1
+            });
+        })
+    </script>
 }

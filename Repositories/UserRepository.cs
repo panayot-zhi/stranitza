@@ -104,17 +104,6 @@ namespace stranitza.Repositories
             };
         }
 
-        public static async Task<ApplicationUser> UpdateUserAsync(this DbSet<ApplicationUser> dbSet, UserDetailsViewModel vModel)
-        {
-            var entry = await dbSet.FindAsync(vModel.Id);
-
-            dbSet.Attach(entry);
-
-            // TODO
-
-            return entry;
-        }
-        
         public static UserDetailsViewModel FromApplicationUser(ApplicationUser x)
         {
             return new UserDetailsViewModel()

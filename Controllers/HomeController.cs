@@ -241,6 +241,7 @@ namespace stranitza.Controllers
 
         private async Task<byte[]> ReadLogFileAsync(string filePath)
         {
+            // NOTE: FileShare should be for Write also, or else we cannot access the log file
             await using (var fileStream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 await using (var memory = new MemoryStream())

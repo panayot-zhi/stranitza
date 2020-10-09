@@ -10,13 +10,13 @@ namespace stranitza.Utility
         public const string HeadEditorRoleName = "HEAD_EDITOR";
         public const string EditorRoleName = "EDITOR";
         public const string UserPlusRoleName = "USER_PLUS";
-        //public const string UserRoleName = "USER";
+        public const string UserRoleName = "USER";
 
         public const int AdministratorWeight = 1;        
         public const int HeadEditorWeight = 10;
         public const int EditorWeight = 15;        
         public const int UserPlusWeight = 25;        
-        //public const int UserWeight = 50;
+        public const int UserWeight = 50;
         
         /// <summary>
         /// Assigns weights to roles, the smaller the weight the broader the access rights.
@@ -27,8 +27,25 @@ namespace stranitza.Utility
             {HeadEditorWeight, HeadEditorRoleName},
             {EditorWeight, EditorRoleName},
             {UserPlusWeight, UserPlusRoleName},
-            //{UserWeight, UserRoleName}
+            {UserWeight, UserRoleName}
         };
+
+        public static StranitzaRoles GetRole(string role)
+        {
+            if (string.IsNullOrEmpty(role))
+            {
+                return StranitzaRoles.User;
+            }
+
+            if (!KnownRoles.ContainsValue(role) )
+            {
+                throw new StranitzaException(
+                    $"Role '{role}' is not part of the known roles for the application.");
+            }
+
+            var knownRoleKey = KnownRoles.Single(x => x.Value == role).Key;
+            return (StranitzaRoles) knownRoleKey;
+        }
 
         public static string GetRoleName(StranitzaRoles role)
         {
