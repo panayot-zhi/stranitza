@@ -37,7 +37,7 @@ namespace stranitza.Controllers
                 Type = type,
             };
 
-            var vModel = await _userManager.GetUsersPagedAsync(pageIndex: page, filter);
+            var vModel = await _userManager.GetUsersPagedAsync(filter: filter, pageIndex: page);
 
             vModel.Filter = filter;
 

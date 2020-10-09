@@ -270,41 +270,6 @@ namespace stranitza.Utility
             return null;
         }
 
-        public static async Task<string> GetDisplayName(this UserManager<ApplicationUser> userManager, ClaimsPrincipal user)
-        {
-            if (!user.Identity.IsAuthenticated)
-            {
-                return null;
-            }
-
-            var applicationUser = await userManager.GetUserAsync(user);
-            return GetDisplayName(applicationUser);
-        }
-
-        public static async Task UpdateRoleAsync(this UserManager<ApplicationUser> userManager, ApplicationUser user, StranitzaRoles role)
-        {
-            var roles = await userManager.GetRolesAsync(user);
-            var roleName = StranitzaRolesHelper.GetRoleName(role);
-            if (roles.Contains(roleName))
-            {
-                return;
-            }
-
-            await userManager.RemoveFromRolesAsync(user, roles);
-            await userManager.AddToRoleAsync(user, roleName);
-        }
-
-        public static async Task UpdateRoleAsync(this UserManager<ApplicationUser> userManager, string userId, StranitzaRoles role)
-        {
-            var user = await userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return;
-            }
-
-            await userManager.UpdateRoleAsync(user, role);
-        }
-
         /*
         public static string GetAvatarPath(this IUrlHelper urlHelper, ApplicationUser user, StranitzaAvatarType? avatarType = null)
         {
@@ -568,64 +533,6 @@ namespace stranitza.Utility
         {
             return url.RouteUrl(routeName, routeValues, url.ActionContext.HttpContext.Request.Scheme);
         }
-        
-        public static async Task UpdateUserAvatarPathAsync(this UserManager<ApplicationUser> userManager, ExternalLoginInfo info)
-        {
-            var user = await userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-
-            var principal = info.Principal;
-            var profilePicture = principal.GetProfilePicture();
-
-            switch (info.LoginProvider)
-            {
-                case "Facebook":
-                    if (user.FacebookAvatarPath != profilePicture)
-                    {
-                        user.FacebookAvatarPath = profilePicture;
-                        await userManager.UpdateAsync(user);
-                    }
-                    break;
-                case "Twitter":
-                    if (user.TwitterAvatarPath != profilePicture)
-                    {
-                        const string sizeMarker = "_normal";
-
-                        var sizeMarkerIndex = profilePicture.LastIndexOf(sizeMarker, StringComparison.InvariantCultureIgnoreCase);
-                        user.TwitterAvatarPath = sizeMarkerIndex > -1 ? 
-                            profilePicture.Remove(sizeMarkerIndex, sizeMarker.Length) : profilePicture;
-                        
-                        await userManager.UpdateAsync(user);
-                    }
-                    break;
-                case "Google":
-                    if (user.GoogleAvatarPath != profilePicture)
-                    {
-                        user.GoogleAvatarPath = profilePicture;
-                        await userManager.UpdateAsync(user);
-                    }
-                    break;
-                default:
-                    throw new StranitzaException("The login provider is not supported.");
-            }
-        }
-
-        public static void ClearExternalAvatarPath(this UserManager<ApplicationUser> userManager, ApplicationUser user, string loginProvider)
-        {
-            switch (loginProvider)
-            {
-                case "Facebook":
-                    user.FacebookAvatarPath = null;
-                    break;
-                case "Twitter":
-                    user.TwitterAvatarPath = null;
-                    break;
-                case "Google":
-                    user.GoogleAvatarPath = null;
-                    break;
-                default:
-                    throw new StranitzaException("The login provider is not supported.");
-            }
-        }
 
         public static AuthenticationScheme ByName(this IList<AuthenticationScheme> list, string name)
         {
@@ -705,6 +612,17 @@ namespace stranitza.Utility
 
                 return builder.ToString();
             }
+        }
+
+        public static async Task<string> GetDisplayName(this UserManager<ApplicationUser> userManager, ClaimsPrincipal user)
+        {
+            if (!user.Identity.IsAuthenticated)
+            {
+                return null;
+            }
+
+            var applicationUser = await userManager.GetUserAsync(user);
+            return GetDisplayName(applicationUser);
         }
 
         public static string GetDisplayName(ApplicationUser user)

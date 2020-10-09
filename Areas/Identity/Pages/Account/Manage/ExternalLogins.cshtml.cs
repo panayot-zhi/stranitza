@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using stranitza.Models.Database;
+using stranitza.Repositories;
 using stranitza.Utility;
 
 namespace stranitza.Areas.Identity.Pages.Account.Manage
