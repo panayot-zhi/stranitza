@@ -1,0 +1,62 @@
+﻿@model UserDetailsViewModel
+
+@{
+    var userDetailsUrl = Url.Action("Details", "Users", new { id = Model.Id });
+}
+
+<div class="image">
+    <a href="@userDetailsUrl" target="_blank">
+        <img src="@Url.Content(Model.AvatarPath)" class="img-responsive" alt="@Model.DisplayName">
+    </a>
+</div>
+
+<div class="col-sm-12 text-center details">
+    @*<h3>
+        <a href="@userDetailsUrl" target="_blank">
+            @Model.DisplayNameOnly
+        </a>
+    </h3>*@
+
+    <div class="author">
+        <span class="bold">Псевдоним: </span>
+        <span>
+            @Model.UserName
+        </span>
+    </div>
+
+    <div class="email">
+        <span class="bold">Email:</span>
+        <span>
+            <a href="mailto:@Model.Email" target="_blank">
+                @if (Model.EmailConfirmed)
+                {
+                    @Model.Email
+                }
+                else
+                {
+                    <i>@Model.Email</i>
+                }
+            </a>
+        </span>
+    </div>
+
+    @if (Model.IsAuthor)
+    {
+        <div class="author bg-success">
+            <span class="bold">Автор: </span>
+            <span>
+                @Model.Names
+            </span>
+        </div>
+    }
+    else
+    {
+        <div class="author">
+            <span class="bold">Имена: </span>
+            <span>
+                @Model.Names
+            </span>
+        </div>
+    }
+
+</div>

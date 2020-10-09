@@ -1,13 +1,280 @@
 ﻿@{
-    ViewData["Title"] = "Относно";
+    ViewData["Title"] = "Относно „Списание Страница“";
 }
 
-<h1>@ViewData["Title"]</h1>
+@section head {
+    <link rel="stylesheet" href="~/css/vertical-timeline.css" />
+}
 
-@*TODO*@
+<div class="col-md-8 blog-main st-welcome">
+    <div class="row">
+        <h1>Относно „Списание Страница“</h1>
 
-<div class="blog-main col-md-8">
+        <div class="col-md-12">
+            <hr>
+        </div>
 
+        <div class="col-sm-12">
+            <ul class="timeline timeline-centered">
+
+                <li class="timeline-item period">
+                    <div class="timeline-info"></div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h2 class="timeline-title">@DateTime.Now.Year</h2>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2017</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">+ / 2017</h3>
+                        <p>Специалният брой за 2017 г. е посветен на новелата Преображението на Франц Кафка, подкрепен от Гьоте институт - София и Австрийското посолство в България.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item cd-bounce-1">
+                    <div class="timeline-info">
+                        <span>2017</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Дигитализация</h3>
+                        <p>Започва процес по дигитализация на списанието.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item cd-bounce-1">
+                    <div class="timeline-info">
+                        <span>2012</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Разговори</h3>
+                        <p>За 2012 г. в съдържанието са включени разговори и интервюта с Елена Алексиева, Валери Петров, Михаил Неделчев, Деян Енев и други.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2010, 2011</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Финансиране</h3>
+                        <p>През календарните 2010 и 2011 помощ за издаването оказва и Филологическият факултет на Пловдивския университет по програма РНИ-ФЛ-03.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span></span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Община Пловдив</h3>
+                        <p>Основната финансова подкрепа в последните години списанието получава от община Пловдив, като участва в различни конкурси и събира средства от частни спонсорства.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>1 / 2009</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Брой 1 / 2009</h3>
+                        <p>Е отново тематичен, посветен на „черния хумор”.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2009</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Обзор</h3>
+                        <p>През 2009 г. по програма, подкрепена от НФ „Култура”, са публикувани и три обзорни статии за литературната 2008 година.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>1 / 2008</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">„досие ДАДА”</h3>
+                        <p>
+                            В брой 1 за 2008 г., специален по рода си, се включва за пръв път и „досие ДАДА”.
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span></span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Рецензии</h3>
+                        <p>Всяка година биват рецензирани около 60 заглавия.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2008</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Награди</h3>
+                        <p>
+                            Национална награда „Христо Г. Данов“ — 2008 г.,
+                            присъдена за представяне на българската книга.
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span></span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Критически страници</h3>
+                        <p>
+                            Като поддържа единствената у нас постоянна критическа секция, списанието не само информира,
+                            а и интерпретира стойностните литературни явления на текущата ни литература.
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Септември, 2007</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Редколегия</h3>
+                        <p>
+                            През 2007 г. списанието обединява усилията на група критици – Борис Минков, Здравко Дечев, Гергина Кръстева,
+                            Татяна Ичевска и Младен Влашки като по този начин се установява в списанието <b>постоянна критическа секция</b>.
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>Май, 2007</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Сдружение Литературна къща</h3>
+                        <p>
+                            Редакционната колегия на списанието регистрира сдружение, което да продължи издаването на списанието.
+                            Сдружението ”Литературна къща” е регистрирано в Министерството на правосъдието и Министерството на културата.
+                            След преодоляването на тези административни пречки списанието започва отново да се издава.
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item period">
+                    <div class="timeline-info"></div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h2 class="timeline-title">2007</h2>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2004</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <p>
+                            През 2004 и 2005 г. списанието престава да излиза поради процедури около фалит на фирмата свързани с противопоставяния между държавата
+                            и общината относно имотите, които фирмата ползва.
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item period">
+                    <div class="timeline-info"></div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h2 class="timeline-title">2003</h2>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2003</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">”–измите на ХХ век”</h3>
+                        <p>
+                            Брой 3-4 за 2003 също е специален и е посветен на ”–измите на ХХ век”
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2002</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">PlayБрой</h3>
+                        <p>
+                            Почти всяка година се издава и един „тематичен брой”, в който се осмислят тенденции на европейския литературен ХХ век – за 2002 г. това е брой 3 (PlayБрой)
+                        </p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>2000</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Награда „Хр. Г. Данов”</h3>
+                        <p>През 2000 г., „Страница” ЕООД, е носител на престижната награда „Хр. Г. Данов” за книготърговия.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span></span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">„Страница” ЕООД</h3>
+                        <p>Списанието издава общинската фирма „Страница” ЕООД, която се занимава с книготърговия и книгоразпространение.</p>
+                    </div>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-info">
+                        <span>1997</span>
+                    </div>
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">Началото</h3>
+                        <p>Списание „Страница” започва да се издава в гр. Пловдив през 1997 г.</p>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
 </div>
 
 <aside class="col-md-4 blog-aside">
@@ -27,4 +294,63 @@
             </ul>
         </div>
     </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Връзки</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                <li><a href="http://slovo.uni-plovdiv.net/" target="_blank">Филологически Факултет, Пловдив</a></li>
+                <li><a href="http://bnr.bg/plovdiv" target="_blank">Радио Пловдив</a></li>
+                <li><a href="https://www.facebook.com/clubpetnoto/" target="_blank">Клуб "Петното на Роршах"</a></li>
+                <li><a href="http://www.plovdiv.bg/" target="_blank">Община Пловдив</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="aside-widget">
+        <header>
+            <h3>Литературен свят</h3>
+        </header>
+
+        <div class="body">
+            <ul class="tales-list">
+                <li><a href="https://hermesbooks.com/" target="_blank">Книжарници Хермес</a></li>
+                <li><a href="http://knigabg.com/" target="_blank">Български книжици</a></li>
+                @* <li><a href="https://www.facebook.com/nissimbooks" target="_blank">Книжарници Нисим</a></li> *@
+                <li><a href="https://www.facebook.com/profile.php?id=409846375812310" target="_blank">Книжарници Нисим</a></li>
+                <li><a href="https://www.helikon.bg/" target="_blank">Книжарници Хеликон</a></li>
+                <li><a href="http://sever.bg/%D0%9C%D0%B0%D0%B3%D0%B8%D1%81%D1%82%D1%8A%D1%80-%D0%92%D0%A2%D0%A3-%D0%A1%D0%B2-%D0%A1%D0%B2-%D0%9A%D0%B8%D1%80%D0%B8%D0%BB-%D0%B8-%D0%9C%D0%B5%D1%82%D0%BE%D0%B4%D0%B8%D0%B9-_l.od_i.32392.html" target="_blank">Книжарница Магистър, ВТУ "Св. св. Кирил и Методий"</a></li>
+                <li><a href="http://sever.bg/%D0%97%D0%BB%D0%B0%D1%82%D0%B5%D0%B2_l.od_i.32376.html" target="_blank">Книжарница Златев, Габрово</a></li>
+                <li><a href="http://bnr.bg/plovdiv/prege/broadcast" target="_blank">ПРЕГЕ, Радио Пловдив</a></li>
+                <li><a href="http://slovo.bg/" target="_blank">Българска виртуална библиотека</a></li>
+                <li><a href="http://www.libplovdiv.com/" target="_blank">Народна библиотека Иван Вазов</a></li>
+            </ul>
+        </div>
+    </div>
+
+    @{
+        var editors = ViewBag.Editors as UserIndexViewModel;
+    }
+
+    @if (editors != null && editors.Records.Any())
+    {
+        <div id="editorial-board" class="aside-widget">
+            <header>
+                <h3>Редколегия</h3>
+            </header>
+
+            <div class="body">
+                @foreach (var user in editors.Records)
+                {
+                    <div class="row credits">
+                        @await Html.PartialAsync("_Staff", user)
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
 </aside>

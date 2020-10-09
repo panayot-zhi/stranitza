@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
 using Serilog;
+using stranitza.Repositories;
 
 namespace stranitza.Controllers
 {    
@@ -25,10 +28,12 @@ namespace stranitza.Controllers
         private readonly EmailSettings _emailSettings;
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings, 
-            IWebHostEnvironment environment, IConfiguration configuration)
+            IWebHostEnvironment environment, IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
+            _userManager = userManager;
             _mailSender = mailSender;
             _environment = environment;
             _configuration = configuration;
@@ -41,8 +46,15 @@ namespace stranitza.Controllers
         }
 
         [ResponseCache(CacheProfileName = StranitzaCacheProfile.Monthly)]
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
+            var filter = new UserFilterViewModel()
+            {
+                Type = UserFilterType.Editors
+            };
+
+            ViewBag.Editors = await _userManager.GetUsersPagedAsync(filter: filter, pageIndex: null);
+
             return View();
         }
 
