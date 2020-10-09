@@ -499,7 +499,7 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleShort(this SourceIndexViewModel source)
         {
-            var releaseNumber = source.ReleaseNumber > 0 ? source.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(source.ReleaseNumber);
             return $"{releaseNumber}/{source.ReleaseYear}";
         }
 
@@ -508,8 +508,17 @@ namespace stranitza.Utility
         /// </summary>
         public static string GetIssueTitleShort(this SourceDetailsViewModel source)
         {
-            var releaseNumber = source.ReleaseNumber > 0 ? source.ReleaseNumber.ToString() : "+";
+            var releaseNumber = GetDisplayReleaseNumber(source.ReleaseNumber);
             return $"{releaseNumber}/{source.ReleaseYear}";
+        }
+
+        /// <summary>
+        /// {releaseNumber}/{releaseYear}
+        /// </summary>
+        public static string GetIssueTitleShort(this StranitzaIssue issue)
+        {
+            var releaseNumber = GetDisplayReleaseNumber(issue.ReleaseNumber);
+            return $"{releaseNumber}/{issue.ReleaseYear}";
         }
 
         /// <summary>

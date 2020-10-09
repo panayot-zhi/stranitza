@@ -35,13 +35,15 @@ namespace stranitza.Repositories
 
         }        
 
-        public static async Task<IEnumerable<FilterCategoryViewModel>> GetCategoryFilterViewModelAsync(this DbSet<StranitzaCategory> dbSet)
+        public static async Task<IEnumerable<FilterCategoryViewModel>> GetCategoryFilterViewModelAsync(this DbSet<StranitzaCategory> dbSet, int? issueId)
         {
             return await dbSet.Select(x => new FilterCategoryViewModel()
             {
                 Category = x.Name,
                 CategoryId = x.Id,
-                Count = x.Sources.Count
+                Count = issueId.HasValue 
+                    ? x.Sources.Count(y => y.IssueId == issueId) 
+                    : x.Sources.Count
 
             }).ToListAsync();
         }

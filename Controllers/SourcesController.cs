@@ -30,11 +30,11 @@ namespace stranitza.Controllers
             _context = context;            
         }
 
-        public async Task<IActionResult> Index(int? page, int? year, int? category, string origin)
+        public async Task<IActionResult> Index(int? page, int? year, int? category, string origin, int? issueId)
         {
             origin = System.Net.WebUtility.UrlDecode(origin);
-            var viewModel = await _context.StranitzaSources.GetSourcesPagedAsync(
-                year: year, categoryId: category, origin: origin, pageIndex: page);
+            var viewModel = await _context.StranitzaSources.GetSourcesPagedAsync(year: year, categoryId: category, origin: origin, 
+                issueId: issueId, pageIndex: page);
 
             /*
             // TODO: Functionality suspended, consult with m.vlashki
@@ -47,8 +47,15 @@ namespace stranitza.Controllers
             }*/
 
             viewModel.YearFilter = _context.CountByYears.GetSourcesCountByYears();
-            viewModel.CategoriesFilter = await _context.StranitzaCategories.GetCategoryFilterViewModelAsync();
+            viewModel.CategoriesFilter = await _context.StranitzaCategories.GetCategoryFilterViewModelAsync(issueId);
             viewModel.OriginFilter = new[] { "А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ю", "Я", "„“" };
+
+            viewModel.IssueId = issueId;
+            if (viewModel.IssueId.HasValue)
+            {
+                var issue = await _context.StranitzaIssues.FindAsync(viewModel.IssueId);
+                viewModel.IssueTitle = issue.GetIssueTitleShort();
+            }
 
             viewModel.CurrentOrigin = origin;
             viewModel.CurrentCategoryId = category;

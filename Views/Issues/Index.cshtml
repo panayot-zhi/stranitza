@@ -70,32 +70,34 @@
             </div>
         </div>
     }
-
-    <div id="release-year-filter" class="aside-widget">
-        <header>
-            <h3>По години</h3>
-        </header>
-        <div class="body">
-            <ul class="tales-list">
-                <li>
-                    <a class="category @(Model.CurrentYear == null ? "active" : "")" href="@Url.Action("Index", "Issues")">
-                        Всички
-                    </a>
-                </li>
-
-                @foreach (var filter in Model.YearFilter)
-                {
+    
+    @if (Model.YearFilter.Any())
+    {
+        <div id="release-year-filter" class="aside-widget">
+            <header>
+                <h3>По години</h3>
+            </header>
+            <div class="body">
+                <ul class="tales-list">
                     <li>
-                        <a class="category @(Model.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Index", "Issues", new { year = filter.Year })">
-                            @filter.Year (@filter.Count)
+                        <a class="category @(Model.CurrentYear == null ? "active" : "")" href="@Url.Action("Index", "Issues")">
+                            Всички
                         </a>
                     </li>
-                }
 
-            </ul>
+                    @foreach (var filter in Model.YearFilter)
+                    {
+                        <li>
+                            <a class="category @(Model.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Index", "Issues", new {year = filter.Year})">
+                                @filter.Year (@filter.Count)
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
         </div>
-    </div>
-
+    }
     <hr />
 
     <div class="aside-widget image">

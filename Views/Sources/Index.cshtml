@@ -17,7 +17,12 @@
     @if (Model.CurrentYear.HasValue)
     {
         <span class="separator">/</span>    
-        <a href="@Url.Action("Index", "Sources", new { year = Model.CurrentYear, category = Model.CurrentCategoryId })">@Model.CurrentYear.Value</a>
+        <a href="@Url.Action("Index", "Sources", new { category = Model.CurrentCategoryId, year = Model.CurrentYear })">@Model.CurrentYear.Value</a>
+    } 
+    else if (Model.IssueId.HasValue)
+    {
+        <span class="separator">/</span>    
+        <a href="@Url.Action("Index", "Sources", new { category = Model.CurrentCategoryId, issueId = Model.IssueId })">Брой № @Model.IssueTitle</a>
     }
         
     @if (!string.IsNullOrEmpty(Model.CurrentOrigin))
@@ -32,7 +37,7 @@
     <div class="row alphabet-sort">
                
         <div class="alphabet-letter clear">
-            <a href="@Url.Action("Index", "Sources", new {year = Model.CurrentYear, category = Model.CurrentCategoryId})">
+            <a href="@Url.Action("Index", "Sources", new { year = Model.CurrentYear, category = Model.CurrentCategoryId, issueId = Model.IssueId })">
                 <i class="fa fa-asterisk"></i>
             </a>
         </div>
@@ -40,7 +45,7 @@
         @foreach (var letter in Model.OriginFilter)
         {
             <div class="alphabet-letter @(Model.CurrentOrigin == letter ? "active" : "")">
-                <a href="@Url.Action("Index", "Sources", new { origin = WebUtility.UrlEncode(letter), year = Model.CurrentYear, category = Model.CurrentCategoryId })">@letter</a>
+                <a href="@Url.Action("Index", "Sources", new { origin = WebUtility.UrlEncode(letter), year = Model.CurrentYear, category = Model.CurrentCategoryId, issueId = Model.IssueId })">@letter</a>
             </div>
         }
 
@@ -92,7 +97,7 @@
             <ul class="tales-list category-list">
 
                 <li>
-                    <a class="category @(Model.CurrentCategoryId == null ? "active" : "")" href="@Url.Action("Index", "Sources", new { year = Model.CurrentYear })">
+                    <a class="category @(Model.CurrentCategoryId == null ? "active" : "")" href="@Url.Action("Index", "Sources", new { year = Model.CurrentYear, issueId = Model.IssueId })">
                         Всички
                     </a>
                 </li>
@@ -100,7 +105,7 @@
                 @foreach (var filter in Model.CategoriesFilter)
                 {
                     <li>
-                        <a class="category @(Model.CurrentCategoryId == filter.CategoryId ? "active" : "")" href="@Url.Action("Index", "Sources", new { category = filter.CategoryId, year = Model.CurrentYear })">
+                        <a class="category @(Model.CurrentCategoryId == filter.CategoryId ? "active" : "")" href="@Url.Action("Index", "Sources", new { category = filter.CategoryId, year = Model.CurrentYear, issueId = Model.IssueId })">
                             @filter.Category (@filter.Count)                                
                         </a>
                     </li>
@@ -109,30 +114,32 @@
             </ul>
         </div>
     </div>
-
-    <div id="release-year-filter" class="aside-widget">
-        <header>
-            <h3>По години</h3>
-        </header>
-        <div class="body">
-            <ul class="tales-list">
-                <li>
-                    <a class="category @(Model.CurrentYear == null ? "active" : "")" href="@Url.Action("Index", "Sources", new { category = Model.CurrentCategoryId })">
-                        Всички
-                    </a>
-                </li>
-                    
-                @foreach (var filter in Model.YearFilter)
-                {
+    
+    @if (!Model.IssueId.HasValue)
+    {
+        <div id="release-year-filter" class="aside-widget">
+            <header>
+                <h3>По години</h3>
+            </header>
+            <div class="body">
+                <ul class="tales-list">
                     <li>
-                        <a class="category @(Model.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Index", "Sources", new { year = filter.Year, category = Model.CurrentCategoryId })">
-                            @filter.Year (@filter.Count)                                
+                        <a class="category @(Model.CurrentYear == null ? "active" : "")" href="@Url.Action("Index", "Sources", new {category = Model.CurrentCategoryId})">
+                            Всички
                         </a>
                     </li>
-                }
 
-            </ul>
+                    @foreach (var filter in Model.YearFilter)
+                    {
+                        <li>
+                            <a class="category @(Model.CurrentYear == filter.Year ? "active" : "")" href="@Url.Action("Index", "Sources", new {year = filter.Year, category = Model.CurrentCategoryId})">
+                                @filter.Year (@filter.Count)
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </div>
         </div>
-    </div>
-
+    }
 </aside>

@@ -13,7 +13,7 @@ namespace stranitza.Repositories
     public static class IndexRepository
     {
         public static async Task<IndexViewModel> GetSourcesPagedAsync(this DbSet<StranitzaSource> sourcesDbSet,
-            int? year, int? categoryId, string origin,
+            int? year, int? categoryId, string origin, int? issueId,
             int? pageIndex, int pageSize = 10)
         {
             if (!pageIndex.HasValue)
@@ -22,6 +22,11 @@ namespace stranitza.Repositories
             }
 
             var query = sourcesDbSet.AsQueryable();
+
+            if (issueId.HasValue)
+            {
+                query = query.Where(x => x.IssueId == issueId.Value);
+            }
 
             if (year.HasValue)
             {

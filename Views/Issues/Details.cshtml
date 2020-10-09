@@ -125,16 +125,11 @@
                     <li><a asp-controller="Issues" asp-action="Edit" asp-route-id="@Model.Id">Редакция на брой</a></li>
                 }
 
-                @*@if (User.IsAtLeast(StranitzaRoles.HeadEditor))
-                {
-                    <li><a asp-controller="Issues" asp-action="Delete" asp-route-id="@Model.Id">Изтриване на броя</a></li>
-                }*@
-
+                <li><a href="@Url.Action("Index", "Sources", new { issueId = Model.Id })">В Индекс</a></li>
                 <li><a href="#sharer">Сподели</a></li>
                 <li><a href="#comments">Коментари</a></li>
                 <li><a href="#create-comment">Напиши коментар</a></li>
                 <li><a href="@Url.Action("DownloadZip", "Issues", new { id = Model.Id })" target="_blank">Сваляне (ZIP)</a></li>
-
 
             </ul>
         </div>

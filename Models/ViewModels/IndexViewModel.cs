@@ -10,6 +10,10 @@ namespace stranitza.Models.ViewModels
 
         public IEnumerable<FilterCategoryViewModel> CategoriesFilter { get; set; }
 
+        public int? IssueId { get; set; }
+
+        public string IssueTitle { get; set; }
+
         public int? CurrentCategoryId { get; set; }
 
         public IEnumerable<CountByYears> YearFilter { get; set; }

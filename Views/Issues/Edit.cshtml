@@ -247,7 +247,7 @@
             <ul class="tales-list">
                 <li><a asp-controller="Issues" asp-action="Create">Създаване на нов брой</a></li>
                 <li><a asp-action="Index" asp-controller="Pages" asp-route-id="@Model.Id">Редакция на страници</a></li>
-                <li><a href="#" target="_blank">Преглед на свързани източници</a></li>
+                <li><a href="@Url.Action("Index", "Sources", new { issueId = Model.Id })">Преглед на свързани източници</a></li>
                 @if (Model.HasPdf)
                 {
                     <li><a href="@Url.Action("Indexer", "Issues", new {id = Model.Id})">Индексиране на съдържанието</a></li>
