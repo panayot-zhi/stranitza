@@ -1,5 +1,4 @@
-﻿
-// Extensions...
+﻿// Extensions...
 Array.prototype.contains = function (val) {
     return this.indexOf(val) > -1;
 };
