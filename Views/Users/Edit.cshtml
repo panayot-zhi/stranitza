@@ -108,9 +108,19 @@
 
         <div class="row">
 
-            <div class="col-md-8 form-group">
+            @{
+                var cssClass = string.Empty;
+                var lockoutEnd = string.Empty;
+                if (Model.LockoutEnd.HasValue)
+                {
+                    cssClass = Model.LockoutEnd.Value.LocalDateTime > DateTimeOffset.Now ? "has-error" : "has-warning";
+                    lockoutEnd = Model.LockoutEnd.Value.LocalDateTime.ToString("dd.MM.yyyy HH:mm");
+                }
+            }
+
+            <div class="col-md-8 form-group @cssClass">
                 <label asp-for="LockoutEnd" class="control-label"></label>
-                <input asp-for="LockoutEnd" class="form-control" placeholder="@DateTime.Now.ToString("dd.MM.yyyy HH:mm")"/>
+                <input asp-for="LockoutEnd" class="form-control" placeholder="@DateTime.Now.ToString("dd.MM.yyyy HH:mm")" value="@lockoutEnd"/>
                 <span asp-validation-for="LockoutEnd" class="text-danger"></span>
             </div>
 
@@ -142,7 +152,7 @@
             {
                 <a asp-controller="Users" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-tales-two pull-left">Изтриване</a>
             }
-            <a asp-controller="Users" asp-action="Index" class="btn btn-default">Отказ</a>
+            <a asp-controller="Users" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-default">Отказ</a>
             <input type="submit" value="Запис" class="btn btn-tales-one"/>
         </div>
     </form>
@@ -157,6 +167,7 @@
                 language: "bg-BG",
                 todayBtn: "linked",
                 format: "dd.mm.yyyy",
+                forceParse: false,
                 autoclose: true,
                 weekStart: 1
             });
