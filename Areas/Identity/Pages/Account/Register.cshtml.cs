@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
@@ -17,19 +17,16 @@ namespace stranitza.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<RegisterModel> _logger;
         private readonly IMailSender _emailSender;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger,
             IMailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;            
             _emailSender = emailSender;
-            _logger = logger;
         }
 
         [BindProperty]
@@ -126,7 +123,7 @@ namespace stranitza.Areas.Identity.Pages.Account
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User created a new account with password.");
+                Log.Logger.Information("User created a new account with password.");
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 

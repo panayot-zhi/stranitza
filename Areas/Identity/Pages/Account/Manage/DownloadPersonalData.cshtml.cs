@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Utility;
 
@@ -16,16 +16,13 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
     public class DownloadPersonalDataModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<DownloadPersonalDataModel> _logger;
         private readonly ApplicationDbContext _dbContext;
 
         public DownloadPersonalDataModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<DownloadPersonalDataModel> logger, 
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
-            _logger = logger;
             _dbContext = dbContext;
         }
 
@@ -46,7 +43,7 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
 
             var now = StranitzaExtensions.Timestamp();
 
-            _logger.LogInformation("User with ID '{UserId}' asked for their personal data [timestamp: {TimeStamp}].", _userManager.GetUserId(User), now);
+            Log.Logger.Information("User with ID '{UserId}' asked for their personal data [timestamp: {TimeStamp}].", _userManager.GetUserId(User), now);
 
             // Only include personal data for download
             var personalData = new Dictionary<string, object>();

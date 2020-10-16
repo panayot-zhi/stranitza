@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
@@ -17,12 +17,10 @@ namespace stranitza.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         [BindProperty]
@@ -109,7 +107,7 @@ namespace stranitza.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 // ReSharper disable once PossibleNullReferenceException
-                _logger.LogInformation($"User '{user.UserName}' logged in.");
+                Log.Logger.Information($"User '{user.UserName}' logged in.");
                 return LocalRedirect(returnUrl);
             }
 
@@ -120,7 +118,7 @@ namespace stranitza.Areas.Identity.Pages.Account
 
             if (result.IsLockedOut)
             {
-                _logger.LogWarning("User account locked out.");
+                Log.Logger.Warning("User account locked out.");
                 return RedirectToPage("./Lockout");
             }
 
@@ -143,18 +141,18 @@ namespace stranitza.Areas.Identity.Pages.Account
             var byName = await userManager.FindByNameAsync(input);
             if (byName != null)
             {
-                _logger.LogInformation($"User '{byName.UserName}' recognized by username.");
+                Log.Logger.Information($"User '{byName.UserName}' recognized by username.");
                 return byName;
             }
 
             var byEmail = await userManager.FindByEmailAsync(input);
             if (byEmail != null)
             {
-                _logger.LogInformation($"User {byEmail.UserName} recognized by email.");
+                Log.Logger.Information($"User {byEmail.UserName} recognized by email.");
                 return byEmail;
             }
 
-            _logger.LogWarning("User cannot be recognized neither by username nor by email.");
+            Log.Logger.Warning("User cannot be recognized neither by username nor by email.");
 
             return null;
         }

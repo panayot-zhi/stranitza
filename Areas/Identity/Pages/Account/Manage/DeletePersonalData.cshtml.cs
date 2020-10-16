@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using stranitza.Models.Database;
 
 namespace stranitza.Areas.Identity.Pages.Account.Manage
@@ -14,18 +14,15 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<DeletePersonalDataModel> _logger;
         private readonly ApplicationDbContext _dbContext;
 
         public DeletePersonalDataModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger, 
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
             _dbContext = dbContext;
         }
 
@@ -115,7 +112,7 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.SignOutAsync();
 
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+            Log.Logger.Information("User with ID '{UserId}' deleted themselves.", userId);
 
             return Redirect("~/");
         }

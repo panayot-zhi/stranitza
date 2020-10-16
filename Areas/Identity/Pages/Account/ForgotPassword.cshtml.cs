@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
@@ -52,7 +53,15 @@ namespace stranitza.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                if (user == null)
+                {
+                    // Don't reveal that the user does not exist
+                    Log.Logger.Warning("An attempt was made to recover a forgotten password for an unknown user: {Input}", Input);
+                    return RedirectToPage("./ForgotPasswordConfirmation");
+                }
+
+                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+                if (!isEmailConfirmed)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return RedirectToPage("./ForgotPasswordConfirmation");

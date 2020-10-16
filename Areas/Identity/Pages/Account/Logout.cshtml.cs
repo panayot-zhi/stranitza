@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using stranitza.Models.Database;
 
 namespace stranitza.Areas.Identity.Pages.Account
@@ -12,12 +12,10 @@ namespace stranitza.Areas.Identity.Pages.Account
     public class LogoutModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<LogoutModel> _logger;
 
-        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         public void OnGet()
@@ -26,7 +24,7 @@ namespace stranitza.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            _logger.LogInformation($"User '{User.Identity.Name}' logging out.");
+            Log.Logger.Information($"User '{User.Identity.Name}' logging out.");
 
             await _signInManager.SignOutAsync();            
             if (returnUrl != null)

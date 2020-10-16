@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using stranitza.Models.Database;
 using stranitza.Repositories;
 using stranitza.Utility;
@@ -17,16 +17,13 @@ namespace stranitza.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager,
-            ILogger<ExternalLoginModel> logger)
+            UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _logger = logger;
         }
 
         [BindProperty]
@@ -113,7 +110,7 @@ namespace stranitza.Areas.Identity.Pages.Account
                 // Update avatar path on each login
                 //await _userManager.UpdateUserAvatarPathAsync(info);
 
-                _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+                Log.Logger.Information("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
 
                 return RedirectToPage("./Redirector", new { redirectUrl = returnUrl });
             }
@@ -193,7 +190,7 @@ namespace stranitza.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         await _userManager.UpdateUserAvatarPathAsync(info);
 
-                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        Log.Logger.Information("User created an account using {Name} provider.", info.LoginProvider);
 
                         return RedirectToPage("./Redirector", new { redirectUrl = returnUrl });
                     }
