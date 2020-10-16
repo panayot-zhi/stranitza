@@ -28,7 +28,7 @@
             {
                 <li><a asp-action="Index" asp-controller="Users">Преглед на потребители</a></li>
             }
-            
+
             @if (User.IsAtLeast(StranitzaRoles.Administrator))
             {
                 <li><a asp-action="Logs" asp-controller="Home" asp-route-preview="true">Преглед на дневен лог</a></li>
@@ -39,7 +39,31 @@
     </div>
 
     <div class="col-md-6">
-       
+        <form asp-page-handler="CreateIssueFromFolder">
+            <div class="row">
+                <div class="form-group col-xs-3">
+                    <label for="releaseNumber" class="control-label">Номер </label>
+                    <input name="releaseNumber" id="releaseNumber" class="form-control" type="text" />
+                </div>
+                <div class="form-group col-xs-9">
+                    <label for="releaseYear" class="control-label">и година на издаване</label>
+                    <div class="input-group">
+                        <input name="releaseYear" id="releaseYear" class="form-control" aria-describedby="calendar-addon" type="text" />
+                        <span class="input-group-addon" id="calendar-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <p class="help-block">Възстановяване на брой от файловата система по година и пореден номер.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-12 text-right">
+                    <input type="submit" value="Възстанови" class="btn btn-tales-one" />
+                </div>
+            </div>
+        </form>
     </div>
 
 </div>

@@ -38,7 +38,7 @@ namespace stranitza.Services
             _applicationConfiguration = configuration;
         }
 
-        public async Task CreateIssueRecord(DirectoryInfo issueDirectory)
+        public async Task<StranitzaIssue> CreateIssueRecord(DirectoryInfo issueDirectory)
         {            
             var directoryNameInformation = issueDirectory.Name.Split('-');
 
@@ -52,7 +52,7 @@ namespace stranitza.Services
             {
                 Log.Logger.Information("Information for issue {IssueReleaseNumber}/{IssueReleaseYear} already exists in the database.",
                     issueReleaseNumber, issueReleaseYear);
-                return;
+                return null;
             }
 
             Log.Logger.Information("Generating issue from folder information {IssueDirectory}.", issueDirectory);
@@ -160,6 +160,8 @@ index: {issue.IndexPage?.Id}";
             await _applicationDbContext.SaveChangesAsync();
 
             Log.Logger.Information("Issue generated successfully: #{IssueId}", issue.Id);
+
+            return issue;
         }
 
         public async Task<StranitzaFile> CreateZipFileRecord(FileSystemInfo fileInfo)

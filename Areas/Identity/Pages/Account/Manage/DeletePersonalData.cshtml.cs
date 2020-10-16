@@ -59,7 +59,7 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
             ModeratedCommentsCount > 0 ||
             PostsCount > 0;
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
