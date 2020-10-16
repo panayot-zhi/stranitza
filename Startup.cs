@@ -44,7 +44,7 @@ namespace stranitza
                     options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                //.AddErrorDescriber<LocalizedIdentityErrorDescriber>()
+                .AddErrorDescriber<LocalizedIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
