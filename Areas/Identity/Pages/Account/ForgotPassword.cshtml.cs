@@ -60,22 +60,37 @@ namespace stranitza.Areas.Identity.Pages.Account
                     return RedirectToPage("./ForgotPasswordConfirmation");
                 }
 
+                // TODO: This behaviour should be monitored and turned off if abused with
+
                 var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
                 if (!isEmailConfirmed)
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+                    Log.Logger.Information("An attempt was made to recover a forgotten password for user without a confirmed email: {Input}", Input);
+
+                    var confirmEmailCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmEmailCallbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { userId = user.Id, code = confirmEmailCode },
+                        protocol: Request.Scheme);
+
+                    await _emailSender.SendMailAsync(Input.Email, "Потвърждение на профил", "ConfirmEmail", 
+                        new { Names = user.Names, ButtonLink = confirmEmailCallbackUrl });
+
+                    Log.Logger.Information("Email verification was resent.");
+
+                    return RedirectToPage("./ResendVerificationEmail");
                 }
 
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Page(
+                var resetPasswordCode = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var resetPasswordCallbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,
-                    values: new { code },
+                    values: new {code = resetPasswordCode},
                     protocol: Request.Scheme);
 
                 await _emailSender.SendMailAsync(Input.Email, "Възстановяване на парола", "ResetPassword", 
-                    new { Ip = StranitzaExtensions.GetIp(HttpContext), ButtonLink = callbackUrl });
+                    new { Ip = StranitzaExtensions.GetIp(HttpContext), ButtonLink = resetPasswordCallbackUrl });
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
