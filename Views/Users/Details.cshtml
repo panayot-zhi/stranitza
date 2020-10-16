@@ -11,7 +11,7 @@
 
 @section breadcrumb {
 
-    @if (User.IsAtLeast(StranitzaRoles.HeadEditor))
+    @if (User.IsAtLeast(StranitzaRoles.Editor))
     {
         <a asp-action="Index" asp-controller="Users">Потребители</a>
     }
