@@ -31,8 +31,9 @@
             
             @if (User.IsAtLeast(StranitzaRoles.Administrator))
             {
-                <li><a asp-action="Logs" asp-controller="Home">Преглед на дневен лог</a></li>
-                <li><a asp-action="Logs" asp-controller="Home" asp-route-zipFiles="true">Преглед на лог (архив)</a></li>
+                <li><a asp-action="Logs" asp-controller="Home" asp-route-preview="true">Преглед на дневен лог</a></li>
+                <li><a asp-action="Logs" asp-controller="Home">Сваляне на дневен лог</a></li>
+                <li><a asp-action="Logs" asp-controller="Home" asp-route-zipFiles="true">Сваляне на лог (архив)</a></li>
             }
         </ul>
     </div>

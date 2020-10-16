@@ -210,7 +210,7 @@ namespace stranitza.Controllers
 
         [ResponseCache(CacheProfileName = "NoCache")]
         [StranitzaAuthorize(StranitzaRoles.Administrator, andAbove: false)]
-        public async Task<IActionResult> Logs(bool zipFiles = false)
+        public async Task<IActionResult> Logs(bool zipFiles = false, bool preview = false)
         {
             var serilogPath = _configuration["Serilog:WriteTo:0:Args:path"];
             var logDirectory = Path.GetDirectoryName(serilogPath);
@@ -245,6 +245,12 @@ namespace stranitza.Controllers
 
             var lastOutputPath = filePaths.OrderByDescending(x => x).First();
             var lastOutputFile = await ReadLogFileAsync(lastOutputPath);
+            
+            if (preview)
+            {
+                return new FileContentResult(lastOutputFile, "text/plain");
+            }
+
             return new FileContentResult(lastOutputFile, "application/octet-stream")
             {
                 FileDownloadName = $"output-{DateTime.Now:yyyyMMdd-HHmmss}.log"
