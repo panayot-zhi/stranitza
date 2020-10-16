@@ -105,7 +105,8 @@ namespace stranitza
 
             services.ConfigureExternalCookie(options =>
             {
-                // Identity.External cookie settings
+                // cookie settings
+                // .netCore.stranitza.identity.external
                 options.Cookie.HttpOnly = true;
 
                 // no cookie policy enforces this
@@ -113,7 +114,7 @@ namespace stranitza
                 //options.Cookie.IsEssential = true;
                 options.Cookie.Name = ".netCore.stranitza.identity.external";
                 options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
                 // If the LoginPath is not set here,
                 // ASP.NET Core will default to /Account/Login
@@ -144,7 +145,7 @@ namespace stranitza
                 //options.Cookie.IsEssential = false;
                 options.Cookie.Name = ".netCore.stranitza.identity";
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
                 // This interferes with the remember me feature
                 //options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
@@ -224,7 +225,7 @@ namespace stranitza
                 options.Cookie.IsEssential = false;
                 options.Cookie.Name = ".netCore.stranitza.session";
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });*/
 
             services.Configure<CookieTempDataProviderOptions>(options =>
@@ -234,7 +235,7 @@ namespace stranitza
                 options.Cookie.IsEssential = false;
                 options.Cookie.Name = ".netCore.stranitza.tempData";
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             services.AddAntiforgery(options =>
@@ -244,7 +245,7 @@ namespace stranitza
                 options.Cookie.IsEssential = true;
                 options.Cookie.Name = ".netCore.stranitza.antiForgery";
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.Expiration = TimeSpan.FromMinutes(30);
             });
 
