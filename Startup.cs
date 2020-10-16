@@ -100,13 +100,12 @@ namespace stranitza
 
             services.ConfigureExternalCookie(options =>
             {
-                // cookie settings
                 // .netCore.stranitza.identity.external
                 options.Cookie.HttpOnly = true;
 
                 // no cookie policy enforces this
                 // if you logged in - you gave consent
-                //options.Cookie.IsEssential = true;
+                options.Cookie.IsEssential = true;
                 options.Cookie.Name = ".netCore.stranitza.identity.external";
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -127,17 +126,18 @@ namespace stranitza
 
                 // allow obtaining new ticket
                 // on a new user activity
-                //options.SlidingExpiration = true;
+                // stick with the defaults
+                // options.SlidingExpiration = true;
             });
 
             services.ConfigureApplicationCookie(options =>
             {
-                // Identity.Application cookie settings
+                // .netCore.stranitza.identity
                 options.Cookie.HttpOnly = true;
 
                 // no cookie policy enforces this
                 // if you logged in - you gave consent
-                //options.Cookie.IsEssential = false;
+                options.Cookie.IsEssential = true;
                 options.Cookie.Name = ".netCore.stranitza.identity";
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -161,7 +161,8 @@ namespace stranitza
 
                 // allow obtaining new ticket
                 // on a new user activity
-                options.SlidingExpiration = true;
+                // stick with the defaults
+                // options.SlidingExpiration = true;
 
             });
 
@@ -225,7 +226,7 @@ namespace stranitza
 
             services.Configure<CookieTempDataProviderOptions>(options =>
             {
-                // TempData cookie settings
+                // .netCore.stranitza.tempData
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = false;
                 options.Cookie.Name = ".netCore.stranitza.tempData";
@@ -235,13 +236,15 @@ namespace stranitza
 
             services.AddAntiforgery(options =>
             {
-                // AntiForgery cookie settings
+                // .netCore.stranitza.antiForgery
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
                 options.Cookie.Name = ".netCore.stranitza.antiForgery";
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.Expiration = TimeSpan.FromMinutes(30);
+
+                // stick with the defaults
+                // options.Cookie.Expiration = TimeSpan.FromMinutes(30);
             });
 
             services.AddTransient<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
