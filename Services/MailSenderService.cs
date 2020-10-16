@@ -168,19 +168,13 @@ namespace stranitza.Services
             var data = Convert.ToBase64String(plainTextBytes);
 
             return _link.GetUriByAction(_.HttpContext, "Email", "Home", new { id = templateName, data = data },
-                options: new LinkOptions()
-                {
-                    LowercaseUrls = true
-                });
+                options: new LinkOptions() { LowercaseUrls = true });
         }
 
         public string GetLogoUri()
         {
             return _link.GetUriByAction(_.HttpContext, "Image", "Home", new { id = "main-logo.png" },
-                options: new LinkOptions()
-                {
-                    LowercaseUrls = true
-                });
+                options: new LinkOptions() { LowercaseUrls = true });
         }
 
         private static ExpandoObject ToExpandoObject(object obj)
