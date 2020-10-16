@@ -1,0 +1,27 @@
+﻿@page
+@model ForgotPasswordConfirmation
+
+@{
+    ViewData["Title"] = "Забравена парола";
+}
+
+@section breadcrumb {
+    <a asp-area="Identity" asp-page="/Account/Login">Вход</a>
+    <span class="separator">/</span>
+    <a asp-area="Identity" asp-page="/Account/ForgotPassword">Забравена парола</a>
+    <span class="separator">/</span>
+    <span>Изпратено потвърждение</span>
+}
+
+<div class="col-sm-12">
+    <h2 class="has-warning"><i class="fa fa-warning"></i>Непотвърден email адрес</h2>
+    <p>За съжаление email адресът Ви не е потвърден. Моля, първо проверете електронната си поща за писмо, съдържащо връзка за потвърждение на email адресът Ви.</p>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            $(".container.main").removeClass("main").addClass("about");
+        });
+    </script>
+}
