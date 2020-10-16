@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
