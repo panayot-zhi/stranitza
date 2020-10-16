@@ -381,7 +381,7 @@ index: {issue.IndexPage?.Id}";
 
                 await _applicationDbContext.SaveChangesAsync();                
 
-                transaction.Commit();
+                await transaction.CommitAsync();
 
                 return entry;
             }
