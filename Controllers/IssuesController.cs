@@ -81,9 +81,12 @@ namespace stranitza.Controllers
         }
 
         [StranitzaAuthorize(StranitzaRoles.Editor)]
-        public IActionResult Create()
+        public IActionResult Create(int? releaseYear)
         {
-            return View(new IssueCreateViewModel());
+            return View(new IssueCreateViewModel()
+            {
+                ReleaseYear = releaseYear
+            });
         }
 
         // POST: Issues/Create
