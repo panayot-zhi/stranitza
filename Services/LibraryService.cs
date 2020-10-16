@@ -354,6 +354,14 @@ index: {issue.IndexPage?.Id}";
                         var pageFileRecord = await CreatePageRecord(pageFile, entry);
                     }
 
+                    if (!entry.PdfFilePreviewId.HasValue)
+                    {
+                        // if there is no pdf file,
+                        // but we have updated pages
+                        // update count also
+                        entry.PagesCount = entry.Pages.Count;
+                    }
+
                     updateZipFile = true;
                 }
 
