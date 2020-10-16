@@ -150,34 +150,6 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostSendVerificationEmailAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Няма потребител с този идентификационен номер '{_userManager.GetUserId(User)}'.");
-            }
-
-            var userId = await _userManager.GetUserIdAsync(user);
-            var email = await _userManager.GetEmailAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-            var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { userId = userId, code = code },
-                protocol: Request.Scheme);
-
-            await _emailSender.SendMailAsync(email, "Потвърждение на профил", "ReConfirmEmail", new { Names = user.Names, ButtonLink = callbackUrl });
-            TempData.AddModalMessage("Беше Ви изпратен верификационен email на адресът, който сте посочили. Моля, последвайте линка от писмото за да верифицирате новата си електронна поща.", "info");
-            return RedirectToPage();
-        }
-
         private async Task<string> SaveAvatarFileAsync(IFormFile formFile, string userId)
         {
             var rootFolderPath = Path.Combine(_configuration["RepositoryPath"], StranitzaConstants.UploadsFolderName);
@@ -191,23 +163,6 @@ namespace stranitza.Areas.Identity.Pages.Account.Manage
             }
 
             return $"~/{StranitzaConstants.UploadsFolderName}/{fileName}.{fileExtension}";
-        }
-
-        private void DeleteAvatarFile(string internalFilePath, string userId)
-        {
-            if (string.IsNullOrEmpty(internalFilePath))
-            {
-                return;
-            }
-
-            var fileName = $"{userId}.{StranitzaExtensions.GetFileExtension(internalFilePath)}";
-            var rootPath = Path.Combine(_configuration["RepositoryPath"], StranitzaConstants.UploadsFolderName);
-            var filePath = Path.Combine(rootPath, fileName);
-
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
         }
     }
 }
