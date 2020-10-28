@@ -57,7 +57,8 @@ namespace stranitza.Repositories
             }
             else
             {
-                query = query.OrderByDescending(x => x.ReleaseYear);
+                query = query.OrderByDescending(x => x.ReleaseYear).
+                    ThenByDescending(x => x.ReleaseNumber);
             }
 
             var count = await query.CountAsync();
