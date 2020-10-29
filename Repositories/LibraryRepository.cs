@@ -34,7 +34,8 @@ namespace stranitza.Repositories
             var count = await query.CountAsync();
             var issues = query
                 .Include(x => x.Pages)
-                .OrderByDescending(x => x.IssueNumber)
+                .OrderByDescending(x => x.ReleaseYear)
+                    .ThenByDescending(x => x.IssueNumber)
                 .Select(x => new IssueIndexViewModel()
                 {
                     Id = x.Id,
