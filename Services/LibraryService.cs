@@ -67,7 +67,8 @@ namespace stranitza.Services
             await _applicationDbContext.AddAsync(issue);
 
             bool issueNumberResolved = false;
-            foreach (var fileInfo in issueDirectory.GetFiles("*", SearchOption.TopDirectoryOnly))
+            var filesInformation = issueDirectory.GetFiles("*", SearchOption.TopDirectoryOnly).OrderBy(x => x.FullName);
+            foreach (var fileInfo in filesInformation)
             {
                 if (fileInfo.Extension.ToUpperInvariant() == ".PDF")
                 {
