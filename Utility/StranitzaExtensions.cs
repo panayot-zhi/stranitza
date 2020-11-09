@@ -346,8 +346,19 @@ namespace stranitza.Utility
 
         private static string GetDisplayIssueNumber(int issueNumber)
         {
-            // NOTE: This should be a fixed magic number :(
-            return issueNumber > 900 ? "извънреден" : issueNumber.ToString();
+            // NOTE: magic numbers :(
+
+            if (issueNumber == 27)
+            {
+                return "27-28";
+            }
+
+            if (issueNumber > 900)
+            {
+                return "извънреден";
+            }
+
+            return issueNumber.ToString();
         }
 
         /// <summary>
