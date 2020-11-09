@@ -232,9 +232,16 @@ namespace stranitza.Controllers
             if (issue == null)
             {                
                 return RedirectToActionPreserveMethod("IssueNotFound", "Home");
-            }            
+            }
 
-            // first off check if there is a gallery page with this number
+            // if there is a pdf, redirect to download link,
+            // NOTE: the download link should handle rights
+            if (issue.HasPdf)
+            {
+                return Redirect(GetPdfPageUrl(issue.Id, source.StartingPage));
+            }
+
+            // check if there is a gallery page with this number
             var page = issue.Pages.SingleOrDefault(x => x.PageNumber == source.StartingPage);
             if (page != null)
             {
@@ -248,13 +255,6 @@ namespace stranitza.Controllers
                 Log.Logger.Warning("Page was found (image), but not available: {PageId}", page.Id);
 
                 return Forbid();
-            }
-
-            // if there is a pdf, redirect to download link,
-            // NOTE: the download link should handle rights
-            if (issue.HasPdf)
-            {
-                return Redirect(GetPdfPageUrl(issue.Id, source.StartingPage));
             }
 
             TempData.AddModalMessage("За съжаление поисканата от Вас страница все още не е част от дигиталния архив на списанието.");
