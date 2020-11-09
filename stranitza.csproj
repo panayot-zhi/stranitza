@@ -9,7 +9,7 @@
     <SatelliteResourceLanguages>bg;en</SatelliteResourceLanguages>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <Version>3.1.243-32456d7</Version>
+    <Version>3.1.245-084014f</Version>
     <Authors>Panayot Ivanov</Authors>
     <Company />
   </PropertyGroup>
@@ -66,9 +66,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LocalizedIdentityErrorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  
+  </ItemGroup>  
 
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
