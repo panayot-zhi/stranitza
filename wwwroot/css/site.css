@@ -1070,3 +1070,7 @@ article.comment .body small {
     margin-right: auto;
     max-height: 150px;
 }
+
+#reward img  {
+    width: auto;
+}
