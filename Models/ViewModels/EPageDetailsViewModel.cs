@@ -51,6 +51,9 @@ namespace stranitza.Models.ViewModels
 
         public int? SourceId { get; set; }
 
+        public UserDetailsViewModel Author { get; set; }
+
         public DateTime DateCreated { get; set; }
+
     }
 }

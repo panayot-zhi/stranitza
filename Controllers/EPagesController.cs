@@ -45,6 +45,11 @@ namespace stranitza.Controllers
                 return NotFound();
             }
 
+            if (entry.AuthorId != null)
+            {
+                entry.Author = UserRepository.FromApplicationUser(await _context.Users.FindAsync(entry.AuthorId));
+            }
+
             return View(entry);
         }
 
