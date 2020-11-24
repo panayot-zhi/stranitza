@@ -215,11 +215,14 @@ namespace stranitza.Utility
 
             // resolve the end page of the last entry
 
-            var lastEntry = r.Entries.Last();
-            var lastEntryStartingPage = lastEntry.StartingPage;
-            if (r.NumberOfPages != lastEntryStartingPage)
+            if (r.Entries.Any())
             {
-                lastEntry.Pages += "-" + r.NumberOfPages;
+                var lastEntry = r.Entries.Last();
+                var lastEntryStartingPage = lastEntry.StartingPage;
+                if (r.NumberOfPages != lastEntryStartingPage)
+                {
+                    lastEntry.Pages += "-" + r.NumberOfPages;
+                }
             }
 
             // in any cases - gather all lines left in the
