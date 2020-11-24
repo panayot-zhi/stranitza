@@ -9,7 +9,7 @@
     <SatelliteResourceLanguages>bg;en</SatelliteResourceLanguages>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <Version>3.1.246-5a981ae</Version>
+    <Version>3.1.247-5de7745</Version>
     <Authors>Panayot Ivanov</Authors>
     <Company />
   </PropertyGroup>
