@@ -279,7 +279,7 @@ namespace stranitza
             var cultureInfo = new CultureInfo("bg-BG");
 
             // NOTE: Soon...
-            //cultureInfo.NumberFormat.CurrencySymbol = "ˆ";
+            //cultureInfo.NumberFormat.CurrencySymbol = "ï¿½";
 
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
