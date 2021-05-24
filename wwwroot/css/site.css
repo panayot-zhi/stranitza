@@ -1074,3 +1074,9 @@ article.comment .body small {
 #reward img  {
     width: auto;
 }
+
+#news .list-group {
+    margin-bottom: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
