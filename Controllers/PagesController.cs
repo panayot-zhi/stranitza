@@ -153,9 +153,14 @@ namespace stranitza.Controllers
 
             var file = page.PageFile;
             var result = file.FilePath;
-            if (thumb && !string.IsNullOrEmpty(file.ThumbPath) && System.IO.File.Exists(file.ThumbPath))
+            if (thumb && !string.IsNullOrEmpty(file.ThumbPath))
             {
                 result = file.ThumbPath;
+            }
+
+            if (!System.IO.File.Exists(result))
+            {
+                return NotFound($"{file.FileName} could not be found!");
             }
 
             return new PhysicalFileResult(result, file.MimeType)
