@@ -62,7 +62,7 @@
 
         <div class="form-group"  str-validation-for="Input.PrivacyConsent" str-error-class="has-error">
             <div class="checkbox">
-                <label asp-for="Input.PrivacyConsent">
+                <label asp-for="Input.PrivacyConsent" style="line-height: 26px">
                     <input asp-for="Input.PrivacyConsent" required="required"/>
                     Прочетох и приемам <a target="_blank" class="underlined" href="@Url.Action("Privacy", controller: "Home")">Политиката за поверителност</a> на сайта и <a class="underlined" target="_blank" href="@Url.Action("TaC", controller: "Home")">Общите му условия</a>
                 </label>
