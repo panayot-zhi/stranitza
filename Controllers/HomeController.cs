@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -326,7 +327,14 @@ namespace stranitza.Controllers
                     }
 
                     Log.Logger.Warning("404 NotFound: " + path);
-                    
+
+                    // TODO: List here any cases where we need response body brevity
+                    var acceptHeaders = Request.Headers["Accept"];
+                    if (acceptHeaders.Any(header => header.Contains("image/*")))
+                    {
+                        return StatusCode((int) HttpStatusCode.NotFound, path);
+                    }
+
                     return View("NotFound");
                 }
             }
