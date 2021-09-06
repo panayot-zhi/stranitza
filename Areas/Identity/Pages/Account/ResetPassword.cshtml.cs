@@ -23,9 +23,9 @@ namespace stranitza.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [EmailAddress]
             [Display(Name = "Email адрес")]
             [Required(ErrorMessage = "Моля, въведете email адрес.")]
+            [EmailAddress(ErrorMessage = "Моля, въведете валиден email адрес.")]
             public string Email { get; set; }
 
             [Required(ErrorMessage = "Моля, въведете парола.")]
