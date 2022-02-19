@@ -966,7 +966,8 @@ aside.comments .comment .body {
 }
 /* The various styles that are used in the about me text chunk */
 .about-bold {
-  font-weight: bold;
+    font-weight: bold;
+    word-break: break-word;
 }
 .about-italic {
   font-style: italic;
