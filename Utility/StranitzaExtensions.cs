@@ -624,6 +624,30 @@ namespace stranitza.Utility
             }
         }
 
+        internal static string ReadStreamInChunks(Stream stream)
+        {
+            const int readChunkBufferLength = 4096;
+            stream.Seek(0, SeekOrigin.Begin);
+
+            using (var textWriter = new StringWriter())
+            using (var streamReader = new StreamReader(stream))
+            {
+                var readChunk = new char[readChunkBufferLength];
+                int readChunkLength;
+
+                do
+                {
+                    readChunkLength = streamReader.ReadBlock(readChunk,
+                        0,
+                        readChunkBufferLength);
+                    textWriter.Write(readChunk, 0, readChunkLength);
+
+                } while (readChunkLength > 0);
+
+                return textWriter.ToString();
+            }
+        }
+
         public static async Task<string> GetDisplayName(this UserManager<ApplicationUser> userManager, ClaimsPrincipal user)
         {
             if (!user.Identity.IsAuthenticated)
