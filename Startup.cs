@@ -32,7 +32,9 @@ namespace stranitza
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            // this is added by another method:
+            // services.AddControllersWithViews
+            //services.AddCors();
 
             services.AddDbContext<ApplicationDbContext>(
                 contextLifetime: ServiceLifetime.Transient, optionsAction: options =>
@@ -96,7 +98,6 @@ namespace stranitza
                     options.ClaimActions.MapJsonKey(StranitzaClaimTypes.VerifiedEmail, "verified_email");
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
                 });
-
 
             services.ConfigureExternalCookie(options =>
             {
@@ -251,16 +252,15 @@ namespace stranitza
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.AddTransient<IMailSender, MailSenderService>();
 
-            services.AddTransient<StatisticService>();
             services.AddTransient<NewsService>();
-            services.AddTransient<LibraryService>();
+            services.AddTransient<StatisticService>();
             services.AddTransient<ELibraryService>();
+            services.AddTransient<LibraryService>();
             services.AddTransient<IndexService>();
 
             Log.Logger.Information("Services added to the container and configured successfully.");
         }
 
-            
         // NOTE: Use this for debugging purposes only
          
         /*private Task OnCreatingTicket(TwitterCreatingTicketContext arg)
