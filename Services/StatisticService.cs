@@ -19,7 +19,6 @@ namespace stranitza.Services
     public class StatisticService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly LinkGenerator _linkGenerator;
@@ -27,12 +26,11 @@ namespace stranitza.Services
         private static string _appVersion;
 
         public StatisticService(ApplicationDbContext dbContext, LinkGenerator linkGenerator,
-            IHttpContextAccessor httpContextAccessor, IMemoryCache cache, IServiceProvider serviceProvider, IConfiguration configuration)
+            IHttpContextAccessor httpContextAccessor, IMemoryCache cache, IConfiguration configuration)
         {
             _cache = cache;
             _dbContext = dbContext;
             _configuration = configuration;
-            _serviceProvider = serviceProvider;
             _httpContextAccessor = httpContextAccessor;
             _linkGenerator = linkGenerator;
         }
