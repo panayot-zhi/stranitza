@@ -155,11 +155,14 @@ namespace stranitza.Controllers
             try
             {
                 const string templateName = "TestEmail";
+                var to = _mailSender.EmailSettings.MailAdmin;
                 var callbackUrl = Url.AbsoluteAction("Index", "Home");
 
-                await _mailSender.SendMailAsync("panayot.zhi@gmail.com", "Коле, получи ли?", templateName, new {
-                    ButtonLink = callbackUrl
-                });
+                await _mailSender.SendMailAsync(to, "Коле, получи ли?", templateName,
+                    new
+                    {
+                        ButtonLink = callbackUrl
+                    });
 
                 dynamic viewModel = new ExpandoObject();
 
@@ -181,7 +184,7 @@ namespace stranitza.Controllers
         public IActionResult Email(string id, string data)
         {
             var base64EncodedBytes = Convert.FromBase64String(data);
-            var jsonViewModel = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+            var jsonViewModel = Encoding.UTF8.GetString(base64EncodedBytes);
             dynamic viewModel = JsonConvert.DeserializeObject(jsonViewModel);
 
             viewModel.PreviewEmailLink = "#";
