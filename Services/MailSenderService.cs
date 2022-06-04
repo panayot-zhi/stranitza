@@ -76,8 +76,10 @@ namespace stranitza.Services
                     Subject = subject
                 };
 
-                var senderName = _emailSettings.SenderName;
-                var senderEmail = _emailSettings.Sender;
+                var debug = EmailSettings.Debug;
+                var senderName = EmailSettings.SenderName;
+                var senderEmail = EmailSettings.Sender;
+
                 mimeMessage.From.Add(new MailboxAddress(Encoding.UTF8, senderName, senderEmail));
 
                 foreach (var email in emails)
@@ -99,6 +101,11 @@ namespace stranitza.Services
                     {
                         mimeMessage.Bcc.Add(MailboxAddress.Parse(email));
                     }
+                }
+
+                if (debug)
+                {
+                    mimeMessage.Bcc.Add(MailboxAddress.Parse(EmailSettings.MailAdmin));
                 }
 
                 return mimeMessage;
