@@ -118,29 +118,33 @@ namespace stranitza.Services
 
         private async Task SendMimeMessage(MimeMessage mimeMessage)
         {
+            await SendMimeMessages(new[] { mimeMessage });
+        }
+
+        private async Task SendMimeMessages(IEnumerable<MimeMessage> mimeMessages)
+        {
             try
             {
                 using (var client = new SmtpClient())
                 {
-                    // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
                     if (_env.IsDevelopment())
                     {
-                        // The third parameter is useSSL (true if the client should make an SSL-wrapped
-                        // connection to the server; otherwise, false).
-                        await client.ConnectAsync(_emailSettings.MailServer, _emailSettings.MailPort,
-                            SecureSocketOptions.StartTlsWhenAvailable);
+                        // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
+                        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                     }
-                    else
-                    {
-                        await client.ConnectAsync(_emailSettings.MailServer);
-                    }
+
+                    // The third parameter is useSSL (true if the client should make 
+                    // an SSL-wrapped connection to the server; otherwise, false).
+                    await client.ConnectAsync(EmailSettings.MailServer, EmailSettings.MailPort,
+                        SecureSocketOptions.StartTlsWhenAvailable);
 
                     // Note: only needed if the SMTP server requires authentication
-                    await client.AuthenticateAsync(_emailSettings.Sender, _emailSettings.Password);
+                    await client.AuthenticateAsync(EmailSettings.Sender, EmailSettings.Password);
 
-                    await client.SendAsync(mimeMessage);
+                    foreach (var mimeMessage in mimeMessages)
+                    {
+                        await client.SendAsync(mimeMessage);
+                    }
 
                     await client.DisconnectAsync(quit: true);
                 }
