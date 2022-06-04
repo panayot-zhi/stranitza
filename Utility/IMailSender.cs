@@ -5,6 +5,8 @@ namespace stranitza.Utility
 {
     public interface IMailSender
     {
+        EmailSettings EmailSettings { get; }
+
         Task SendMailAsync(string email, string subject, string template, dynamic viewModel);
 
         Task SendMailAsync(List<string> emails, List<string> ccEmails, List<string> bccEmails,

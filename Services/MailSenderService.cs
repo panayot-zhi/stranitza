@@ -20,19 +20,21 @@ namespace stranitza.Services
 {
     public class MailSenderService : IMailSender
     {
-        private readonly EmailSettings _emailSettings;
+        public EmailSettings EmailSettings { get; }
+
         private readonly IRazorViewToStringRenderer _renderer;
         private readonly IHttpContextAccessor _;
         private readonly IWebHostEnvironment _env;
         private readonly LinkGenerator _link;
 
         public MailSenderService(
-            IOptions<EmailSettings> emailSettings,
+            IOptionsSnapshot<EmailSettings> emailSettings,
             IRazorViewToStringRenderer renderer,
             IHttpContextAccessor httpContext,
             IWebHostEnvironment env, LinkGenerator link)
         {
-            _emailSettings = emailSettings.Value;
+            EmailSettings = emailSettings.Value;
+
             _renderer = renderer;
             _env = env;
             _link = link;
