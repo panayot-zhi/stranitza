@@ -93,7 +93,7 @@
     </ItemGroup>
   </Target>
 
-  <Target AfterTargets="AfterPublish" Name="UpdateVersionPy">
+  <Target AfterTargets="BeforePublish" Name="UpdateVersionPy">
     <Exec Command="python &quot;$(ProjectDir)Utility\python\version.py&quot; &quot;$(ProjectDir)$(ProjectName).csproj&quot;" />
   </Target>
 
