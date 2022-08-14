@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Dynamic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Dynamic;
+using System.IO.Compression;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+using stranitza.Repositories;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Utility;
+using Newtonsoft.Json;
 using Serilog;
-using stranitza.Repositories;
 
 namespace stranitza.Controllers
-{    
+{
     public class HomeController : Controller
     {
         private readonly IMailSender _mailSender;
@@ -30,7 +29,7 @@ namespace stranitza.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings, 
+        public HomeController(IMailSender mailSender, IOptions<EmailSettings> emailSettings,
             IWebHostEnvironment environment, IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
@@ -41,7 +40,7 @@ namespace stranitza.Controllers
         }
 
         public IActionResult Index()
-        {            
+        {
             return View();
         }
 
@@ -60,7 +59,7 @@ namespace stranitza.Controllers
 
         [ResponseCache(CacheProfileName = StranitzaCacheProfile.Monthly)]
         public IActionResult Privacy()
-        {                        
+        {
             return View();
         }
 
@@ -110,43 +109,43 @@ namespace stranitza.Controllers
             switch (id)
             {
                 case "email":
-                {
-                    return await TestSendEmail();
-                }
+                    {
+                        return await TestSendEmail();
+                    }
                 case "challenge":
-                {
-                    return Challenge();
-                }
+                    {
+                        return Challenge();
+                    }
                 case "unauthorized":
-                {
-                    return Unauthorized();
-                }
+                    {
+                        return Unauthorized();
+                    }
                 case "notfound":
-                {
-                    return NotFound();
-                }
+                    {
+                        return NotFound();
+                    }
                 case "forbid":
-                {
-                    return Forbid();
-                }
+                    {
+                        return Forbid();
+                    }
                 case "forbidden":
-                {
-                    return StatusCode(403);
-                }
+                    {
+                        return StatusCode(403);
+                    }
                 case "issuenotfound":
-                {
-                    return RedirectToActionPreserveMethod("IssueNotFound");                    
-                }
+                    {
+                        return RedirectToActionPreserveMethod("IssueNotFound");
+                    }
                 case "issuenotfoundlocal":
-                {                    
-                    return LocalRedirectPreserveMethod("/Home/IssueNotFound");
-                }
+                    {
+                        return LocalRedirectPreserveMethod("/Home/IssueNotFound");
+                    }
                 default:
-                {
-                    var innerEx = new StranitzaException("StranitzaException.");
-                    throw new Exception("Simulated exception.", innerEx);
-                }
-            }            
+                    {
+                        var innerEx = new StranitzaException("StranitzaException.");
+                        throw new Exception("Simulated exception.", innerEx);
+                    }
+            }
         }
 
         private async Task<IActionResult> TestSendEmail()
@@ -248,7 +247,7 @@ namespace stranitza.Controllers
 
             var lastOutputPath = filePaths.OrderByDescending(x => x).First();
             var lastOutputFile = await ReadLogFileAsync(lastOutputPath);
-            
+
             if (preview)
             {
                 return new FileContentResult(lastOutputFile, "text/plain");
@@ -303,44 +302,44 @@ namespace stranitza.Controllers
             switch (code)
             {
                 case "400":
-                {
-                    return View("BadRequest");
-                }
+                    {
+                        return View("BadRequest");
+                    }
                 case "401":
-                {
-                    if (User.Identity.IsAuthenticated)
                     {
-                        return Unauthorized();
-                    }
+                        if (User.Identity.IsAuthenticated)
+                        {
+                            return Unauthorized();
+                        }
 
-                    return Challenge();
-                }
+                        return Challenge();
+                    }
                 case "403":
-                {
-                    return View("Forbidden");                    
-                }
+                    {
+                        return View("Forbidden");
+                    }
                 case "404":
-                {
-                    var path = "Could not resolve path.";
-                    if (statusCodeReExecuteFeature != null)
                     {
-                        path = statusCodeReExecuteFeature.GetFullPath();
-                        ViewData["Path"] = path;
+                        var path = "Could not resolve path.";
+                        if (statusCodeReExecuteFeature != null)
+                        {
+                            path = statusCodeReExecuteFeature.GetFullPath();
+                            ViewData["Path"] = path;
+                        }
+
+                        Log.Logger.Warning("404 NotFound: " + path);
+
+                        // TODO: List here any cases where we need response body brevity
+                        var acceptHeaders = Request.Headers["Accept"];
+                        if (acceptHeaders.Any(header => header.Contains("image/*")))
+                        {
+                            return StatusCode((int)HttpStatusCode.NotFound, path);
+                        }
+
+                        return View("NotFound");
                     }
-
-                    Log.Logger.Warning("404 NotFound: " + path);
-
-                    // TODO: List here any cases where we need response body brevity
-                    var acceptHeaders = Request.Headers["Accept"];
-                    if (acceptHeaders.Any(header => header.Contains("image/*")))
-                    {
-                        return StatusCode((int) HttpStatusCode.NotFound, path);
-                    }
-
-                    return View("NotFound");
-                }
             }
-            
+
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
             if (string.IsNullOrEmpty(code))
