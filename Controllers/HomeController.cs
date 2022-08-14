@@ -22,7 +22,6 @@ using stranitza.Repositories;
 
 namespace stranitza.Controllers
 {    
-    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly IMailSender _mailSender;
