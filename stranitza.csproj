@@ -9,19 +9,19 @@
     <SatelliteResourceLanguages>bg;en</SatelliteResourceLanguages>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <Version>3.1.249-a505b4d</Version>
+    <Version>3.1.250-1befc77</Version>
     <Authors>Panayot Ivanov</Authors>
     <Company />
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="backup\**" />
+    <Compile Remove="backups\**" />
     <Compile Remove="release\**" />
-    <Content Remove="backup\**" />
+    <Content Remove="backups\**" />
     <Content Remove="release\**" />
-    <EmbeddedResource Remove="backup\**" />
+    <EmbeddedResource Remove="backups\**" />
     <EmbeddedResource Remove="release\**" />
-    <None Remove="backup\**" />
+    <None Remove="backups\**" />
     <None Remove="release\**" />
   </ItemGroup>
 
