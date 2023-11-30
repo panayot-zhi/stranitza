@@ -242,7 +242,7 @@ namespace stranitza
                 options.Cookie.IsEssential = true;
                 options.Cookie.Name = ".netCore.stranitza.antiForgery";
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 
                 // stick with the defaults
                 // options.Cookie.Expiration = TimeSpan.FromMinutes(30);
