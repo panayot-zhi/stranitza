@@ -14,40 +14,6 @@ namespace stranitza.Services
 {
     public class PopulateDatabaseService
     {
-        public static void EnsureCriticalFilesAndFolders(IConfiguration configuration)
-        {
-            var rootFolderPath = configuration["RepositoryPath"];
-
-            if (!Directory.Exists(rootFolderPath))
-            {
-                throw new StranitzaException($"No directory found at {rootFolderPath}.");
-            }
-
-            /*var jsonFilePath = Path.Combine(configuration["RepositoryPath"], StranitzaConstants.IndexJsonFileName);
-            if (!File.Exists(jsonFilePath))
-            {
-                Log.Logger.Warning("No json index file found at {JsonFilePath}.", jsonFilePath);
-            }*/
-
-            var forbiddenPagePdfFilePath = Path.Combine(rootFolderPath, StranitzaConstants.ForbiddenPagePdfFileName);
-            if (!File.Exists(forbiddenPagePdfFilePath))
-            {
-                Log.Logger.Warning("No forbidden page pdf file found at {ForbiddenPagePdfFilePath}.", forbiddenPagePdfFilePath);
-            }
-
-            var issuesFolderPath = Path.Combine(rootFolderPath, StranitzaConstants.IssuesFolderName);
-            if (!Directory.Exists(issuesFolderPath))
-            {
-                Directory.CreateDirectory(issuesFolderPath);
-            }
-
-            var uploadsFolderPath = Path.Combine(rootFolderPath, StranitzaConstants.UploadsFolderName);
-            if (!Directory.Exists(uploadsFolderPath))
-            {
-                Directory.CreateDirectory(uploadsFolderPath);
-            }
-        }
-
         public static async Task EnsureCriticalRoles(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
