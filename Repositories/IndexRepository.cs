@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using stranitza.Models.Database;
 using stranitza.Models.Generic;
 using stranitza.Models.ViewModels;

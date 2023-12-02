@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Serilog;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
@@ -564,9 +564,9 @@ namespace stranitza.Services
 
         private ApplicationDbContext CreateDbContext()
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-            optionsBuilder.UseMySql(connectionString);
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             
             return new ApplicationDbContext(optionsBuilder.Options);
         }
