@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using stranitza.Models.Database;
 using stranitza.Models.ViewModels;
 using stranitza.Repositories;
@@ -16,17 +13,11 @@ namespace stranitza.Controllers
 {
     public class PagesController : Controller
     {
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
         private readonly ApplicationDbContext _context;
         private readonly LibraryService _service;
 
-        public PagesController(ApplicationDbContext context, LibraryService service, 
-            IWebHostEnvironment environment, 
-            IConfiguration configuration)
+        public PagesController(ApplicationDbContext context, LibraryService service)
         {
-            _environment = environment;
-            _configuration = configuration;
             _context = context;
             _service = service;
         }
@@ -165,13 +156,6 @@ namespace stranitza.Controllers
             if (thumb && !string.IsNullOrEmpty(file.ThumbPath))
             {
                 result = file.ThumbPath;
-            }
-
-            if (_environment.IsDevelopment())
-            {
-                var localRepositoryPath = _configuration["RepositoryPath"];
-                var productionRepositoryPath = _configuration["ProductionRepositoryPath"];
-                result = result.Replace(productionRepositoryPath, localRepositoryPath);
             }
 
             if (!System.IO.File.Exists(result))
