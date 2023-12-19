@@ -1,45 +1,35 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
 using Serilog;
+using SixLabors.ImageSharp;
 using stranitza.Models.Database;
 using stranitza.Services;
-using stranitza.Utility;
 
-namespace stranitza
+namespace stranitza.Utility
 {
-    public class Startup
+    public static class StranitzaStartup
     {
-        public Startup(IConfiguration configuration)
+        public static void AddStranitzaDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // this is added by another method:
-            // services.AddControllersWithViews
-            //services.AddCors();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<ApplicationDbContext>(
                 contextLifetime: ServiceLifetime.Transient, optionsAction: options =>
-                    options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+        }
 
+        public static void AddStranitzaIdentity(this IServiceCollection services)
+        {
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddErrorDescriber<LocalizedIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -72,36 +62,48 @@ namespace stranitza
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
-             services.AddAuthentication()
+            services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+            });
+        }
+
+        public static void AddStranitzaAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication()
                 .AddFacebook(options =>
                 {
-                    options.AppId = Configuration.GetValue<string>("FacebookAppId");
-                    options.AppSecret = Configuration.GetValue<string>("FacebookAppSecret");
+                    options.AppId = configuration.GetValue<string>("FacebookAppId");
+                    options.AppSecret = configuration.GetValue<string>("FacebookAppSecret");
                     options.Fields.Add("picture.width(150).height(150)");
-                    options.ClaimActions.MapCustomJson(StranitzaClaimTypes.Picture, 
+                    options.ClaimActions.MapCustomJson(StranitzaClaimTypes.Picture,
                         json => json.GetProperty("picture").GetProperty("data").GetString("url"));
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
                 })
                 .AddTwitter(options =>
                 {
-                    options.ConsumerKey = Configuration.GetValue<string>("TwitterConsumerKey");
-                    options.ConsumerSecret = Configuration.GetValue<string>("TwitterConsumerSecret");
+                    options.ConsumerKey = configuration.GetValue<string>("TwitterConsumerKey");
+                    options.ConsumerSecret = configuration.GetValue<string>("TwitterConsumerSecret");
                     options.ClaimActions.MapJsonKey(StranitzaClaimTypes.Picture, "profile_image_url_https");
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
                     options.RetrieveUserDetails = true;
                 })
                 .AddGoogle(options =>
                 {
-                    options.ClientId = Configuration.GetValue<string>("GoogleClientId");
-                    options.ClientSecret = Configuration.GetValue<string>("GoogleClientSecret");
+                    options.ClientId = configuration.GetValue<string>("GoogleClientId");
+                    options.ClientSecret = configuration.GetValue<string>("GoogleClientSecret");
                     options.ClaimActions.MapJsonKey(StranitzaClaimTypes.Picture, "picture");
                     options.ClaimActions.MapJsonKey(StranitzaClaimTypes.VerifiedEmail, "verified_email");
                     //options.Events.OnCreatingTicket = OnCreatingTicket;
                 });
+        }
 
+        public static void AddStranitzaCookies(this IServiceCollection services)
+        {
+            // .netCore.stranitza.identity.external
             services.ConfigureExternalCookie(options =>
             {
-                // .netCore.stranitza.identity.external
                 options.Cookie.HttpOnly = true;
 
                 // no cookie policy enforces this
@@ -131,9 +133,9 @@ namespace stranitza
                 // options.SlidingExpiration = true;
             });
 
+            // .netCore.stranitza.identity
             services.ConfigureApplicationCookie(options =>
             {
-                // .netCore.stranitza.identity
                 options.Cookie.HttpOnly = true;
 
                 // no cookie policy enforces this
@@ -167,15 +169,32 @@ namespace stranitza
 
             });
 
-            // IOptions<T>
-            services.AddOptions();
-
-            services.AddRouting(option =>
+            // .netCore.stranitza.tempData
+            services.Configure<CookieTempDataProviderOptions>(options =>
             {
-                option.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
-                option.LowercaseUrls = true;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = false;
+                options.Cookie.Name = ".netCore.stranitza.tempData";
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
+            // .netCore.stranitza.antiForgery
+            services.AddAntiforgery(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.Name = ".netCore.stranitza.antiForgery";
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+                // stick with the defaults
+                // options.Cookie.Expiration = TimeSpan.FromMinutes(30);
+            });
+        }
+
+        public static void AddStranitzaCaching(this IServiceCollection services)
+        {
             services.AddResponseCaching();
 
             services.AddControllersWithViews(options =>
@@ -208,48 +227,11 @@ namespace stranitza
                 });
 
             });
+        }
 
-            services.AddRazorPages(options =>
-            {
-                options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-                options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-            });
-
-            /*services.AddSession(options =>
-            {
-                // Session cookie settings
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = false;
-                options.Cookie.Name = ".netCore.stranitza.session";
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            });*/
-
-            services.Configure<CookieTempDataProviderOptions>(options =>
-            {
-                // .netCore.stranitza.tempData
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = false;
-                options.Cookie.Name = ".netCore.stranitza.tempData";
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            });
-
-            services.AddAntiforgery(options =>
-            {
-                // .netCore.stranitza.antiForgery
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-                options.Cookie.Name = ".netCore.stranitza.antiForgery";
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
-                // stick with the defaults
-                // options.Cookie.Expiration = TimeSpan.FromMinutes(30);
-            });
-
+        public static void AddStranitzaServices(this IServiceCollection services)
+        {
             services.AddTransient<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
-            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.AddTransient<IMailSender, MailSenderService>();
 
             services.AddTransient<NewsService>();
@@ -257,81 +239,60 @@ namespace stranitza
             services.AddTransient<ELibraryService>();
             services.AddTransient<LibraryService>();
             services.AddTransient<IndexService>();
-
-            Log.Logger.Information("Services added to the container and configured successfully.");
         }
 
-        // NOTE: Use this for debugging purposes only
-         
-        /*private Task OnCreatingTicket(TwitterCreatingTicketContext arg)
+        public static void ConfigureStranitza(this IServiceCollection services, IConfiguration configuration)
         {
-            return Task.CompletedTask;
-        }
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
 
-        private Task OnCreatingTicket(OAuthCreatingTicketContext arg)
-        {
-            return Task.CompletedTask;
-        }*/
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider services)
-        {
             var cultureInfo = new CultureInfo("bg-BG");
 
             // NOTE: Soon...
-            //cultureInfo.NumberFormat.CurrencySymbol = "�";
+            //cultureInfo.NumberFormat.CurrencySymbol = "€";
 
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+        }
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+        public static void UseStranitzaFiles(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            var rootFolderPath = configuration["RepositoryPath"];
 
-            if (!env.IsDevelopment())
+            if (!Directory.Exists(rootFolderPath))
             {
-                // The default HSTS value is 30 days.
-                // You may want to change this for production
-                // scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                throw new StranitzaException($"No directory found at {rootFolderPath}.");
             }
-            
-            app.UseResponseCaching();
-            app.UseExceptionHandler("/Home/Error");
-            app.UseStatusCodePagesWithReExecute("/Home/Error", "?code={0}");
 
-            PopulateDatabaseService.EnsureCriticalFilesAndFolders(Configuration);
+            /*var jsonFilePath = Path.Combine(configuration["RepositoryPath"], StranitzaConstants.IndexJsonFileName);
+            if (!File.Exists(jsonFilePath))
+            {
+                Log.Logger.Warning("No json index file found at {JsonFilePath}.", jsonFilePath);
+            }*/
 
-            //app.UseHttpsRedirection();
+            var forbiddenPagePdfFilePath = Path.Combine(rootFolderPath, StranitzaConstants.ForbiddenPagePdfFileName);
+            if (!File.Exists(forbiddenPagePdfFilePath))
+            {
+                Log.Logger.Warning("No forbidden page pdf file found at {ForbiddenPagePdfFilePath}.", forbiddenPagePdfFilePath);
+            }
+
+            var issuesFolderPath = Path.Combine(rootFolderPath, StranitzaConstants.IssuesFolderName);
+            if (!Directory.Exists(issuesFolderPath))
+            {
+                Directory.CreateDirectory(issuesFolderPath);
+            }
+
+            var uploadsFolderPath = Path.Combine(rootFolderPath, StranitzaConstants.UploadsFolderName);
+            if (!Directory.Exists(uploadsFolderPath))
+            {
+                Directory.CreateDirectory(uploadsFolderPath);
+            }
+
             app.UseStaticFiles(); // wwwroot
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Configuration.GetValue<string>("RepositoryPath"), StranitzaConstants.UploadsFolderName)),
+                FileProvider = new PhysicalFileProvider(uploadsFolderPath),
                 RequestPath = new PathString($"/{StranitzaConstants.UploadsFolderName}")
             });
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            PopulateDatabaseService.EnsureCriticalRoles(services).Wait();
-            PopulateDatabaseService.EnsureCriticalUsers(services, Configuration).Wait();
-            PopulateDatabaseService.LoadIssuesFromRootFolder(services, Configuration).Wait();
-            //PopulateDatabaseService.LoadIndexFromRootFolder(services, Configuration).Wait();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                endpoints.MapRazorPages();
-            });
-
-            Log.Logger.Information("Configuration of the HTTP request pipeline successful.");
         }
     }
 }

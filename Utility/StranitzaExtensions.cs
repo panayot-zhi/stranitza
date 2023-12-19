@@ -218,6 +218,7 @@ namespace stranitza.Utility
             zip.Add(File.ReadAllBytes(filepath), filename);
         }
 
+
         public static string[] GatherErrors(this ModelStateDictionary modelState)
         {
             return modelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)).ToArray();
@@ -235,6 +236,7 @@ namespace stranitza.Utility
                 modelState.AddIdentityError(identityError);
             }
         }
+
         public static void AddIdentityErrors(this ITempDataDictionary tempData, IEnumerable<IdentityError> errors)
         {
             foreach (var identityError in errors)
